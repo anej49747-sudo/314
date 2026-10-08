@@ -1,0 +1,103 @@
+.login {
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("/background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    #back {
+        width: 150px;
+        height: 40px;
+        color: #987d5a;
+        border-radius: 10px;
+        border: 1px solid #d8cfc7;
+        background-color: #f7e7d8;
+        box-shadow: none;
+        font-size: 15px;
+        font-weight: 500;
+
+        &:hover {
+            background-color: #e6d1c0;
+            border-color: #e3d4ca;
+        }
+    }
+
+    .loginbox {
+        width: 400px;
+        height: auto;
+        background-color: rgb(247, 237, 226);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .title {
+            width: 100%;
+            text-align: center;
+            font-size: larger;
+            margin-bottom: 10px;
+
+            span {
+                margin: 0 5px;
+
+                &:hover {
+                    text-decoration: underline;
+                    color: rgb(209, 175, 88)
+                }
+            }
+        }
+
+        .ant-form {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        // 柔和圆角
+        border-radius: 20px;
+
+        // 淡淡的边框
+        border: 1px solid #ebe0d2;
+
+        // 柔和阴影 
+        box-shadow: 0 8px 30px rgba(120, 90, 60, 0.10);
+
+        // 内部留白
+        padding: 25px;
+        box-sizing: border-box;
+
+        .title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #6b5745;
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 5px;
+        }
+
+        // Submit bottom
+        .ant-btn-primary {
+            width: 100%;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid #c5a78d;
+            background-color: #c5a78d;
+            box-shadow: none;
+            font-size: 15px;
+            font-weight: 500;
+
+            // 鼠标悬停
+            &:hover {
+                background-color: #b99478;
+                border-color: #b99478;
+            }
+        }
+
+
+    }
+}
