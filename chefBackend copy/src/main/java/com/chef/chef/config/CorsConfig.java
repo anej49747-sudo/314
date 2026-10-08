@@ -1,32 +1,30 @@
 package com.chef.chef.config;
 
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 @org.springframework.context.annotation.Configuration
 public class CorsConfig {
 
     @org.springframework.context.annotation.Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
+    public org.springframework.web.filter.CorsFilter corsFilter() {
 
-            @Override
-            public void addCorsMappings(
-                    org.springframework.web.servlet.config.annotation.CorsRegistry registry) {
+        org.springframework.web.cors.CorsConfiguration config =
+                new org.springframework.web.cors.CorsConfiguration();
 
-                registry.addMapping("/**")
-                        .allowedOriginPatterns("http://localhost:5173")
-                        .allowedMethods(
-                                "GET",
-                                "POST",
-                                "PUT",
-                                "PATCH",
-                                "DELETE",
-                                "OPTIONS"
-                        )
-                        .allowedHeaders("*")
-                        .allowCredentials(true)
-                        .maxAge(3600);
-            }
-        };
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedHeader("*");
+
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("PATCH");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("OPTIONS");
+
+        org.springframework.web.cors.UrlBasedCorsConfigurationSource source =
+                new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration("/**", config);
+
+        return new org.springframework.web.filter.CorsFilter(source);
     }
 }
