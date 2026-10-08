@@ -2,8 +2,7 @@ import axios from "axios";
 import cookie from "js-cookie";
 
 const request = axios.create({
-    baseURL: "http://localhost:8080",
-    // baseURL: "http://127.0.0.1:5000",
+    baseURL: "https://314-production.up.railway.app",
     timeout: 20000,
     timeoutErrorMessage: "request timeout",
 });

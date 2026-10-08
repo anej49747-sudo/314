@@ -10,7 +10,7 @@ function login() {
     const [showAlert, setShowAlert] = useState(false)
     const navigate = useNavigate()
     const onFinish = async (values) => {
-        console.log('Success:', values);
+        // console.log('Success:', values);
         try {
             const res = await apiLogin(values);
             console.log(res);

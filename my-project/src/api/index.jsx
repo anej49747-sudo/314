@@ -14,10 +14,12 @@ export function apiRegistration(data) {
     })
 }
 
-export function apiGetuser(data) {
+export function apiGetuser(userid) {
     return newRequest({
         url: "/api/getuser",
         method: "get",
-        data
-    })
+        params: {
+            userid: userid
+        }
+    });
 }
