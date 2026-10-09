@@ -56,7 +56,7 @@ function Login() {
             setAlert({
                 text:
                     error.response?.data?.message ||
-                    "Login failed.",
+                    "Login failed. Please check your username and password.",
                 type: "error",
             });
             setShowAlert(true);
@@ -74,7 +74,7 @@ function Login() {
         setShowAlert(false);
     };
 
-    // Switch to Login 1
+    // Switch to Login
     const login = () => {
         setPagecontent("login");
         setShowAlert(false);
