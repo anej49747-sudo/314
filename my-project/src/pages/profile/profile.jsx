@@ -1,6 +1,5 @@
-```jsx
-import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   apiGetuser,
   apiUpdateDesignerProfile,
@@ -24,7 +23,8 @@ function Profile() {
     savedUser.id ||
     savedUser.userid ||
     "";
-
+  console.log("当前用户 ID:", userId);
+  console.log("当前用户资料:", userdata);
   const [currentUser, setCurrentUser] = useState(userdata);
 
   const [formData, setFormData] = useState({
@@ -110,7 +110,7 @@ function Profile() {
         console.error("Failed to load profile:", error);
         setErrorMessage(
           error?.response?.data?.message ||
-            "Failed to load profile. Please try again."
+          "Failed to load profile. Please try again."
         );
       } finally {
         setLoading(false);
@@ -154,7 +154,7 @@ function Profile() {
     // 此接口只允许更新 designer 角色
     if (
       String(currentUser.role || userdata.role || "").toLowerCase()
-        !== "designer"
+      !== "designer"
     ) {
       setErrorMessage(
         "Only designer accounts can update designer profiles."
@@ -215,7 +215,7 @@ function Profile() {
 
       setErrorMessage(
         error?.response?.data?.message ||
-          "Failed to save your profile. Please try again."
+        "Failed to save your profile. Please try again."
       );
     } finally {
       setSaving(false);
@@ -402,4 +402,3 @@ function Profile() {
 }
 
 export default Profile;
-```

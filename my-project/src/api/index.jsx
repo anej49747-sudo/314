@@ -24,7 +24,7 @@ export function apiGetuser(userid) {
         url: "/api/getuser",
         method: "get",
         params: {
-            userid,
+            userId: userid,
         },
     });
 }
@@ -64,9 +64,10 @@ export function apiGetProjectById(id) {
 
 
 // 更新设计师个人资料
+// Update designer profile
 export function apiUpdateDesignerProfile(id, data) {
     return newRequest({
-        url: `/ api / designer / ${encodeURIComponent(id)}/profile`,
+        url: `/api/designer/${encodeURIComponent(id)}/profile`,
         method: "put",
         data,
     });

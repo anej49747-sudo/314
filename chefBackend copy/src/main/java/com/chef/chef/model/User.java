@@ -1,5 +1,6 @@
-
 package com.chef.chef.model;
+
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -27,5 +28,7 @@ public class User {
     private String email;
     private String company;
     private String bio;
-    private String designStyles;
+
+    // Multiple design styles, e.g. Modern, Minimalist
+    private List<String> designStyles;
 }

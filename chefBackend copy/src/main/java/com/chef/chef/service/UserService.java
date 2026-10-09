@@ -1,5 +1,6 @@
 package com.chef.chef.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,27 +17,31 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    /**
-     * 用户登录
-     */
+    //user login
     public User checkLogin(String username, String password) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
+        Optional<User> userOpt =
+                userRepository.findByUsername(username);
 
         if (userOpt.isEmpty()) {
-            throw new IllegalArgumentException("User does not exist");
+            throw new IllegalArgumentException(
+                    "User does not exist"
+            );
         }
 
         User user = userOpt.get();
 
-        if (!user.getPassword().equals(password)) {
-            throw new IllegalArgumentException("Incorrect password");
+        if (user.getPassword() == null
+                || !user.getPassword().equals(password)) {
+            throw new IllegalArgumentException(
+                    "Incorrect password"
+            );
         }
 
         return user;
     }
 
     /**
-     * 用户注册
+     * User registration
      */
     public User register(String username, String password) {
         if (username == null || username.isBlank()
@@ -47,7 +52,9 @@ public class UserService {
         }
 
         if (userRepository.existsByUsername(username)) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new IllegalArgumentException(
+                    "Username already exists"
+            );
         }
 
         User user = new User();
@@ -59,40 +66,48 @@ public class UserService {
     }
 
     /**
-     * 根据 ID 获取用户
+     * Get user by ID
      */
     public User getUser(String userId) {
         if (userId == null || userId.isBlank()) {
-            throw new IllegalArgumentException("User ID is required");
+            throw new IllegalArgumentException(
+                    "User ID is required"
+            );
         }
 
         return userRepository.findById(userId)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("User not found"));
+                        new IllegalArgumentException(
+                                "User not found"
+                        )
+                );
     }
 
     /**
-     * 获取所有设计师
+     * Get all designers
      */
     public List<User> findDesigners() {
         return userRepository.findByRole("designer");
     }
 
     /**
-     * 根据 ID 获取设计师公开资料
+     * Get one designer by ID
      */
     public User getDesignerById(String id) {
         User user = getUser(id);
 
-        if (!"designer".equalsIgnoreCase(user.getRole())) {
-            throw new IllegalArgumentException("Designer not found");
+        if (user.getRole() == null
+                || !user.getRole().equalsIgnoreCase("designer")) {
+            throw new IllegalArgumentException(
+                    "Designer not found"
+            );
         }
 
         return user;
     }
 
     /**
-     * 更新设计师个人资料
+     * Update designer profile
      */
     public User updateDesignerProfile(
             String userId,
@@ -103,17 +118,30 @@ public class UserService {
             String bio,
             List<String> designStyles
     ) {
+        // Find the designer
         User user = getDesignerById(userId);
 
+        // Update profile fields
         user.setName(name);
         user.setGender(gender);
         user.setEmail(email);
         user.setCompany(company);
         user.setBio(bio);
-        user.setDesignStyles(
-                designStyles == null ? List.of() : designStyles
-        );
 
+        // Explicitly create a typed list to avoid generic inference issues
+        List<String> styles = new ArrayList<>();
+
+        if (designStyles != null) {
+            for (String style : designStyles) {
+                if (style != null && !style.isBlank()) {
+                    styles.add(style.trim());
+                }
+            }
+        }
+
+        user.setDesignStyles(styles);
+
+        // Save changes to MongoDB
         return userRepository.save(user);
     }
 }
