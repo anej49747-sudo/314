@@ -8,9 +8,11 @@
     .header {
         width: 100%;
         height: 90px;
-        background-color: white;
+        padding: 0 25px;
+        background-color: #ffffff;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         border-bottom: 1px solid rgba(255, 253, 240, 0.5);
         box-sizing: border-box;
         position: fixed;
@@ -18,16 +20,42 @@
         left: 0;
         z-index: 100;
 
+        // Independent navigation box on the left
+        .header-nav {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        // Designers is a text-style navigation link
+        .nav-link {
+            padding: 10px 0;
+            margin: 0;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            border-radius: 0;
+            color: #53685b;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s ease, border-color 0.2s ease;
+
+            &:hover {
+                color: #a17b45;
+                border-bottom-color: #a9bba7;
+            }
+        }
+
+        // Login/Register, user dropdown and Logout on the right
         .header-actions {
-            position: absolute;
-            top: 20px;
-            right: 25px;
-            z-index: 1000;
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: flex-end;
             gap: 12px;
+            margin-left: auto;
         }
 
         .user-dropdown {
@@ -101,14 +129,12 @@
         }
 
         .login-register {
-            list-style: none;
-            position: static;
-            margin: 0;
-            padding: 0;
             flex-shrink: 0;
             box-sizing: border-box;
             width: 145px;
             height: 46px;
+            margin: 0;
+            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -183,7 +209,7 @@
     .feature-section {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 25px;
     }
 
@@ -204,6 +230,26 @@
             border-color: #bdcdbf;
             box-shadow: 0 13px 28px rgba(71, 91, 78, 0.12);
         }
+
+        &:nth-child(1) {
+            .feature-icon {
+                font-size: 38px;
+            }
+        }
+
+        &:nth-child(2) {
+            .feature-icon {
+                font-size: 25px;
+            }
+        }
+
+        &:nth-child(3) {
+            .feature-icon {
+                font-size: 20px;
+                font-weight: 700;
+                -webkit-text-stroke: 0.8px #53685b;
+            }
+        }
     }
 
     .feature-icon {
@@ -217,26 +263,6 @@
         border-radius: 50%;
         font-size: 29px;
         margin-bottom: 25px;
-    }
-
-    .feature-card:nth-child(1) {
-        .feature-icon {
-            font-size: 38px;
-        }
-    }
-
-    .feature-card:nth-child(2) {
-        .feature-icon {
-            font-size: 25px;
-        }
-    }
-
-    .feature-card:nth-child(3) {
-        .feature-icon {
-            font-size: 20px;
-            font-weight: 700;
-            -webkit-text-stroke: 0.8px #53685b;
-        }
     }
 
     .feature-content {
@@ -320,10 +346,14 @@
     .home {
         .header {
             height: 80px;
+            padding: 0 15px;
+
+            .nav-link {
+                font-size: 14px;
+            }
 
             .header-actions {
-                top: 17px;
-                right: 15px;
+                gap: 8px;
             }
 
             .user-tag {

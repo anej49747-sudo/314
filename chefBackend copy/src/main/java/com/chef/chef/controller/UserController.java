@@ -1,3 +1,4 @@
+
 package com.chef.chef.controller;
 
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +27,7 @@ public class UserController {
 
     private final UserService userService;
 
-    // Login
+    // Login with username and password
     @PostMapping(
         value = "/login",
         produces = "application/json;charset=UTF-8"
@@ -131,6 +133,51 @@ public class UserController {
 
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(response);
+        }
+    }
+
+    // Get one designer by ID
+    @GetMapping(
+        value = "/designer/{id}",
+        produces = "application/json;charset=UTF-8"
+    )
+    public ResponseEntity<Map<String, Object>> getDesignerById(
+            @PathVariable String id) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            User user = userService.getUser(id);
+
+            // Check whether the user is a designer
+            if (!"designer".equalsIgnoreCase(user.getRole())) {
+                response.put("status", "error");
+                response.put("message", "Designer not found");
+
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(response);
+            }
+
+            // Return public information only
+            Map<String, Object> designerData = new HashMap<>();
+            designerData.put("id", user.getId());
+            designerData.put("username", user.getUsername());
+            designerData.put("name", user.getName());
+            designerData.put("role", user.getRole());
+
+            response.put("designer", designerData);
+            response.put("status", "success");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Designer not found");
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
                     .body(response);
         }
     }
