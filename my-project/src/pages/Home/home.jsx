@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router-dom";
 import { Alert } from "antd";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../Home/home.css";
 
 function Home() {
@@ -14,7 +14,9 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const currentUser = JSON.parse(localStorage.getItem("userdata") || "null");
+    const currentUser = JSON.parse(
+      localStorage.getItem("userdata") || "null",
+    );
 
     setUser(currentUser);
     setLoginStatus(currentUser !== null);
@@ -31,7 +33,9 @@ function Home() {
   };
 
   const goToDashboard = () => {
-    const currentUser = JSON.parse(localStorage.getItem("userdata") || "null");
+    const currentUser = JSON.parse(
+      localStorage.getItem("userdata") || "null",
+    );
 
     if (!currentUser) {
       navigate("/login");
@@ -80,6 +84,14 @@ function Home() {
 
       <div className="header">
         <div className="header-actions">
+          {/* Designers button at the far left */}
+          <button
+            onClick={() => navigate("/designer")}
+            className="login-register"
+          >
+            Designers
+          </button>
+
           {loginStatus ? (
             <>
               <div className="user-dropdown">
@@ -87,9 +99,13 @@ function Home() {
                   className="user-tag"
                   onClick={() => setShowMenu(!showMenu)}
                 >
-                  {role ? role.charAt(0).toUpperCase() + role.slice(1) : "User"}{" "}
+                  {role
+                    ? role.charAt(0).toUpperCase() + role.slice(1)
+                    : "User"}{" "}
                   : {username}
-                  <span className="dropdown-arrow">{showMenu ? "⌃" : "⌄"}</span>
+                  <span className="dropdown-arrow">
+                    {showMenu ? "⌃" : "⌄"}
+                  </span>
                 </button>
 
                 {showMenu && (
@@ -97,7 +113,6 @@ function Home() {
                     <div
                       className="dropdown-item"
                       onClick={() =>
-                        //     // goToDashboard
                         navigate("/dashboard", {
                           state: { userdata: user },
                         })
@@ -141,9 +156,7 @@ function Home() {
               <div className="feature-content">
                 <h2>Search</h2>
 
-                <p>
-                  Search your interest.
-                </p>
+                <p>Search your interest.</p>
               </div>
 
               <button
