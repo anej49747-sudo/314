@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   apiGetuser,
+  apiGetDesignerById,
   apiUpdateDesignerProfile,
 } from "../../api";
 import "./profile.css";
@@ -10,21 +11,18 @@ function Profile() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 获取当前用户信息，兼容路由传值和 localStorage
-  const savedUser = JSON.parse(
-    localStorage.getItem("userdata") || "{}"
-  );
+  const [savedUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("userdata") || "{}");
+    } catch {
+      return {};
+    }
+  });
 
   const userdata = location.state?.userdata || savedUser;
-
   const userId =
-    userdata.id ||
-    userdata.userid ||
-    savedUser.id ||
-    savedUser.userid ||
-    "";
-  console.log("当前用户 ID:", userId);
-  console.log("当前用户资料:", userdata);
+    userdata.id || userdata.userid || savedUser.id || savedUser.userid || "";
+
   const [currentUser, setCurrentUser] = useState(userdata);
 
   const [formData, setFormData] = useState({
@@ -35,7 +33,7 @@ function Profile() {
     bio: userdata.bio || "",
     designStyles: Array.isArray(userdata.designStyles)
       ? userdata.designStyles.join(", ")
-      : "",
+      : userdata.designStyles || "",
   });
 
   const [showedit, setshowedit] = useState(false);
@@ -43,7 +41,6 @@ function Profile() {
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // 将后端返回的数据转换成表单格式
   const fillForm = (user) => {
     setFormData({
       name: user.name || "",
@@ -53,17 +50,14 @@ function Profile() {
       bio: user.bio || "",
       designStyles: Array.isArray(user.designStyles)
         ? user.designStyles.join(", ")
-        : "",
+        : user.designStyles || "",
     });
   };
 
-  // 获取最新用户资料
   useEffect(() => {
     const getUser = async () => {
       if (!userId) {
-        setErrorMessage(
-          "Cannot find your user ID. Please log in again."
-        );
+        setErrorMessage("Cannot find your user ID. Please log in again.");
         return;
       }
 
@@ -71,43 +65,45 @@ function Profile() {
       setErrorMessage("");
 
       try {
-        const res = await apiGetuser(userId);
+        const role = String(
+          userdata.role || savedUser.role || ""
+        ).toLowerCase();
+
+        const res =
+          role === "designer"
+            ? await apiGetDesignerById(userId)
+            : await apiGetuser(userId);
+
         const result = res?.data ?? res;
 
-        if (result.status === "success" && result.userdata) {
-          const user = result.userdata;
-
-          setCurrentUser(user);
-
-          // 普通用户资料接口可能不包含设计师专属字段，
-          // 因此保留路由或本地已有的设计师资料
-          const mergedUser = {
-            ...userdata,
-            ...user,
-            gender: user.gender ?? userdata.gender ?? "",
-            company: user.company ?? userdata.company ?? "",
-            bio: user.bio ?? userdata.bio ?? "",
-            designStyles:
-              user.designStyles ?? userdata.designStyles ?? [],
-          };
-
-          setCurrentUser(mergedUser);
-          fillForm(mergedUser);
-
-          localStorage.setItem(
-            "userdata",
-            JSON.stringify({
-              ...savedUser,
-              ...user,
-            })
-          );
-        } else {
+        if (result.status !== "success") {
           setErrorMessage(
             result.message || "Unable to load your profile."
           );
+          return;
         }
+
+        const user = result.designer || result.userdata;
+
+        if (!user) {
+          setErrorMessage("No profile data was returned.");
+          return;
+        }
+
+        setCurrentUser(user);
+        fillForm(user);
+
+        localStorage.setItem(
+          "userdata",
+          JSON.stringify({
+            ...savedUser,
+            ...user,
+            id: user.id || userId,
+          })
+        );
       } catch (error) {
         console.error("Failed to load profile:", error);
+
         setErrorMessage(
           error?.response?.data?.message ||
           "Failed to load profile. Please try again."
@@ -118,9 +114,10 @@ function Profile() {
     };
 
     getUser();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
-  // 处理输入框变化
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -130,32 +127,29 @@ function Profile() {
     }));
   };
 
-  // 开始编辑
   const edit = () => {
     fillForm(currentUser);
     setErrorMessage("");
     setshowedit(true);
   };
 
-  // 取消编辑，恢复原来的数据
   const handleCancel = () => {
     fillForm(currentUser);
     setErrorMessage("");
     setshowedit(false);
   };
 
-  // 保存个人资料到后端
   const submit = async () => {
     if (!userId) {
       setErrorMessage("Cannot find your user ID. Please log in again.");
       return;
     }
 
-    // 此接口只允许更新 designer 角色
-    if (
-      String(currentUser.role || userdata.role || "").toLowerCase()
-      !== "designer"
-    ) {
+    const role = String(
+      currentUser.role || userdata.role || savedUser.role || ""
+    ).toLowerCase();
+
+    if (role !== "designer") {
       setErrorMessage(
         "Only designer accounts can update designer profiles."
       );
@@ -181,35 +175,36 @@ function Profile() {
       const res = await apiUpdateDesignerProfile(userId, payload);
       const result = res?.data ?? res;
 
-      if (result.status === "success") {
-        const updatedUser = result.designer || {
-          ...currentUser,
-          ...payload,
-        };
-
-        setCurrentUser(updatedUser);
-        fillForm(updatedUser);
-
-        // 同步更新本地缓存
-        const latestSavedUser = JSON.parse(
-          localStorage.getItem("userdata") || "{}"
-        );
-
-        localStorage.setItem(
-          "userdata",
-          JSON.stringify({
-            ...latestSavedUser,
-            ...updatedUser,
-          })
-        );
-
-        setshowedit(false);
-        alert("Profile updated successfully!");
-      } else {
+      if (result.status !== "success") {
         setErrorMessage(
           result.message || "Failed to update profile."
         );
+        return;
       }
+
+      const updatedUser = result.designer || {
+        ...currentUser,
+        ...payload,
+      };
+
+      setCurrentUser(updatedUser);
+      fillForm(updatedUser);
+
+      const latestSavedUser = JSON.parse(
+        localStorage.getItem("userdata") || "{}"
+      );
+
+      localStorage.setItem(
+        "userdata",
+        JSON.stringify({
+          ...latestSavedUser,
+          ...updatedUser,
+          id: updatedUser.id || userId,
+        })
+      );
+
+      setshowedit(false);
+      alert("Profile updated successfully!");
     } catch (error) {
       console.error("Failed to update profile:", error);
 
@@ -222,12 +217,16 @@ function Profile() {
     }
   };
 
+  const role =
+    currentUser.role || userdata.role || savedUser.role || "";
+
   return (
     <div className="profile-page">
-      <div className="profile-background"></div>
+      <div className="profile-background" />
 
       <div className="profile-navigation">
         <button
+          type="button"
           className="profile-navigation-btn"
           onClick={() => navigate(-1)}
         >
@@ -239,7 +238,7 @@ function Profile() {
       <div className="profile-container">
         <div className="profile-header">
           <h1>Personal Profile</h1>
-          <div className="profile-title-line"></div>
+          <div className="profile-title-line" />
         </div>
 
         <div className="profile-content">
@@ -251,18 +250,22 @@ function Profile() {
             </div>
 
             <div className="username">
-              {currentUser.username || userdata.username || "Username"}
+              {currentUser.username ||
+                userdata.username ||
+                "Username"}
             </div>
 
-            <div className="profile-role">
-              {currentUser.role || userdata.role || ""}
-            </div>
+            <div className="profile-role">{role}</div>
           </div>
 
-          <div className="profile-divider"></div>
+          <div className="profile-divider" />
 
           <div className="right">
-            {loading && <p>Loading profile...</p>}
+            {loading && (
+              <p className="profile-status">
+                Loading profile...
+              </p>
+            )}
 
             {errorMessage && (
               <p className="profile-error" role="alert">
@@ -275,7 +278,6 @@ function Profile() {
               <input
                 id="profile-name"
                 type="text"
-                className="name"
                 name="name"
                 placeholder="Enter your name"
                 value={formData.name}
@@ -288,7 +290,6 @@ function Profile() {
               <label htmlFor="profile-gender">Gender:</label>
               <select
                 id="profile-gender"
-                className="gender"
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
@@ -309,7 +310,6 @@ function Profile() {
               <input
                 id="profile-email"
                 type="email"
-                className="email"
                 name="email"
                 placeholder="Enter email"
                 value={formData.email}
@@ -323,7 +323,6 @@ function Profile() {
               <input
                 id="profile-company"
                 type="text"
-                className="company"
                 name="company"
                 placeholder="Enter company name or information"
                 value={formData.company}
@@ -336,33 +335,30 @@ function Profile() {
               <label htmlFor="profile-bio">Introduction:</label>
               <textarea
                 id="profile-bio"
-                className="bio"
                 name="bio"
                 placeholder="Introduce yourself and your experience"
                 value={formData.bio}
                 onChange={handleChange}
                 disabled={!showedit || saving}
-                rows={4}
+                rows={3}
               />
             </div>
 
             <div className="profile-field">
-              <label htmlFor="profile-styles">Design Styles:</label>
+              <label htmlFor="profile-styles">
+                Design Styles:
+              </label>
               <input
                 id="profile-styles"
                 type="text"
-                className="designStyles"
                 name="designStyles"
                 placeholder="e.g. Modern, Minimalist, Scandinavian"
                 value={formData.designStyles}
                 onChange={handleChange}
                 disabled={!showedit || saving}
               />
-              {showedit && (
-                <small>
-                  Separate each design style with a comma.
-                </small>
-              )}
+
+
             </div>
 
             <div className="but">
