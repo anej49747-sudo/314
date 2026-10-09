@@ -27,7 +27,59 @@ public class UserController {
 
     private final UserService userService;
 
-    // Login with username and password
+    // =========================
+    // Register
+    // =========================
+    @PostMapping(
+        value = "/register",
+        produces = "application/json;charset=UTF-8"
+    )
+    public ResponseEntity<Map<String, Object>> register(
+            @RequestBody Map<String, String> registerData) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        String username = registerData.get("username");
+        String password = registerData.get("password");
+
+        try {
+            User user = userService.register(username, password);
+
+            response.put("status", "success");
+            response.put("message", "Registration successful");
+            response.put("id", user.getId());
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(response);
+
+        } catch (IllegalArgumentException e) {
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+
+            if ("Username already exists".equals(e.getMessage())) {
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(response);
+            }
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(response);
+
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Registration failed");
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(response);
+        }
+    }
+
+    // =========================
+    // Login
+    // =========================
     @PostMapping(
         value = "/login",
         produces = "application/json;charset=UTF-8"
@@ -66,7 +118,9 @@ public class UserController {
         }
     }
 
+    // =========================
     // Get one user by ID
+    // =========================
     @GetMapping(
         value = "/getuser",
         produces = "application/json;charset=UTF-8"
@@ -100,7 +154,9 @@ public class UserController {
         }
     }
 
+    // =========================
     // Get all designers
+    // =========================
     @GetMapping(
         value = "/designer",
         produces = "application/json;charset=UTF-8"
@@ -137,7 +193,9 @@ public class UserController {
         }
     }
 
+    // =========================
     // Get one designer by ID
+    // =========================
     @GetMapping(
         value = "/designer/{id}",
         produces = "application/json;charset=UTF-8"

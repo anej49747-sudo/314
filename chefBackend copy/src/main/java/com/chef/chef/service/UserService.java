@@ -1,3 +1,4 @@
+
 package com.chef.chef.service;
 
 import java.util.List;
@@ -18,9 +19,11 @@ public class UserService {
 
     // Login
     public User checkLogin(String username, String password) {
+
         System.out.println("正在查询用户名：" + username);
 
-        Optional<User> userOpt = userRepository.findByUsername(username);
+        Optional<User> userOpt =
+                userRepository.findByUsername(username);
 
         System.out.println("是否找到用户：" + userOpt.isPresent());
 
@@ -39,10 +42,42 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // Register
+    public User register(String username, String password) {
+
+        // Check required fields
+        if (username == null || username.isBlank()
+                || password == null || password.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Username and password are required"
+            );
+        }
+
+        // Check whether username already exists
+        if (userRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException(
+                    "Username already exists"
+            );
+        }
+
+        // Create a new user
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+
+        // Assign default role
+        user.setRole("customer");
+
+        // Save to MongoDB
+        return userRepository.save(user);
+    }
+
     // Get one user by ID
     public User getUser(String userid) {
         return userRepository.findById(userid)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(
+                        () -> new RuntimeException("User not found")
+                );
     }
 
     // Get all designers
