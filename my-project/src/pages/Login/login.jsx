@@ -74,7 +74,7 @@ function Login() {
         setShowAlert(false);
     };
 
-    // Switch to Login
+    // Switch to Login 1
     const login = () => {
         setPagecontent("login");
         setShowAlert(false);
