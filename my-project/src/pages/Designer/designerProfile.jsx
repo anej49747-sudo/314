@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { apiGetDesignerById } from "../../api";
+import "./designerProfile.scss";
 
 function DesignerProfile() {
-    const { id } = useParams();
+    const { id: rawId } = useParams();
+    const id = rawId?.trim();
 
     const [designer, setDesigner] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -17,10 +19,16 @@ function DesignerProfile() {
                 setLoading(true);
                 setError("");
 
+
+                console.log("Designer ID from URL:", id);
+
                 const res = await apiGetDesignerById(id);
+
+                console.log("Full API response:", res);
+
                 const responseData = res?.data ?? res;
 
-                // Support common backend response formats.
+
                 const data =
                     responseData?.designer ??
                     responseData?.userdata ??
@@ -70,26 +78,19 @@ function DesignerProfile() {
 
     if (loading) {
         return (
-            <main className="directory-page">
-                <p>Loading profile...</p>
-            </main>
+            <div>Loading......</div>
         );
     }
 
-    if (error) {
+    if (error || !designer) {
         return (
             <main className="directory-page">
-                <Link to="/designer">← Back to Designers</Link>
-                <p>{error}</p>
-            </main>
-        );
-    }
-
-    if (!designer) {
-        return (
-            <main className="directory-page">
-                <Link to="/designer">← Back to Designers</Link>
-                <p>Designer not found.</p>
+                <Link className="back-link" to="/designer">
+                    ← Back to Designers
+                </Link>
+                <p className="profile-message">
+                    {error || "Designer not found."}
+                </p>
             </main>
         );
     }
@@ -97,59 +98,99 @@ function DesignerProfile() {
     const designStyles = Array.isArray(designer.designStyles)
         ? designer.designStyles
         : typeof designer.designStyles === "string"
-            ? designer.designStyles.split(",").map((style) => style.trim()).filter(Boolean)
+            ? designer.designStyles
+                .split(",")
+                .map((style) => style.trim())
+                .filter(Boolean)
             : [];
+
+    const information = [
+        { label: "Username", value: designer.username, icon: "♙" },
+        {
+            label: "Name",
+            value: designer.name || designer.fullName,
+            icon: "✧",
+        },
+        { label: "Gender", value: designer.gender, icon: "♀" },
+        { label: "Email", value: designer.email, icon: "✉" },
+        { label: "Company", value: designer.company, icon: "⌂" },
+    ];
+
+    const introduction =
+        designer.bio || designer.description || "Not provided";
 
     return (
         <main className="directory-page">
-            <Link to="/designer">← Back to Designers</Link>
+            <Link className="back-link" to="/designer">
+                ← Back to Designers
+            </Link>
 
             <article className="directory-card">
-                <h1>{designer.name || designer.fullName || designer.username || "Designer"}</h1>
+                <div className="designer-content">
+                    <section className="profile-section">
+                        <h1 className="section-title">
+                            {designer.name ||
+                                designer.fullName ||
+                                designer.username ||
+                                "Designer"}
+                        </h1>
 
-                <p>
-                    <strong>Username:</strong>{" "}
-                    {designer.username || "Not provided"}
-                </p>
+                        <h2 className="subsection-title">
+                            Personal Information
+                        </h2>
 
-                <p>
-                    <strong>Name:</strong>{" "}
-                    {designer.name || designer.fullName || "Not provided"}
-                </p>
+                        <div className="designer-info-grid">
+                            {information.map((item) => (
+                                <div
+                                    className="designer-info-item"
+                                    key={item.label}
+                                >
+                                    <div className="info-icon" aria-hidden="true">
+                                        {item.icon}
+                                    </div>
 
-                <p>
-                    <strong>Gender:</strong>{" "}
-                    {designer.gender || "Not provided"}
-                </p>
-
-                <p>
-                    <strong>Email:</strong>{" "}
-                    {designer.email || "Not provided"}
-                </p>
-
-                <p>
-                    <strong>Company:</strong>{" "}
-                    {designer.company || "Not provided"}
-                </p>
-
-                <p>
-                    <strong>Introduction:</strong>{" "}
-                    {designer.bio || designer.description || "Not provided"}
-                </p>
-
-                <section className="designer-styles">
-                    <h2>Design Styles</h2>
-
-                    {designStyles.length > 0 ? (
-                        <ul>
-                            {designStyles.map((style, index) => (
-                                <li key={`${style}-${index}`}>{style}</li>
+                                    <div className="info-text">
+                                        <span className="info-label">
+                                            {item.label}
+                                        </span>
+                                        <p className="info-value">
+                                            {item.value || "Not provided"}
+                                        </p>
+                                    </div>
+                                </div>
                             ))}
-                        </ul>
-                    ) : (
-                        <p>Not provided</p>
-                    )}
-                </section>
+                        </div>
+                    </section>
+
+                    <section className="profile-section about-section">
+                        <h2 className="section-title">
+                            About the Designer
+                        </h2>
+
+                        <div className="designer-about">
+                            <p className="about-text">{introduction}</p>
+                        </div>
+                    </section>
+
+                    <section className="profile-section styles-section">
+                        <h2 className="section-title">Design Styles</h2>
+
+                        {designStyles.length > 0 ? (
+                            <div className="designer-styles">
+                                {designStyles.map((style, index) => (
+                                    <span
+                                        className="style-tag"
+                                        key={`${style} -${index} `}
+                                    >
+                                        {style}
+                                    </span>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="empty-styles">Not provided</p>
+                        )}
+                    </section>
+                </div>
             </article>
         </main>
     );

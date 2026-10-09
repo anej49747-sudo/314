@@ -5,6 +5,7 @@ import {
   apiGetDesignerById,
   apiUpdateDesignerProfile,
 } from "../../api";
+
 import "./profile.css";
 
 function Profile() {
