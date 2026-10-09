@@ -9,9 +9,11 @@
 .home .header {
   width: 100%;
   height: 90px;
-  background-color: white;
+  padding: 0 25px;
+  background-color: #ffffff;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid rgba(255, 253, 240, 0.5);
   box-sizing: border-box;
   position: fixed;
@@ -20,16 +22,39 @@
   z-index: 100;
 }
 
+.home .header .header-nav {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.home .header .nav-link {
+  padding: 10px 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: #53685b;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.home .header .nav-link:hover {
+  color: #a17b45;
+  border-bottom-color: #a9bba7;
+}
+
 .home .header .header-actions {
-  position: absolute;
-  top: 20px;
-  right: 25px;
-  z-index: 1000;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
+  margin-left: auto;
 }
 
 .home .header .user-dropdown {
@@ -103,14 +128,12 @@
 }
 
 .home .header .login-register {
-  list-style: none;
-  position: static;
-  margin: 0;
-  padding: 0;
   flex-shrink: 0;
   box-sizing: border-box;
   width: 145px;
   height: 46px;
+  margin: 0;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -184,7 +207,7 @@
 .home .feature-section {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 25px;
 }
 
@@ -207,19 +230,6 @@
   box-shadow: 0 13px 28px rgba(71, 91, 78, 0.12);
 }
 
-.home .feature-icon {
-  width: 58px;
-  height: 58px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #eef3eb;
-  color: #53685b;
-  border-radius: 50%;
-  font-size: 29px;
-  margin-bottom: 25px;
-}
-
 .home .feature-card:nth-child(1) .feature-icon {
   font-size: 38px;
 }
@@ -232,6 +242,19 @@
   font-size: 20px;
   font-weight: 700;
   -webkit-text-stroke: 0.8px #53685b;
+}
+
+.home .feature-icon {
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #eef3eb;
+  color: #53685b;
+  border-radius: 50%;
+  font-size: 29px;
+  margin-bottom: 25px;
 }
 
 .home .feature-content {
@@ -306,10 +329,13 @@
 @media (max-width: 600px) {
   .home .header {
     height: 80px;
+    padding: 0 15px;
+  }
+  .home .header .nav-link {
+    font-size: 14px;
   }
   .home .header .header-actions {
-    top: 17px;
-    right: 15px;
+    gap: 8px;
   }
   .home .header .user-tag {
     width: 150px;

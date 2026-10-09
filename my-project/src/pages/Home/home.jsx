@@ -1,7 +1,8 @@
+
 import { Alert } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../Home/home.css";
+import "../Home/home.scss";
 
 function Home() {
   const [showAlert, setShowAlert] = useState(false);
@@ -68,7 +69,7 @@ function Home() {
 
   return (
     <div className="home">
-      {showAlert ? (
+      {showAlert && (
         <Alert
           title="Logout Success!"
           type="success"
@@ -80,22 +81,28 @@ function Home() {
             zIndex: 1001,
           }}
         />
-      ) : null}
+      )}
 
-      <div className="header">
-        <div className="header-actions">
-          {/* Designers button at the far left */}
+      {/* Header */}
+      <header className="header">
+        {/* Left navigation box */}
+        <nav className="header-nav">
           <button
+            type="button"
+            className="nav-link"
             onClick={() => navigate("/designer")}
-            className="login-register"
           >
             Designers
           </button>
+        </nav>
 
+        {/* Right user actions */}
+        <div className="header-actions">
           {loginStatus ? (
             <>
               <div className="user-dropdown">
                 <button
+                  type="button"
                   className="user-tag"
                   onClick={() => setShowMenu(!showMenu)}
                 >
@@ -103,6 +110,7 @@ function Home() {
                     ? role.charAt(0).toUpperCase() + role.slice(1)
                     : "User"}{" "}
                   : {username}
+
                   <span className="dropdown-arrow">
                     {showMenu ? "⌃" : "⌄"}
                   </span>
@@ -110,26 +118,33 @@ function Home() {
 
                 {showMenu && (
                   <div className="dropdown-menu">
-                    <div
+                    <button
+                      type="button"
                       className="dropdown-item"
-                      onClick={() =>
+                      onClick={() => {
+                        setShowMenu(false);
                         navigate("/dashboard", {
                           state: { userdata: user },
-                        })
-                      }
+                        });
+                      }}
                     >
                       Dashboard
-                    </div>
+                    </button>
                   </div>
                 )}
               </div>
 
-              <button onClick={LogOut} className="login-register">
+              <button
+                type="button"
+                onClick={LogOut}
+                className="login-register"
+              >
                 Logout
               </button>
             </>
           ) : (
             <button
+              type="button"
               onClick={() => navigate("/login")}
               className="login-register"
             >
@@ -137,8 +152,9 @@ function Home() {
             </button>
           )}
         </div>
-      </div>
+      </header>
 
+      {/* Main content */}
       <div className="homecontent">
         <section className="home-main">
           <div className="home-title">
@@ -146,20 +162,23 @@ function Home() {
 
             <div className="title-line"></div>
 
-            <p>Discover and manage interior design projects.</p>
+            <p>
+              Discover and manage interior design projects.
+            </p>
           </div>
 
           <div className="feature-section">
+            {/* Search */}
             <div className="feature-card">
               <div className="feature-icon">⌕</div>
 
               <div className="feature-content">
                 <h2>Search</h2>
-
                 <p>Search your interest.</p>
               </div>
 
               <button
+                type="button"
                 className="feature-button"
                 onClick={() => navigate("/home")}
               >
@@ -168,16 +187,17 @@ function Home() {
               </button>
             </div>
 
+            {/* View */}
             <div className="feature-card">
               <div className="feature-icon">◇</div>
 
               <div className="feature-content">
                 <h2>View</h2>
-
                 <p>Explore different design ideas.</p>
               </div>
 
               <button
+                type="button"
                 className="feature-button"
                 onClick={() => navigate("/home")}
               >
@@ -186,16 +206,17 @@ function Home() {
               </button>
             </div>
 
+            {/* Save */}
             <div className="feature-card">
               <div className="feature-icon">♡</div>
 
               <div className="feature-content">
                 <h2>Save</h2>
-
                 <p>Save your favourite projects for later.</p>
               </div>
 
               <button
+                type="button"
                 className="feature-button"
                 onClick={() => navigate("/home")}
               >

@@ -12,29 +12,62 @@ function DesignerProfile() {
     useEffect(() => {
         async function loadDesigner() {
             try {
+                setLoading(true);
+                setError("");
+
                 const res = await apiGetDesignerById(id);
 
-                const data = res?.userdata ?? res?.designer ?? res?.data ?? res;
+                // Compatible with Axios responses and direct JSON responses
+                const responseData = res?.data ?? res;
 
-                if (!data || typeof data !== "object" || data.status === "error") {
+                // Your backend returns { designer: {...}, status: "success" }
+                const data =
+                    responseData?.designer ??
+                    responseData?.userdata ??
+                    responseData;
+
+                if (
+                    !data ||
+                    typeof data !== "object" ||
+                    responseData?.status === "error" ||
+                    data.status === "error"
+                ) {
                     throw new Error("Designer not found");
                 }
 
                 setDesigner(data);
             } catch (err) {
-                console.error(err);
+                console.error("Failed to load designer:", err);
                 setError("Unable to load this designer's profile.");
             } finally {
                 setLoading(false);
             }
         }
 
-        loadDesigner();
+        if (id) {
+            loadDesigner();
+        } else {
+            setError("Designer ID is missing.");
+            setLoading(false);
+        }
     }, [id]);
 
-    if (loading) return <p>Loading profile...</p>;
-    if (error) return <p>{error}</p>;
-    if (!designer) return <p>Designer not found.</p>;
+    if (loading) {
+        return <p>Loading profile...</p>;
+    }
+
+    if (error) {
+        return (
+            <main className="directory-page">
+                <Link to="/designer">← Back to Designers</Link>
+                <p>{error}</p>
+            </main>
+        );
+    }
+
+    if (!designer) {
+        return <p>Designer not found.</p>;
+    }
 
     return (
         <main className="directory-page">
@@ -44,8 +77,15 @@ function DesignerProfile() {
                 <h1>{designer.name || designer.username || "Designer"}</h1>
 
                 <p>
+                    <strong>Username:</strong>{" "}
+                    {designer.username || "Not provided"}
+                </p>
+
+                <p>
                     <strong>Introduction:</strong>{" "}
-                    {designer.description || designer.bio || "Not provided"}
+                    {designer.description ||
+                        designer.bio ||
+                        "Not provided"}
                 </p>
 
                 {designer.specialization && (
