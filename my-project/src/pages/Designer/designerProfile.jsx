@@ -10,37 +10,49 @@ function DesignerProfile() {
     const [error, setError] = useState("");
 
     useEffect(() => {
+        let cancelled = false;
+
         async function loadDesigner() {
             try {
                 setLoading(true);
                 setError("");
 
                 const res = await apiGetDesignerById(id);
-
-                // Compatible with Axios responses and direct JSON responses
                 const responseData = res?.data ?? res;
 
-                // Your backend returns { designer: {...}, status: "success" }
+                // Support common backend response formats.
                 const data =
                     responseData?.designer ??
                     responseData?.userdata ??
+                    responseData?.user ??
                     responseData;
 
                 if (
                     !data ||
                     typeof data !== "object" ||
+                    Array.isArray(data) ||
                     responseData?.status === "error" ||
                     data.status === "error"
                 ) {
                     throw new Error("Designer not found");
                 }
 
-                setDesigner(data);
+                if (!cancelled) {
+                    setDesigner(data);
+                }
             } catch (err) {
                 console.error("Failed to load designer:", err);
-                setError("Unable to load this designer's profile.");
+
+                if (!cancelled) {
+                    setError(
+                        err?.response?.data?.message ||
+                        "Unable to load this designer's profile."
+                    );
+                }
             } finally {
-                setLoading(false);
+                if (!cancelled) {
+                    setLoading(false);
+                }
             }
         }
 
@@ -50,10 +62,18 @@ function DesignerProfile() {
             setError("Designer ID is missing.");
             setLoading(false);
         }
+
+        return () => {
+            cancelled = true;
+        };
     }, [id]);
 
     if (loading) {
-        return <p>Loading profile...</p>;
+        return (
+            <main className="directory-page">
+                <p>Loading profile...</p>
+            </main>
+        );
     }
 
     if (error) {
@@ -66,15 +86,26 @@ function DesignerProfile() {
     }
 
     if (!designer) {
-        return <p>Designer not found.</p>;
+        return (
+            <main className="directory-page">
+                <Link to="/designer">← Back to Designers</Link>
+                <p>Designer not found.</p>
+            </main>
+        );
     }
+
+    const designStyles = Array.isArray(designer.designStyles)
+        ? designer.designStyles
+        : typeof designer.designStyles === "string"
+            ? designer.designStyles.split(",").map((style) => style.trim()).filter(Boolean)
+            : [];
 
     return (
         <main className="directory-page">
             <Link to="/designer">← Back to Designers</Link>
 
             <article className="directory-card">
-                <h1>{designer.name || designer.username || "Designer"}</h1>
+                <h1>{designer.name || designer.fullName || designer.username || "Designer"}</h1>
 
                 <p>
                     <strong>Username:</strong>{" "}
@@ -82,30 +113,43 @@ function DesignerProfile() {
                 </p>
 
                 <p>
-                    <strong>Introduction:</strong>{" "}
-                    {designer.description ||
-                        designer.bio ||
-                        "Not provided"}
+                    <strong>Name:</strong>{" "}
+                    {designer.name || designer.fullName || "Not provided"}
                 </p>
 
-                {designer.specialization && (
-                    <p>
-                        <strong>Specialization:</strong>{" "}
-                        {designer.specialization}
-                    </p>
-                )}
+                <p>
+                    <strong>Gender:</strong>{" "}
+                    {designer.gender || "Not provided"}
+                </p>
 
-                {designer.email && (
-                    <p>
-                        <strong>Email:</strong> {designer.email}
-                    </p>
-                )}
+                <p>
+                    <strong>Email:</strong>{" "}
+                    {designer.email || "Not provided"}
+                </p>
 
-                {designer.phone && (
-                    <p>
-                        <strong>Phone:</strong> {designer.phone}
-                    </p>
-                )}
+                <p>
+                    <strong>Company:</strong>{" "}
+                    {designer.company || "Not provided"}
+                </p>
+
+                <p>
+                    <strong>Introduction:</strong>{" "}
+                    {designer.bio || designer.description || "Not provided"}
+                </p>
+
+                <section className="designer-styles">
+                    <h2>Design Styles</h2>
+
+                    {designStyles.length > 0 ? (
+                        <ul>
+                            {designStyles.map((style, index) => (
+                                <li key={`${style}-${index}`}>{style}</li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>Not provided</p>
+                    )}
+                </section>
             </article>
         </main>
     );
