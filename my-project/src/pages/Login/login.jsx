@@ -56,7 +56,7 @@ function Login() {
             setAlert({
                 text:
                     error.response?.data?.message ||
-                    "Login failed. Please check your username and password.",
+                    "Login failed.",
                 type: "error",
             });
             setShowAlert(true);

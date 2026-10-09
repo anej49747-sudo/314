@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiGetDesigner } from "../../api";
@@ -11,6 +12,7 @@ function Designer() {
         async function loadDesigners() {
             try {
                 const res = await apiGetDesigner();
+
                 console.log("Designer API response:", res);
 
                 const list = Array.isArray(res)
@@ -27,6 +29,7 @@ function Designer() {
                 setDesigners(list);
             } catch (err) {
                 console.error("Failed to load designers:", err);
+
                 setError(
                     "Unable to load designers. Please check the backend API."
                 );
@@ -38,19 +41,36 @@ function Designer() {
         loadDesigners();
     }, []);
 
-    if (loading) {
-        return <p>Loading designers...</p>;
-    }
-
-    if (error) {
-        return <p>{error}</p>;
-    }
-
     return (
         <main style={{ padding: "30px" }}>
+
+            {/* Back to Home button */}
+            <Link
+                to="/home"
+                style={{
+                    display: "inline-block",
+                    padding: "10px 18px",
+                    marginBottom: "25px",
+                    border: "1px solid #ccc",
+                    borderRadius: "8px",
+                    backgroundColor: "#fff",
+                    color: "#333",
+                    textDecoration: "none",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    transition: "background-color 0.2s",
+                }}
+            >
+                ← Back to Home
+            </Link>
+
             <h1>Interior Designers</h1>
 
-            {designers.length === 0 ? (
+            {loading ? (
+                <p>Loading designers...</p>
+            ) : error ? (
+                <p>{error}</p>
+            ) : designers.length === 0 ? (
                 <p>No designers found.</p>
             ) : (
                 <div>
