@@ -26,7 +26,7 @@
     border: 1px solid #d5dfd4;
     border-radius: 11px;
     background: #fff;
-    color: #52685a;
+    color: #60826c;
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
@@ -50,7 +50,7 @@
 
     h1 {
         margin: 0;
-        color: #405447;
+        color: #667d6e;
         font-family: Georgia, "Times New Roman", serif;
         font-size: clamp(36px, 4.5vw, 52px);
         font-weight: 500;
@@ -111,12 +111,12 @@
     border: 1px solid #d2ddcd;
     border-radius: 50%;
     background: #fff;
-    color: #657d67;
+    color: #6c896e;
     font-size: 25px;
 }
 
 .designer-card-label {
-    color: #748773;
+    color: #596a58;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 1.6px;
@@ -136,7 +136,7 @@
 .designer-card-name {
     width: 100%;
     margin: 0;
-    color: #405447;
+    color: #577662;
     font-family: Georgia, "Times New Roman", serif;
     font-size: 25px;
     font-weight: 600;
@@ -170,7 +170,7 @@
     line-height: 1.85;
     overflow-wrap: anywhere;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+
 }
 
 /* Design style tags */
@@ -214,9 +214,9 @@
     width: 100%;
     box-sizing: border-box;
     padding: 13px 17px;
-    border: 1px solid #647d67;
+    border: 1px solid #829884;
     border-radius: 10px;
-    background: #647d67;
+    background: #9bb89e;
     color: #fff;
     font-size: 14px;
     font-weight: 500;
@@ -229,8 +229,8 @@
     }
 
     &:hover {
-        border-color: #405b46;
-        background: #405b46;
+        border-color: #85a78d;
+        background: #91ae97;
 
         span {
             transform: translateX(4px);
