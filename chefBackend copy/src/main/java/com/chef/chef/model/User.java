@@ -1,3 +1,4 @@
+
 package com.chef.chef.model;
 
 import org.springframework.data.annotation.Id;
@@ -7,26 +8,24 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data // 自动生成 Getter, Setter, toString, equals, hashCode
-@NoArgsConstructor // 自动生成无参构造函数
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "user") // 必须和 database里的名字一模一样
+@Document(collection = "user")
 public class User {
-    @Id
-    private String id; // 对应数据库里的 _id
 
-    // private String email; // 对应数据库里的 email
-    // private String identity; // 对应数据库里的 identity
-    // private String avatar;
+    @Id
+    private String id;
+
     private String username;
-    // @JsonIgnore
     private String password;
     private String role;
+
+    // Designer profile information
     private String name;
-    // @Field("user_title")
-    // private String userTitle;
-
-    // @Field("loginStatus") // 对应数据库里的 loginStatus
-    // private Boolean loginStatus;
-
+    private String gender;
+    private String email;
+    private String company;
+    private String bio;
+    private String designStyles;
 }

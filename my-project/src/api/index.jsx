@@ -61,3 +61,13 @@ export function apiGetProjectById(id) {
         method: "get",
     });
 }
+
+
+// 更新设计师个人资料
+export function apiUpdateDesignerProfile(id, data) {
+    return newRequest({
+        url: `/ api / designer / ${encodeURIComponent(id)}/profile`,
+        method: "put",
+        data,
+    });
+}

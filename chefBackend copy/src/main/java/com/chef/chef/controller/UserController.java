@@ -1,15 +1,13 @@
-
 package com.chef.chef.controller;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,216 +25,220 @@ public class UserController {
 
     private final UserService userService;
 
-    // =========================
-    // Register
-    // =========================
-    @PostMapping(
-        value = "/register",
-        produces = "application/json;charset=UTF-8"
-    )
-    public ResponseEntity<Map<String, Object>> register(
-            @RequestBody Map<String, String> registerData) {
+    /**
+     * 统一生成用户公开资料
+     * 不返回 password
+     */
+    private Map<String, Object> toUserData(User user) {
+        Map<String, Object> data = new LinkedHashMap<>();
 
-        Map<String, Object> response = new HashMap<>();
+        data.put("id", user.getId());
+        data.put("username", user.getUsername());
+        data.put("role", user.getRole());
+        data.put("name", user.getName());
 
-        String username = registerData.get("username");
-        String password = registerData.get("password");
+        return data;
+    }
+
+    /**
+     * 设计师公开资料
+     */
+    private Map<String, Object> toDesignerData(User user) {
+        Map<String, Object> data = toUserData(user);
+
+        data.put("gender", user.getGender());
+        data.put("email", user.getEmail());
+        data.put("company", user.getCompany());
+        data.put("bio", user.getBio());
+        data.put(
+                "designStyles",
+                user.getDesignStyles() == null
+                        ? List.of()
+                        : user.getDesignStyles()
+        );
+
+        return data;
+    }
+
+    /**
+     * 注册
+     * POST /api/register
+     */
+    @PostMapping("/register")
+    public Map<String, Object> register(@RequestBody Map<String, String> body) {
+        Map<String, Object> response = new LinkedHashMap<>();
 
         try {
+            String username = body.get("username");
+            String password = body.get("password");
+
             User user = userService.register(username, password);
 
             response.put("status", "success");
             response.put("message", "Registration successful");
-            response.put("id", user.getId());
-
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(response);
+            response.put("userdata", toUserData(user));
 
         } catch (IllegalArgumentException e) {
             response.put("status", "error");
             response.put("message", e.getMessage());
-
-            if ("Username already exists".equals(e.getMessage())) {
-                return ResponseEntity
-                        .status(HttpStatus.CONFLICT)
-                        .body(response);
-            }
-
-            return ResponseEntity
-                    .badRequest()
-                    .body(response);
-
-        } catch (Exception e) {
-            response.put("status", "error");
-            response.put("message", "Registration failed");
-
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(response);
         }
+
+        return response;
     }
 
-    // =========================
-    // Login
-    // =========================
-    @PostMapping(
-        value = "/login",
-        produces = "application/json;charset=UTF-8"
-    )
-    public ResponseEntity<Map<String, Object>> login(
-            @RequestBody Map<String, String> loginData) {
-
-        String username = loginData.get("username");
-        String password = loginData.get("password");
-
-        Map<String, Object> response = new HashMap<>();
+    /**
+     * 登录
+     * POST /api/login
+     */
+    @PostMapping("/login")
+    public Map<String, Object> login(@RequestBody Map<String, String> body) {
+        Map<String, Object> response = new LinkedHashMap<>();
 
         try {
+            String username = body.get("username");
+            String password = body.get("password");
+
             User user = userService.checkLogin(username, password);
 
-            // Return public user information only
-            Map<String, Object> userData = new HashMap<>();
-            userData.put("id", user.getId());
-            userData.put("username", user.getUsername());
-            userData.put("role", user.getRole());
-            userData.put("name", user.getName());
-
-            response.put("userdata", userData);
-            response.put("message", username + "登录成功！");
             response.put("status", "success");
+            response.put("message", "Login successful");
+            response.put("userdata", toUserData(user));
 
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             response.put("status", "error");
             response.put("message", e.getMessage());
-
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(response);
         }
+
+        return response;
     }
 
-    // =========================
-    // Get one user by ID
-    // =========================
-    @GetMapping(
-        value = "/getuser",
-        produces = "application/json;charset=UTF-8"
-    )
-    public ResponseEntity<Map<String, Object>> getUser(
-            @RequestParam("userId") String userId) {
-
-        Map<String, Object> response = new HashMap<>();
+    /**
+     * 获取个人资料
+     * GET /api/getuser?userId=用户ID
+     */
+    @GetMapping("/getuser")
+    public Map<String, Object> getUser(
+            @RequestParam("userId") String userId
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
 
         try {
             User user = userService.getUser(userId);
 
-            Map<String, Object> userData = new HashMap<>();
-            userData.put("id", user.getId());
-            userData.put("username", user.getUsername());
-            userData.put("role", user.getRole());
-            userData.put("name", user.getName());
-
-            response.put("userdata", userData);
             response.put("status", "success");
+            response.put("userdata", toUserData(user));
 
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             response.put("status", "error");
-            response.put("message", "User not found");
-
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(response);
+            response.put("message", e.getMessage());
         }
+
+        return response;
     }
 
-    // =========================
-    // Get all designers
-    // =========================
-    @GetMapping(
-        value = "/designer",
-        produces = "application/json;charset=UTF-8"
-    )
-    public ResponseEntity<?> getDesigners() {
+    /**
+     * 获取设计师列表
+     * GET /api/designer
+     */
+    @GetMapping("/designer")
+    public Map<String, Object> getDesigners() {
+        List<Map<String, Object>> designers = userService.findDesigners()
+                .stream()
+                .map(this::toDesignerData)
+                .toList();
 
-        try {
-            List<User> designers = userService.findDesigners();
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", "success");
+        response.put("designers", designers);
 
-            List<Map<String, Object>> result = designers.stream()
-                    .map(user -> {
-                        Map<String, Object> item = new HashMap<>();
-
-                        item.put("id", user.getId());
-                        item.put("username", user.getUsername());
-                        item.put("name", user.getName());
-
-                        return item;
-                    })
-                    .toList();
-
-            return ResponseEntity.ok(result);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            Map<String, String> response = new HashMap<>();
-            response.put("status", "error");
-            response.put("message", "Failed to retrieve designers");
-
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(response);
-        }
+        return response;
     }
 
-    // =========================
-    // Get one designer by ID
-    // =========================
-    @GetMapping(
-        value = "/designer/{id}",
-        produces = "application/json;charset=UTF-8"
-    )
-    public ResponseEntity<Map<String, Object>> getDesignerById(
-            @PathVariable String id) {
-
-        Map<String, Object> response = new HashMap<>();
+    /**
+     * 获取单个设计师公开资料
+     * GET /api/designer/{id}
+     */
+    @GetMapping("/designer/{id}")
+    public Map<String, Object> getDesignerById(
+            @PathVariable("id") String id
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
 
         try {
-            User user = userService.getUser(id);
+            User user = userService.getDesignerById(id);
 
-            // Check whether the user is a designer
-            if (!"designer".equalsIgnoreCase(user.getRole())) {
-                response.put("status", "error");
-                response.put("message", "Designer not found");
-
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(response);
-            }
-
-            // Return public information only
-            Map<String, Object> designerData = new HashMap<>();
-            designerData.put("id", user.getId());
-            designerData.put("username", user.getUsername());
-            designerData.put("name", user.getName());
-            designerData.put("role", user.getRole());
-
-            response.put("designer", designerData);
             response.put("status", "success");
+            response.put("designer", toDesignerData(user));
 
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             response.put("status", "error");
-            response.put("message", "Designer not found");
-
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(response);
+            response.put("message", e.getMessage());
         }
+
+        return response;
+    }
+
+    /**
+     * 更新设计师个人资料
+     * PUT /api/designer/{id}/profile
+     */
+    @PutMapping("/designer/{id}/profile")
+    public Map<String, Object> updateDesignerProfile(
+            @PathVariable("id") String id,
+            @RequestBody Map<String, Object> body
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        try {
+            String name = getString(body, "name");
+            String gender = getString(body, "gender");
+            String email = getString(body, "email");
+            String company = getString(body, "company");
+            String bio = getString(body, "bio");
+
+            List<String> designStyles = getStringList(body, "designStyles");
+
+            User user = userService.updateDesignerProfile(
+                    id,
+                    name,
+                    gender,
+                    email,
+                    company,
+                    bio,
+                    designStyles
+            );
+
+            response.put("status", "success");
+            response.put("message", "Profile updated successfully");
+            response.put("designer", toDesignerData(user));
+
+        } catch (IllegalArgumentException e) {
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+        }
+
+        return response;
+    }
+
+    private String getString(Map<String, Object> body, String key) {
+        Object value = body.get(key);
+        return value == null ? "" : value.toString().trim();
+    }
+
+    private List<String> getStringList(
+            Map<String, Object> body,
+            String key
+    ) {
+        Object value = body.get(key);
+
+        if (!(value instanceof List<?> list)) {
+            return List.of();
+        }
+
+        return list.stream()
+                .filter(item -> item instanceof String)
+                .map(item -> ((String) item).trim())
+                .filter(item -> !item.isEmpty())
+                .toList();
     }
 }
