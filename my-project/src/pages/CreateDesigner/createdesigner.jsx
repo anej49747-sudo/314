@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -29,7 +28,6 @@ function CreateDesigner() {
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("success");
 
-    // Display a message and optionally hide it automatically.
     const showMessage = (text, type = "success", duration = 0) => {
         setMessage(text);
         setMessageType(type);
@@ -75,7 +73,7 @@ function CreateDesigner() {
         }));
     };
 
-    // Enable editing.
+    // Edit
     const handleEdit = () => {
         setForm((current) => ({
             ...current,
@@ -86,7 +84,7 @@ function CreateDesigner() {
         setMessage("");
     };
 
-    // Save the form locally before creating the account.
+    // Save
     const handleSave = () => {
         if (
             !form.username.trim() ||
@@ -185,7 +183,7 @@ function CreateDesigner() {
         }
     };
 
-    // Delete a Designer account from the backend and database.
+    // Delete a Designer account from the backend
     const removeDesigner = async (designer) => {
         if (!designer.id) {
             showMessage(
@@ -229,7 +227,7 @@ function CreateDesigner() {
                 2500
             );
 
-            // Refresh the list after successful deletion.
+            // Refresh the list
             await loadDesigners();
         } catch (error) {
             console.error("Failed to remove Designer:", error);

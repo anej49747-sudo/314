@@ -7,7 +7,7 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Back to Dashboard */
+// Back to Dashboard
 .create-designer-header {
     margin-bottom: 26px;
 }
@@ -39,7 +39,7 @@
     line-height: 1;
 }
 
-/* Two-column page layout */
+// Two-column page layout
 .create-designer-layout {
     display: grid;
     grid-template-columns: 460px minmax(0, 1fr);
@@ -48,7 +48,7 @@
     width: 100%;
 }
 
-/* Create Designer section */
+// Create Designer section
 .create-designer-section,
 .create-designer-list-section {
     min-width: 0;
@@ -82,7 +82,7 @@
     line-height: 1.4;
 }
 
-/* Form fields */
+// Form fields
 .create-designer-fields {
     display: flex;
     flex-direction: column;
@@ -139,7 +139,7 @@
     cursor: not-allowed;
 }
 
-/* Edit, Save and Create buttons */
+// Edit, Save and Create buttons
 .create-designer-actions {
     display: flex;
     gap: 12px;
@@ -199,7 +199,7 @@
     cursor: not-allowed;
 }
 
-/* Designer List */
+// Designer List
 .create-designer-list-section {
     box-sizing: border-box;
     padding: 25px;
@@ -293,7 +293,7 @@
     text-align: center;
 }
 
-/* Remove Designer button */
+// Remove Designer button
 .create-designer-remove-button {
     display: inline-flex;
     align-items: center;
@@ -323,7 +323,7 @@
     cursor: not-allowed;
 }
 
-/* Status message */
+// Status message
 .create-designer-message {
     position: fixed;
     right: 28px;
