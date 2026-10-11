@@ -17,7 +17,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    //user login
     public User checkLogin(String username, String password) {
         Optional<User> userOpt =
                 userRepository.findByUsername(username);
@@ -40,9 +39,6 @@ public class UserService {
         return user;
     }
 
-    /**
-     * User registration
-     */
     public User register(String username, String password) {
         if (username == null || username.isBlank()
                 || password == null || password.isBlank()) {
@@ -65,9 +61,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    /**
-     * Get user by ID
-     */
     public User getUser(String userId) {
         if (userId == null || userId.isBlank()) {
             throw new IllegalArgumentException(
@@ -83,16 +76,10 @@ public class UserService {
                 );
     }
 
-    /**
-     * Get all designers
-     */
     public List<User> findDesigners() {
         return userRepository.findByRole("designer");
     }
 
-    /**
-     * Get one designer by ID
-     */
     public User getDesignerById(String id) {
         User user = getUser(id);
 
@@ -106,9 +93,6 @@ public class UserService {
         return user;
     }
 
-    /**
-     * Update designer profile
-     */
     public User updateDesignerProfile(
             String userId,
             String name,
@@ -118,17 +102,14 @@ public class UserService {
             String bio,
             List<String> designStyles
     ) {
-        // Find the designer
         User user = getDesignerById(userId);
 
-        // Update profile fields
         user.setName(name);
         user.setGender(gender);
         user.setEmail(email);
         user.setCompany(company);
         user.setBio(bio);
 
-        // Explicitly create a typed list to avoid generic inference issues
         List<String> styles = new ArrayList<>();
 
         if (designStyles != null) {
@@ -141,7 +122,23 @@ public class UserService {
 
         user.setDesignStyles(styles);
 
-        // Save changes to MongoDB
+        return userRepository.save(user);
+    }
+
+    public User updateUserProfile(
+            String userId,
+            String name,
+            String gender,
+            String email,
+            String bio
+    ) {
+        User user = getUser(userId);
+
+        user.setName(name);
+        user.setGender(gender);
+        user.setEmail(email);
+        user.setBio(bio);
+
         return userRepository.save(user);
     }
 }
