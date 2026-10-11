@@ -1,25 +1,25 @@
 .home {
   width: 100%;
   min-height: 100vh;
+  box-sizing: border-box;
   background: rgba(255, 250, 230, 0.45);
   font-family: Arial, Helvetica, sans-serif;
-  box-sizing: border-box;
 }
 
 .home .header {
-  width: 100%;
-  height: 90px;
-  padding: 0 25px;
-  background-color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 253, 240, 0.5);
-  box-sizing: border-box;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
+  width: 100%;
+  height: 90px;
+  box-sizing: border-box;
+  padding: 0 25px;
+  background-color: #ffffff;
+  border-bottom: 1px solid rgba(255, 253, 240, 0.5);
 }
 
 .home .header .header-nav {
@@ -29,8 +29,8 @@
 }
 
 .home .header .nav-link {
-  padding: 10px 0;
   margin: 0;
+  padding: 10px 0;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
@@ -63,18 +63,18 @@
 }
 
 .home .header .user-tag {
-  width: 180px;
-  height: 46px;
-  box-sizing: border-box;
-  background-color: #ffffff;
-  color: #718875;
-  border: 1.5px solid #b8b8b8;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  width: 180px;
+  height: 46px;
+  box-sizing: border-box;
   padding: 0 12px;
+  background-color: #ffffff;
+  color: #718875;
+  border: 1.5px solid #b8b8b8;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -108,8 +108,8 @@
 
 .home .header .dropdown-item {
   width: 100%;
-  padding: 12px 4px;
   box-sizing: border-box;
+  padding: 12px 4px;
   color: #718875;
   background-color: #ffffff;
   font-size: 15px;
@@ -128,15 +128,15 @@
 }
 
 .home .header .login-register {
-  flex-shrink: 0;
-  box-sizing: border-box;
-  width: 145px;
-  height: 46px;
-  margin: 0;
-  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  width: 145px;
+  height: 46px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
   background-color: #f8f7f2;
   color: #718875;
   border: 1.5px solid #a9bba7;
@@ -165,20 +165,20 @@
 }
 
 .home .home-main {
-  width: 100%;
-  max-width: 1200px;
-  min-height: calc(100vh - 90px);
-  margin: 0 auto;
-  padding: 80px 50px;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  min-height: calc(100vh - 90px);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 80px 50px;
 }
 
 .home .home-title {
-  text-align: center;
   margin-bottom: 55px;
+  text-align: center;
 }
 
 .home .home-title h1 {
@@ -205,21 +205,21 @@
 }
 
 .home .feature-section {
-  width: 100%;
   display: grid;
+  width: 100%;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 25px;
 }
 
 .home .feature-card {
+  display: flex;
+  flex-direction: column;
   min-height: 300px;
+  box-sizing: border-box;
   padding: 30px;
   background-color: rgba(255, 255, 255, 0.9);
   border: 1px solid #e0e6df;
   border-radius: 18px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
   box-shadow: 0 7px 22px rgba(71, 91, 78, 0.07);
   transition: all 0.25s ease;
 }
@@ -245,16 +245,16 @@
 }
 
 .home .feature-icon {
-  width: 58px;
-  height: 58px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 25px;
   background-color: #eef3eb;
   color: #53685b;
   border-radius: 50%;
   font-size: 29px;
-  margin-bottom: 25px;
 }
 
 .home .feature-content {
@@ -276,13 +276,14 @@
 }
 
 .home .feature-button {
-  width: 100%;
-  height: 45px;
-  margin-top: 25px;
-  padding: 0 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+  height: 45px;
+  box-sizing: border-box;
+  margin-top: 25px;
+  padding: 0 15px;
   border: 1px solid #dce5dd;
   background-color: #f6f8f5;
   color: #63766a;
@@ -291,7 +292,6 @@
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  box-sizing: border-box;
   transition: all 0.2s ease;
 }
 
@@ -308,72 +308,4 @@
 .home .feature-button span:last-child {
   font-size: 19px;
   transition: transform 0.2s ease;
-}
-
-@media (max-width: 900px) {
-  .home .home-main {
-    padding: 70px 35px;
-  }
-  .home .home-title h1 {
-    font-size: 40px;
-  }
-  .home .feature-section {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  .home .feature-card {
-    min-height: 220px;
-  }
-}
-
-@media (max-width: 600px) {
-  .home .header {
-    height: 80px;
-    padding: 0 15px;
-  }
-  .home .header .nav-link {
-    font-size: 14px;
-  }
-  .home .header .header-actions {
-    gap: 8px;
-  }
-  .home .header .user-tag {
-    width: 150px;
-    height: 42px;
-    font-size: 12px;
-  }
-  .home .header .dropdown-menu {
-    width: 150px;
-    top: 50px;
-  }
-  .home .header .login-register {
-    width: 120px;
-    height: 42px;
-    font-size: 12px;
-  }
-  .home .homecontent {
-    padding-top: 80px;
-  }
-  .home .home-main {
-    padding: 55px 20px;
-  }
-  .home .home-title {
-    margin-bottom: 40px;
-  }
-  .home .home-title h1 {
-    font-size: 32px;
-  }
-  .home .home-title p {
-    font-size: 13px;
-  }
-  .home .feature-card {
-    min-height: 210px;
-    padding: 24px;
-  }
-  .home .feature-content h2 {
-    font-size: 20px;
-  }
-  .home .feature-content p {
-    font-size: 13px;
-  }
 }

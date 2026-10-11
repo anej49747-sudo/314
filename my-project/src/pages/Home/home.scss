@@ -1,44 +1,52 @@
 .home {
     width: 100%;
     min-height: 100vh;
-    background: rgba(255, 250, 230, 0.45);
-    font-family: Arial, Helvetica, sans-serif;
     box-sizing: border-box;
 
+    background: rgba(255, 250, 230, 0.45);
+    font-family: Arial, Helvetica, sans-serif;
+
+    // Header and navigation
     .header {
-        width: 100%;
-        height: 90px;
-        padding: 0 25px;
-        background-color: #ffffff;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid rgba(255, 253, 240, 0.5);
-        box-sizing: border-box;
+
         position: fixed;
         top: 0;
         left: 0;
         z-index: 100;
 
-        // Independent navigation box on the left
+        width: 100%;
+        height: 90px;
+        box-sizing: border-box;
+        padding: 0 25px;
+
+        background-color: #ffffff;
+        border-bottom: 1px solid rgba(255, 253, 240, 0.5);
+
+        // Navigation on the left
         .header-nav {
             display: flex;
             align-items: center;
             height: 100%;
         }
 
-        // Designers is a text-style navigation link
+        // Designers navigation link
         .nav-link {
-            padding: 10px 0;
             margin: 0;
+            padding: 10px 0;
+
             background: transparent;
             border: none;
             border-bottom: 2px solid transparent;
             border-radius: 0;
+
             color: #53685b;
             font-family: inherit;
             font-size: 16px;
             font-weight: 600;
+
             cursor: pointer;
             transition: color 0.2s ease, border-color 0.2s ease;
 
@@ -48,13 +56,14 @@
             }
         }
 
-        // Login/Register, user dropdown and Logout on the right
+        // Login, register, user dropdown and logout
         .header-actions {
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: flex-end;
             gap: 12px;
+
             margin-left: auto;
         }
 
@@ -64,22 +73,26 @@
         }
 
         .user-tag {
-            width: 180px;
-            height: 46px;
-            box-sizing: border-box;
-            background-color: #ffffff;
-            color: #718875;
-            border: 1.5px solid #b8b8b8;
-            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+
+            width: 180px;
+            height: 46px;
+            box-sizing: border-box;
             padding: 0 12px;
+
+            background-color: #ffffff;
+            color: #718875;
+            border: 1.5px solid #b8b8b8;
+            border-radius: 10px;
+
             font-size: 14px;
             font-weight: 600;
             letter-spacing: 0.3px;
             font-family: inherit;
+
             cursor: pointer;
             transition: all 0.25s ease;
 
@@ -98,9 +111,11 @@
             position: absolute;
             top: 54px;
             right: 0;
+
             width: 180px;
             box-sizing: border-box;
             padding: 6px;
+
             background-color: #ffffff;
             border: 1.5px solid #b8b8b8;
             border-radius: 10px;
@@ -109,17 +124,21 @@
 
         .dropdown-item {
             width: 100%;
-            padding: 12px 4px;
             box-sizing: border-box;
+            padding: 12px 4px;
+
             color: #718875;
             background-color: #ffffff;
+
             font-size: 15px;
             font-weight: 600;
             letter-spacing: 0.3px;
             font-family: inherit;
             text-align: center;
+
             border: none;
             border-radius: 6px;
+
             cursor: pointer;
             transition: background-color 0.2s ease;
 
@@ -129,23 +148,27 @@
         }
 
         .login-register {
-            flex-shrink: 0;
-            box-sizing: border-box;
-            width: 145px;
-            height: 46px;
-            margin: 0;
-            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+
+            width: 145px;
+            height: 46px;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+
             background-color: #f8f7f2;
             color: #718875;
             border: 1.5px solid #a9bba7;
             border-radius: 24px;
+
             font-size: 15px;
             font-weight: 600;
             letter-spacing: 0.3px;
             font-family: inherit;
+
             cursor: pointer;
             transition: all 0.25s ease;
 
@@ -153,12 +176,14 @@
                 background-color: #dfe9dc;
                 color: #58745d;
                 border-color: #a9bba7;
+
                 transform: translateY(-2px);
                 box-shadow: 0 5px 14px rgba(130, 155, 130, 0.18);
             }
         }
     }
 
+    // Main content area
     .homecontent {
         width: 100%;
         min-height: calc(100vh - 90px);
@@ -167,23 +192,26 @@
     }
 
     .home-main {
-        width: 100%;
-        max-width: 1200px;
-        min-height: calc(100vh - 90px);
-        margin: 0 auto;
-        padding: 80px 50px;
-        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         justify-content: center;
+
+        width: 100%;
+        max-width: 1200px;
+        min-height: calc(100vh - 90px);
+        box-sizing: border-box;
+        margin: 0 auto;
+        padding: 80px 50px;
     }
 
+    // Page title
     .home-title {
-        text-align: center;
         margin-bottom: 55px;
+        text-align: center;
 
         h1 {
             margin: 0;
+
             color: #53685b;
             font-size: 48px;
             font-weight: 600;
@@ -194,34 +222,42 @@
             width: 55px;
             height: 4px;
             margin: 20px auto;
+
             background-color: #a9bba7;
             border-radius: 5px;
         }
 
         p {
             margin: 0;
+
             color: #7b887e;
             font-size: 16px;
             line-height: 1.6;
         }
     }
 
+    // Feature card section
     .feature-section {
-        width: 100%;
         display: grid;
+
+        width: 100%;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 25px;
     }
 
+    // Individual feature card
     .feature-card {
+        display: flex;
+        flex-direction: column;
+
         min-height: 300px;
+        box-sizing: border-box;
         padding: 30px;
+
         background-color: rgba(255, 255, 255, 0.9);
         border: 1px solid #e0e6df;
         border-radius: 18px;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
+
         box-shadow: 0 7px 22px rgba(71, 91, 78, 0.07);
         transition: all 0.25s ease;
 
@@ -252,24 +288,30 @@
         }
     }
 
+    // Feature icon
     .feature-icon {
-        width: 58px;
-        height: 58px;
         display: flex;
         align-items: center;
         justify-content: center;
+
+        width: 58px;
+        height: 58px;
+        margin-bottom: 25px;
+
         background-color: #eef3eb;
         color: #53685b;
         border-radius: 50%;
+
         font-size: 29px;
-        margin-bottom: 25px;
     }
 
+    // Feature text
     .feature-content {
         flex: 1;
 
         h2 {
             margin: 0 0 12px;
+
             color: #3d5145;
             font-size: 23px;
             font-weight: 600;
@@ -277,29 +319,35 @@
 
         p {
             margin: 0;
+
             color: #7a887f;
             font-size: 14px;
             line-height: 1.6;
         }
     }
 
+    // Feature button
     .feature-button {
-        width: 100%;
-        height: 45px;
-        margin-top: 25px;
-        padding: 0 15px;
         display: flex;
         align-items: center;
         justify-content: space-between;
+
+        width: 100%;
+        height: 45px;
+        box-sizing: border-box;
+        margin-top: 25px;
+        padding: 0 15px;
+
         border: 1px solid #dce5dd;
         background-color: #f6f8f5;
         color: #63766a;
         border-radius: 9px;
+
         font-size: 13px;
         font-weight: 500;
         font-family: inherit;
+
         cursor: pointer;
-        box-sizing: border-box;
         transition: all 0.2s ease;
 
         &:hover {
@@ -315,98 +363,6 @@
         span:last-child {
             font-size: 19px;
             transition: transform 0.2s ease;
-        }
-    }
-}
-
-@media (max-width: 900px) {
-    .home {
-        .home-main {
-            padding: 70px 35px;
-        }
-
-        .home-title {
-            h1 {
-                font-size: 40px;
-            }
-        }
-
-        .feature-section {
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .feature-card {
-            min-height: 220px;
-        }
-    }
-}
-
-@media (max-width: 600px) {
-    .home {
-        .header {
-            height: 80px;
-            padding: 0 15px;
-
-            .nav-link {
-                font-size: 14px;
-            }
-
-            .header-actions {
-                gap: 8px;
-            }
-
-            .user-tag {
-                width: 150px;
-                height: 42px;
-                font-size: 12px;
-            }
-
-            .dropdown-menu {
-                width: 150px;
-                top: 50px;
-            }
-
-            .login-register {
-                width: 120px;
-                height: 42px;
-                font-size: 12px;
-            }
-        }
-
-        .homecontent {
-            padding-top: 80px;
-        }
-
-        .home-main {
-            padding: 55px 20px;
-        }
-
-        .home-title {
-            margin-bottom: 40px;
-
-            h1 {
-                font-size: 32px;
-            }
-
-            p {
-                font-size: 13px;
-            }
-        }
-
-        .feature-card {
-            min-height: 210px;
-            padding: 24px;
-        }
-
-        .feature-content {
-            h2 {
-                font-size: 20px;
-            }
-
-            p {
-                font-size: 13px;
-            }
         }
     }
 }

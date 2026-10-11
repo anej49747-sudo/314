@@ -1,15 +1,18 @@
 .profile-page {
-  min-height: 100vh;
-  width: 100%;
-  padding: 35px 24px;
-  background-color: #f8faf7;
-  font-family: Arial, Helvetica, sans-serif;
-  position: relative;
-  box-sizing: border-box;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  position: relative;
+
+  width: 100%;
+  min-height: 100vh;
+  padding: 35px 24px;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  background-color: #f8faf7;
+  font-family: Arial, Helvetica, sans-serif;
 
   *,
   *::before,
@@ -17,23 +20,30 @@
     box-sizing: border-box;
   }
 
+  // Background image
+
   .profile-background {
     position: fixed;
     inset: 0;
+    z-index: 0;
+
     background-image: url("/pro.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    z-index: 0;
+
     pointer-events: none;
   }
 
+  // Navigation button
+
   .profile-navigation {
+    display: flex;
+    align-items: flex-start;
+
     position: fixed;
     top: 25px;
     left: 25px;
-    display: flex;
-    align-items: flex-start;
     z-index: 10;
   }
 
@@ -41,14 +51,18 @@
     display: flex;
     align-items: center;
     gap: 9px;
-    padding: 10px 15px;
+
     min-height: 42px;
+    padding: 10px 15px;
+
     border: 1px solid #d7e0d8;
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #53685b;
     border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+
+    color: #53685b;
     font-size: 13px;
     font-weight: 500;
+
     cursor: pointer;
     transition: all 0.2s ease;
 
@@ -62,6 +76,7 @@
   .navigation-icon {
     font-size: 17px;
     line-height: 1;
+
     transition: transform 0.2s ease;
   }
 
@@ -69,16 +84,22 @@
     transform: translateX(-3px);
   }
 
+  // Profile container
+
   .profile-container {
-    position: relative;
-    z-index: 5;
-    width: 100%;
-    max-width: 1100px;
-    margin: 55px auto 0;
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    position: relative;
+    z-index: 5;
+
+    width: 100%;
+    max-width: 1100px;
+    margin: 55px auto 0;
   }
+
+  // Page heading
 
   .profile-header {
     width: 100%;
@@ -86,6 +107,7 @@
 
     h1 {
       margin: 0;
+
       color: #43594b;
       font-size: 36px;
       font-weight: 600;
@@ -97,31 +119,41 @@
     width: 44px;
     height: 4px;
     margin: 14px auto 0;
+
     background-color: #8da38f;
     border-radius: 4px;
   }
 
+  // Main profile content
+
   .profile-content {
+    display: grid;
+    grid-template-columns: 290px 1px minmax(0, 1fr);
+
     width: 100%;
     max-width: 1100px;
     min-height: 440px;
     margin-top: 32px;
-    display: grid;
-    grid-template-columns: 290px 1px minmax(0, 1fr);
+
     background-color: rgba(255, 255, 255, 0.95);
     border: 1px solid #dce3dc;
     border-radius: 18px;
     overflow: hidden;
+
     box-shadow: 0 8px 28px rgba(67, 89, 75, 0.1);
   }
+
+  // Left profile panel
 
   .profile-left {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 45px 30px;
+
     min-width: 0;
+    padding: 45px 30px;
+
     background-color: rgba(225, 231, 220, 0.9);
   }
 
@@ -129,18 +161,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
     flex-shrink: 0;
   }
 
+  // Default avatar
+
   .default-avatar {
-    width: 140px;
-    height: 140px;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    width: 140px;
+    height: 140px;
+
     background-color: #e7eae3;
     border: 4px solid #ffffff;
     border-radius: 50%;
+
     box-shadow: 0 6px 18px rgba(67, 89, 75, 0.1);
 
     span {
@@ -150,62 +188,80 @@
     }
   }
 
+  // Username
+
   .username {
     width: 100%;
     margin: 18px 0 0;
+
     color: #53685b;
     font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.3px;
     line-height: 1.4;
     text-align: center;
+
     overflow-wrap: anywhere;
   }
 
+  // User role
+
   .profile-left {
     .profile-role {
-      width: 100%;
-      min-height: 0;
-      margin-top: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
+
+      width: 100%;
+      min-height: 0;
+      margin-top: 8px;
+
       color: #53685b;
       font-size: 14px;
       font-weight: 500;
       text-align: center;
       text-transform: lowercase;
+
       overflow-wrap: anywhere;
     }
   }
+
+  // Divider between panels
 
   .profile-divider {
     width: 1px;
     background-color: #d9e0d9;
   }
 
-  // Form layout: labels and controls share fixed columns.
+  // Right form panel
+
   .right {
-    min-width: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
     gap: 18px;
+
+    min-width: 0;
     padding: 40px 55px;
+
     background-color: rgba(255, 255, 255, 0.95);
   }
 
+  // Form fields
+
   .profile-field {
-    width: 100%;
-    min-width: 0;
     display: grid;
     grid-template-columns: 135px minmax(0, 1fr);
     align-items: center;
     column-gap: 12px;
 
+    width: 100%;
+    min-width: 0;
+
     >label {
       margin: 0;
+
       color: #53685b;
       font-size: 15px;
       font-weight: 600;
@@ -217,18 +273,25 @@
     >select,
     >textarea {
       display: block;
+
       width: 100%;
       min-width: 0;
       margin: 0;
       padding: 10px 12px;
+
       border: 1px solid #d9ddd5;
       border-radius: 8px;
       outline: none;
+
       background-color: #faf9f3;
       color: #68776d;
+
       font-family: inherit;
       font-size: 14px;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
     }
 
     >input,
@@ -241,6 +304,8 @@
       resize: vertical;
     }
 
+    // Disabled fields
+
     >input:disabled,
     >select:disabled,
     >textarea:disabled {
@@ -250,6 +315,8 @@
       cursor: default;
     }
 
+    // Editable fields
+
     >input:not(:disabled),
     >select:not(:disabled),
     >textarea:not(:disabled) {
@@ -257,10 +324,14 @@
       border-color: #9bae9d;
     }
 
+    // Input placeholders
+
     >input::placeholder,
     >textarea::placeholder {
       color: #a1aaa3;
     }
+
+    // Focus effect
 
     >input:focus,
     >select:focus,
@@ -269,17 +340,23 @@
       box-shadow: 0 0 0 3px rgba(141, 163, 143, 0.12);
     }
 
+    // Field helper text
+
     >small {
       grid-column: 2;
       margin-top: 4px;
+
       color: #829185;
       font-size: 12px;
     }
   }
 
+  // Status and error messages
+
   .profile-status,
   .profile-error {
     margin: 0;
+
     text-align: center;
     font-size: 13px;
   }
@@ -292,23 +369,29 @@
     color: #b54747;
   }
 
+  // Action buttons
+
   .but {
-    width: 100%;
     display: flex;
     justify-content: center;
     gap: 12px;
+
+    width: 100%;
     margin-top: 4px;
 
     button {
       min-width: 80px;
       height: 36px;
       padding: 0 16px;
+
       border: 1px solid #8da38f;
       border-radius: 8px;
       background-color: #8da38f;
+
       color: #ffffff;
       font-size: 13px;
       font-weight: 600;
+
       cursor: pointer;
       transition: background-color 0.2s ease;
 
@@ -321,129 +404,6 @@
         opacity: 0.6;
         cursor: not-allowed;
       }
-    }
-  }
-
-  @media (max-width: 1050px) {
-    .profile-container {
-      max-width: 96%;
-    }
-
-    .profile-content {
-      grid-template-columns: 250px 1px minmax(0, 1fr);
-    }
-
-    .right {
-      padding: 35px 30px;
-    }
-
-    .profile-field {
-      grid-template-columns: 120px minmax(0, 1fr);
-      column-gap: 10px;
-    }
-  }
-
-  @media (max-width: 800px) {
-    padding: 80px 25px 35px;
-    overflow-y: auto;
-
-    .profile-container {
-      max-width: 650px;
-      margin-top: 10px;
-    }
-
-    .profile-content {
-      min-height: 0;
-      grid-template-columns: minmax(0, 1fr);
-      margin-top: 30px;
-    }
-
-    .profile-left {
-      padding: 40px 25px;
-    }
-
-    .default-avatar {
-      width: 120px;
-      height: 120px;
-
-      span {
-        font-size: 58px;
-      }
-    }
-
-    .profile-divider {
-      width: 100%;
-      height: 1px;
-    }
-
-    .right {
-      padding: 35px 30px;
-      gap: 18px;
-    }
-  }
-
-  @media (max-width: 500px) {
-    padding: 75px 18px 30px;
-
-    .profile-navigation {
-      top: 18px;
-      left: 18px;
-    }
-
-    .profile-container {
-      width: 100%;
-    }
-
-    .profile-header h1 {
-      font-size: 28px;
-    }
-
-    .profile-content {
-      margin-top: 24px;
-      border-radius: 13px;
-    }
-
-    .profile-left {
-      padding: 35px 20px;
-    }
-
-    .default-avatar {
-      width: 110px;
-      height: 110px;
-
-      span {
-        font-size: 54px;
-      }
-    }
-
-    .right {
-      padding: 28px 16px;
-      gap: 16px;
-    }
-
-    .profile-field {
-      grid-template-columns: 100px minmax(0, 1fr);
-      column-gap: 8px;
-
-      >label {
-        font-size: 12px;
-      }
-
-      >input,
-      >select,
-      >textarea {
-        font-size: 12px;
-      }
-
-      >input,
-      >select {
-        height: 40px;
-      }
-    }
-
-    .but button {
-      min-width: 70px;
-      padding: 0 12px;
     }
   }
 }
