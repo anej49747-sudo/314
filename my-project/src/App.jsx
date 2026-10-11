@@ -3,8 +3,8 @@ import {
   BrowserRouter,
   useRoutes
 } from "react-router-dom";
-import Router from "./router/Router";
 import "./App.css";
+import Router from "./router/Router";
 
 function AppContent() {
   const routes = useRoutes(Router);

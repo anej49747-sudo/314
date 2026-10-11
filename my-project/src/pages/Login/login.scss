@@ -13,7 +13,6 @@
     background-repeat: no-repeat;
 
     // Back button
-
     #back {
         width: 150px;
         height: 40px;
@@ -34,7 +33,6 @@
     }
 
     // Login form container
-
     .loginbox {
         display: flex;
         flex-direction: column;
@@ -51,7 +49,6 @@
         box-shadow: 0 8px 30px rgba(120, 90, 60, 0.10);
 
         // Form title
-
         .title {
             width: 100%;
             margin-top: 5px;
@@ -73,7 +70,6 @@
         }
 
         // Ant Design form layout
-
         .ant-form {
             display: flex;
             flex-direction: column;
@@ -83,7 +79,6 @@
         }
 
         // Submit button
-
         .ant-btn-primary {
             width: 100%;
             height: 40px;
@@ -97,7 +92,6 @@
             font-weight: 500;
 
             // Hover effect
-
             &:hover {
                 background-color: #b99478;
                 border-color: #b99478;
