@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -8,7 +9,6 @@ const API_BASE_URL =
     "https://314-production.up.railway.app";
 
 const createEmptyDesigner = () => ({
-    formId: crypto.randomUUID(),
     username: "",
     password: "",
     name: "",
@@ -22,13 +22,26 @@ function CreateDesigner() {
     const location = useLocation();
     const userdata = location.state?.userdata || {};
 
-    const [forms, setForms] = useState([createEmptyDesigner()]);
+    const [form, setForm] = useState(createEmptyDesigner());
     const [designers, setDesigners] = useState([]);
-    const [loading, setLoading] = useState({});
+    const [creating, setCreating] = useState(false);
+    const [deletingId, setDeletingId] = useState(null);
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("success");
 
-    // Load existing designers
+    // Display a message and optionally hide it automatically.
+    const showMessage = (text, type = "success", duration = 0) => {
+        setMessage(text);
+        setMessageType(type);
+
+        if (duration > 0) {
+            window.setTimeout(() => {
+                setMessage((current) => (current === text ? "" : current));
+            }, duration);
+        }
+    };
+
+    // Load designers from the backend.
     const loadDesigners = async () => {
         try {
             const response = await axios.get(
@@ -38,15 +51,14 @@ function CreateDesigner() {
             if (response.data.status === "success") {
                 setDesigners(response.data.designers || []);
             } else {
-                setMessage(
-                    response.data.message || "Unable to load Designer List."
+                showMessage(
+                    response.data.message || "Unable to load Designer List.",
+                    "error"
                 );
-                setMessageType("error");
             }
         } catch (error) {
             console.error("Failed to load designers:", error);
-            setMessage("Unable to load Designer List.");
-            setMessageType("error");
+            showMessage("Unable to load Designer List.", "error");
         }
     };
 
@@ -54,127 +66,78 @@ function CreateDesigner() {
         loadDesigners();
     }, []);
 
-    // Update form fields
-    const updateForm = (formId, field, value) => {
-        setForms((currentForms) =>
-            currentForms.map((form) =>
-                form.formId === formId
-                    ? {
-                        ...form,
-                        [field]: value,
-                        isSaved: false,
-                    }
-                    : form
-            )
-        );
-    };
-
-    // Enable editing
-    const handleEdit = (formId) => {
-        setForms((currentForms) =>
-            currentForms.map((form) =>
-                form.formId === formId
-                    ? {
-                        ...form,
-                        isEditing: true,
-                        isSaved: false,
-                    }
-                    : form
-            )
-        );
-
-        setMessage("");
-    };
-
-    // Save form locally
-    const handleSave = (form) => {
-        if (
-            !form.username.trim() ||
-            !form.password ||
-            !form.name.trim() ||
-            !form.role.trim()
-        ) {
-            setMessage(
-                "Please fill in data before saving."
-            );
-            setMessageType("error");
-            return;
-        }
-
-        setForms((currentForms) =>
-            currentForms.map((item) =>
-                item.formId === form.formId
-                    ? {
-                        ...item,
-                        username: item.username.trim(),
-                        name: item.name.trim(),
-                        role: item.role.trim().toLowerCase(),
-                        isEditing: false,
-                        isSaved: true,
-                    }
-                    : item
-            )
-        );
-
-        setMessage(
-            "Form saved. "
-        );
-        setMessageType("success");
-    };
-
-    // Add another form
-    const addDesignerForm = () => {
-        setForms((currentForms) => [
-            ...currentForms,
-            createEmptyDesigner(),
-        ]);
-
-        setMessage("");
-    };
-
-    // Remove a form
-    const removeDesignerForm = (formId) => {
-        setForms((currentForms) => {
-            const remaining = currentForms.filter(
-                (form) => form.formId !== formId
-            );
-
-            return remaining.length > 0
-                ? remaining
-                : [createEmptyDesigner()];
-        });
-
-        setMessage("");
-    };
-
-    // Create account through backend
-    const createDesigner = async (form) => {
-        if (!form.isSaved || form.isEditing) {
-            setMessage(
-                "Please click Edit and Save before creating the account."
-            );
-            setMessageType("error");
-            return;
-        }
-
-        if (
-            !form.username.trim() ||
-            !form.password ||
-            !form.name.trim() ||
-            !form.role.trim()
-        ) {
-            setMessage(
-                "Please complete all fields before creating the account."
-            );
-            setMessageType("error");
-            return;
-        }
-
-        setLoading((current) => ({
+    // Update editable form fields.
+    const updateForm = (field, value) => {
+        setForm((current) => ({
             ...current,
-            [form.formId]: true,
+            [field]: value,
+            isSaved: false,
+        }));
+    };
+
+    // Enable editing.
+    const handleEdit = () => {
+        setForm((current) => ({
+            ...current,
+            isEditing: true,
+            isSaved: false,
         }));
 
+        setMessage("");
+    };
+
+    // Save the form locally before creating the account.
+    const handleSave = () => {
+        if (
+            !form.username.trim() ||
+            !form.password ||
+            !form.name.trim()
+        ) {
+            showMessage(
+                "Please fill in data before saving.",
+                "error",
+                3000
+            );
+            return;
+        }
+
+        setForm((current) => ({
+            ...current,
+            username: current.username.trim(),
+            name: current.name.trim(),
+            role: "designer",
+            isEditing: false,
+            isSaved: true,
+        }));
+
+        showMessage("Form saved.", "success", 2000);
+    };
+
+    // Create the Designer account through the backend.
+    const createDesigner = async () => {
+        if (!form.isSaved || form.isEditing) {
+            showMessage(
+                "Please click Edit and Save before creating the account.",
+                "error",
+                3000
+            );
+            return;
+        }
+
+        if (
+            !form.username.trim() ||
+            !form.password ||
+            !form.name.trim()
+        ) {
+            showMessage(
+                "Please complete all fields before creating the account.",
+                "error",
+                3000
+            );
+            return;
+        }
+
+        setCreating(true);
         setMessage("");
 
         try {
@@ -184,48 +147,101 @@ function CreateDesigner() {
                     username: form.username.trim(),
                     password: form.password,
                     name: form.name.trim(),
-                    role: form.role.trim().toLowerCase(),
+                    role: "designer",
                 }
             );
 
             if (response.data.status !== "success") {
-                setMessage(
+                showMessage(
                     response.data.message ||
-                    "Failed to create Designer account."
+                    "Failed to create Designer account.",
+                    "error",
+                    3000
                 );
-                setMessageType("error");
                 return;
             }
 
-            setMessage(
-                `Designer account "${form.username.trim()}" created successfully.`
+            showMessage(
+                `Designer account "${form.username.trim()}" created!`,
+                "success",
+                2000
             );
-            setMessageType("success");
 
-            setForms((currentForms) => {
-                const remaining = currentForms.filter(
-                    (item) => item.formId !== form.formId
-                );
+            setForm(createEmptyDesigner());
 
-                return remaining.length > 0
-                    ? remaining
-                    : [createEmptyDesigner()];
-            });
-
+            // Refresh the list after successful creation.
             await loadDesigners();
         } catch (error) {
             console.error("Failed to create Designer:", error);
 
-            setMessage(
+            showMessage(
                 error.response?.data?.message ||
-                "Failed to create Designer account. Please check the backend API."
+                "Failed to create Designer account. Please check the backend API.",
+                "error",
+                4000
             );
-            setMessageType("error");
         } finally {
-            setLoading((current) => ({
-                ...current,
-                [form.formId]: false,
-            }));
+            setCreating(false);
+        }
+    };
+
+    // Delete a Designer account from the backend and database.
+    const removeDesigner = async (designer) => {
+        if (!designer.id) {
+            showMessage(
+                "Cannot remove this Designer because the ID is missing.",
+                "error",
+                3000
+            );
+            return;
+        }
+
+        const confirmed = window.confirm(
+            `Are you sure you want to remove "${designer.username}"? This action cannot be undone.`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        setDeletingId(designer.id);
+        setMessage("");
+
+        try {
+            const response = await axios.delete(
+                `${API_BASE_URL}/api/designer/${encodeURIComponent(
+                    designer.id
+                )}`
+            );
+
+            if (response.data.status !== "success") {
+                showMessage(
+                    response.data.message || "Failed to remove Designer.",
+                    "error",
+                    3000
+                );
+                return;
+            }
+
+            showMessage(
+                `Designer "${designer.username}" has been removed.`,
+                "success",
+                2500
+            );
+
+            // Refresh the list after successful deletion.
+            await loadDesigners();
+        } catch (error) {
+            console.error("Failed to remove Designer:", error);
+
+            showMessage(
+                error.response?.data?.message ||
+                "Failed to remove Designer. Please check the backend API.",
+                "error",
+                4000
+            );
+        } finally {
+            setDeletingId(null);
         }
     };
 
@@ -241,216 +257,199 @@ function CreateDesigner() {
                         })
                     }
                 >
-                    <span>←</span>
+                    <span aria-hidden="true">←</span>
                     Back to Dashboard
                 </button>
             </header>
 
-            {/* Create Designer cards */}
-            <section className="create-designer-section">
-                <div className="create-designer-forms">
-                    {forms.map((form, index) => (
-                        <div
-                            className="create-designer-card"
-                            key={form.formId}
-                        >
-                            <div className="create-designer-card-header">
-                                <h2>Create Designer</h2>
+            <main className="create-designer-layout">
+                {/* Left column: Create Designer */}
+                <section className="create-designer-section">
+                    <div className="create-designer-card">
+                        <div className="create-designer-card-header">
+                            <h2>Create Designer</h2>
+                        </div>
 
-                                <div className="create-designer-card-header-actions">
-                                    {forms.length > 1 && (
-                                        <button
-                                            type="button"
-                                            className="create-designer-remove"
-                                            onClick={() =>
-                                                removeDesignerForm(form.formId)
+                        <div className="create-designer-fields">
+                            <label>
+                                Username
+                                <input
+                                    type="text"
+                                    value={form.username}
+                                    readOnly={!form.isEditing}
+                                    onChange={(event) =>
+                                        updateForm(
+                                            "username",
+                                            event.target.value
+                                        )
+                                    }
+                                    placeholder="Enter username"
+                                    autoComplete="off"
+                                />
+                            </label>
+
+                            <label>
+                                Password
+                                <input
+                                    type="password"
+                                    value={form.password}
+                                    readOnly={!form.isEditing}
+                                    onChange={(event) =>
+                                        updateForm(
+                                            "password",
+                                            event.target.value
+                                        )
+                                    }
+                                    placeholder="Enter password"
+                                    autoComplete="new-password"
+                                />
+                            </label>
+
+                            <label>
+                                Full Name
+                                <input
+                                    type="text"
+                                    value={form.name}
+                                    readOnly={!form.isEditing}
+                                    onChange={(event) =>
+                                        updateForm(
+                                            "name",
+                                            event.target.value
+                                        )
+                                    }
+                                    placeholder="Enter full name"
+                                />
+                            </label>
+
+                            <label>
+                                Role
+                                <input
+                                    type="text"
+                                    value="designer"
+                                    disabled
+                                />
+                            </label>
+                        </div>
+
+                        <div className="create-designer-actions">
+                            <button
+                                type="button"
+                                className="create-designer-edit-save"
+                                onClick={
+                                    form.isEditing ? handleSave : handleEdit
+                                }
+                                disabled={creating}
+                            >
+                                {form.isEditing ? "Save" : "Edit"}
+                            </button>
+
+                            <button
+                                type="button"
+                                className="create-designer-submit"
+                                disabled={
+                                    creating ||
+                                    form.isEditing ||
+                                    !form.isSaved
+                                }
+                                onClick={createDesigner}
+                            >
+                                {creating
+                                    ? "Creating..."
+                                    : "Create Designer"}
+                                {!creating && (
+                                    <span aria-hidden="true">→</span>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Right column: Designer List */}
+                <section className="create-designer-list-section">
+                    <div className="create-designer-list-heading">
+                        <h2>Designer List</h2>
+                        <span className="create-designer-count">
+                            {designers.length} designers
+                        </span>
+                    </div>
+
+                    <div className="create-designer-table-wrapper">
+                        <table className="create-designer-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Full Name</th>
+                                    <th>Role</th>
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {designers.length > 0 ? (
+                                    designers.map((designer) => (
+                                        <tr
+                                            key={
+                                                designer.id ||
+                                                designer.username
                                             }
                                         >
-                                            Remove
-                                        </button>
-                                    )}
+                                            <td className="create-designer-username">
+                                                {designer.username}
+                                            </td>
 
-                                    <button
-                                        type="button"
-                                        className="create-designer-add"
-                                        onClick={addDesignerForm}
-                                        aria-label="Add another Designer"
-                                        title="Add another Designer"
-                                    >
-                                        +
-                                    </button>
-                                </div>
-                            </div>
+                                            <td>
+                                                {designer.name || "—"}
+                                            </td>
 
-                            {forms.length > 1 && (
-                                <p className="create-designer-form-number">
-                                    Designer form {index + 1}
-                                </p>
-                            )}
+                                            <td>
+                                                <span className="create-designer-role">
+                                                    {designer.role || "designer"}
+                                                </span>
+                                            </td>
 
-                            <div className="create-designer-fields">
-                                <label>
-                                    Username
-                                    <input
-                                        type="text"
-                                        value={form.username}
-                                        readOnly={!form.isEditing}
-                                        onChange={(event) =>
-                                            updateForm(
-                                                form.formId,
-                                                "username",
-                                                event.target.value
-                                            )
-                                        }
-                                        placeholder="Enter username"
-                                        autoComplete="off"
-                                    />
-                                </label>
-
-                                <label>
-                                    Password
-                                    <input
-                                        type="password"
-                                        value={form.password}
-                                        readOnly={!form.isEditing}
-                                        onChange={(event) =>
-                                            updateForm(
-                                                form.formId,
-                                                "password",
-                                                event.target.value
-                                            )
-                                        }
-                                        placeholder="Enter password"
-                                        autoComplete="new-password"
-                                    />
-                                </label>
-
-                                <label>
-                                    Full Name
-                                    <input
-                                        type="text"
-                                        value={form.name}
-                                        readOnly={!form.isEditing}
-                                        onChange={(event) =>
-                                            updateForm(
-                                                form.formId,
-                                                "name",
-                                                event.target.value
-                                            )
-                                        }
-                                        placeholder="Enter full name"
-                                    />
-                                </label>
-
-                                <label>
-                                    Role
-                                    <input
-                                        type="text"
-                                        value={form.role}
-                                        disabled
-                                        readOnly={!form.isEditing}
-                                        onChange={(event) =>
-                                            updateForm(
-                                                form.formId,
-                                                "role",
-                                                event.target.value
-                                            )
-                                        }
-                                        placeholder="Enter role"
-                                    />
-                                </label>
-                            </div>
-
-                            <div className="create-designer-actions">
-                                <button
-                                    type="button"
-                                    className="create-designer-edit-save"
-                                    onClick={() =>
-                                        form.isEditing
-                                            ? handleSave(form)
-                                            : handleEdit(form.formId)
-                                    }
-                                >
-                                    {form.isEditing ? "Save" : "Edit"}
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="create-designer-submit"
-                                    disabled={
-                                        Boolean(loading[form.formId]) ||
-                                        form.isEditing ||
-                                        !form.isSaved
-                                    }
-                                    onClick={() => createDesigner(form)}
-                                >
-                                    {loading[form.formId]
-                                        ? "Creating..."
-                                        : "Create Designer"}
-                                    {!loading[form.formId] && <span>→</span>}
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {message && (
-                    <div
-                        className={`create-designer-message ${messageType}`}
-                        role="status"
-                    >
-                        {message}
-                    </div>
-                )}
-            </section>
-
-            {/* Designer List: unchanged, three columns only */}
-            <section className="create-designer-list-section">
-                <div className="create-designer-list-heading">
-                    <h2>Designer List</h2>
-                </div>
-
-                <div className="create-designer-table-wrapper">
-                    <table className="create-designer-table">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Full Name</th>
-                                <th>Role</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {designers.length > 0 ? (
-                                designers.map((designer) => (
-                                    <tr key={designer.id}>
-                                        <td className="create-designer-username">
-                                            {designer.username}
-                                        </td>
-
-                                        <td>{designer.name || "—"}</td>
-
-                                        <td>
-                                            <span className="create-designer-role">
-                                                {designer.role || "designer"}
-                                            </span>
+                                            <td>
+                                                <button
+                                                    type="button"
+                                                    className="create-designer-remove-button"
+                                                    disabled={
+                                                        deletingId ===
+                                                        designer.id
+                                                    }
+                                                    onClick={() =>
+                                                        removeDesigner(designer)
+                                                    }
+                                                >
+                                                    {deletingId === designer.id
+                                                        ? "Removing..."
+                                                        : "Remove"}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan="4"
+                                            className="create-designer-empty"
+                                        >
+                                            No designers found.
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td
-                                        colSpan="3"
-                                        className="create-designer-empty"
-                                    >
-                                        No designers found.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+
+            {message && (
+                <div
+                    className={`create-designer-message ${messageType}`}
+                    role="status"
+                >
+                    {message}
                 </div>
-            </section>
+            )}
         </div>
     );
 }

@@ -1,3 +1,4 @@
+
 package com.chef.chef.service;
 
 import java.util.ArrayList;
@@ -80,34 +81,33 @@ public class UserService {
         return userRepository.findByRole("designer");
     }
 
+    public User createDesigner(String username, String password, String name) {
+        if (username == null || username.isBlank()
+                || password == null || password.isBlank()
+                || name == null || name.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Username, password and full name are required"
+            );
+        }
 
-public User createDesigner(String username, String password, String name) {
-    if (username == null || username.isBlank()
-            || password == null || password.isBlank()
-            || name == null || name.isBlank()) {
-        throw new IllegalArgumentException(
-                "Username, password and full name are required"
-        );
+        username = username.trim();
+        name = name.trim();
+
+        if (userRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException(
+                    "Username already exists"
+            );
+        }
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setName(name);
+
+        user.setRole("designer");
+
+        return userRepository.save(user);
     }
-
-    username = username.trim();
-    name = name.trim();
-
-    if (userRepository.existsByUsername(username)) {
-        throw new IllegalArgumentException(
-                "Username already exists"
-        );
-    }
-
-    User user = new User();
-    user.setUsername(username);
-    user.setPassword(password);
-    user.setName(name);
-
-    user.setRole("designer");
-
-    return userRepository.save(user);
-}
 
     public User getDesignerById(String id) {
         User user = getUser(id);
@@ -120,6 +120,21 @@ public User createDesigner(String username, String password, String name) {
         }
 
         return user;
+    }
+
+    // 新增：删除 Designer 账号
+    public void deleteDesigner(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Designer ID is required"
+            );
+        }
+
+        // 确认该 ID 对应的用户确实是 Designer
+        User designer = getDesignerById(id);
+
+        // 从 MongoDB 删除该 Designer 记录
+        userRepository.deleteById(designer.getId());
     }
 
     public User updateDesignerProfile(

@@ -1,9 +1,11 @@
+
 package com.chef.chef.controller;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,10 +23,8 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-
 public class UserController {
 
-    // final: fix UserService
     private final UserService userService;
 
     private Map<String, Object> toUserData(User user) {
@@ -56,7 +56,9 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Map<String, Object> register(@RequestBody Map<String, String> body) {
+    public Map<String, Object> register(
+            @RequestBody Map<String, String> body
+    ) {
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -78,7 +80,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody Map<String, String> body) {
+    public Map<String, Object> login(
+            @RequestBody Map<String, String> body
+    ) {
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -101,7 +105,7 @@ public class UserController {
 
     @GetMapping("/getuser")
     public Map<String, Object> getUser(
-        // 从/getuser取值
+            // 从/getuser取值
             @RequestParam("userId") String userId
     ) {
         Map<String, Object> response = new LinkedHashMap<>();
@@ -135,32 +139,33 @@ public class UserController {
     }
 
     @PostMapping("/admin/create-designer")
-public Map<String, Object> createDesigner(
-        @RequestBody Map<String, String> body
-) {
-    Map<String, Object> response = new LinkedHashMap<>();
+    public Map<String, Object> createDesigner(
+            @RequestBody Map<String, String> body
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
 
-    try {
-        User user = userService.createDesigner(
-                body.get("username"),
-                body.get("password"),
-                body.get("name")
-        );
+        try {
+            User user = userService.createDesigner(
+                    body.get("username"),
+                    body.get("password"),
+                    body.get("name")
+            );
 
-        response.put("status", "success");
-        response.put("message", "Designer created successfully");
-        response.put("designer", toDesignerData(user));
+            response.put("status", "success");
+            response.put("message", "Designer created successfully");
+            response.put("designer", toDesignerData(user));
 
-    } catch (IllegalArgumentException e) {
-        response.put("status", "error");
-        response.put("message", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+        }
+
+        return response;
     }
 
-    return response;
-}
     @GetMapping("/designer/{id}")
     public Map<String, Object> getDesignerById(
-        // 从/designer/{id}取值
+            // 从/designer/{id}取值
             @PathVariable("id") String id
     ) {
         Map<String, Object> response = new LinkedHashMap<>();
@@ -170,6 +175,27 @@ public Map<String, Object> createDesigner(
 
             response.put("status", "success");
             response.put("designer", toDesignerData(user));
+
+        } catch (IllegalArgumentException e) {
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+        }
+
+        return response;
+    }
+
+    // 新增：删除指定的 Designer 账号
+    @DeleteMapping("/designer/{id}")
+    public Map<String, Object> deleteDesigner(
+            @PathVariable("id") String id
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        try {
+            userService.deleteDesigner(id);
+
+            response.put("status", "success");
+            response.put("message", "Designer deleted successfully");
 
         } catch (IllegalArgumentException e) {
             response.put("status", "error");
@@ -217,40 +243,43 @@ public Map<String, Object> createDesigner(
         return response;
     }
 
-@PutMapping("/user/{id}/profile")
-public Map<String, Object> updateUserProfile(
-        @PathVariable("id") String id,
-        @RequestBody Map<String, Object> body
-) {
-    Map<String, Object> response = new LinkedHashMap<>();
+    @PutMapping("/user/{id}/profile")
+    public Map<String, Object> updateUserProfile(
+            @PathVariable("id") String id,
+            @RequestBody Map<String, Object> body
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
 
-    try {
-        String name = getString(body, "name");
-        String gender = getString(body, "gender");
-        String email = getString(body, "email");
-        String bio = getString(body, "bio");
+        try {
+            String name = getString(body, "name");
+            String gender = getString(body, "gender");
+            String email = getString(body, "email");
+            String bio = getString(body, "bio");
 
-        User user = userService.updateUserProfile(
-                id,
-                name,
-                gender,
-                email,
-                bio
-        );
+            User user = userService.updateUserProfile(
+                    id,
+                    name,
+                    gender,
+                    email,
+                    bio
+            );
 
-        response.put("status", "success");
-        response.put("message", "Profile updated successfully");
-        response.put("userdata", toUserData(user));
+            response.put("status", "success");
+            response.put("message", "Profile updated successfully");
+            response.put("userdata", toUserData(user));
 
-    } catch (IllegalArgumentException e) {
-        response.put("status", "error");
-        response.put("message", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+        }
+
+        return response;
     }
 
-    return response;
-}
-
-    private String getString(Map<String, Object> body, String key) {
+    private String getString(
+            Map<String, Object> body,
+            String key
+    ) {
         Object value = body.get(key);
         return value == null ? "" : value.toString().trim();
     }
