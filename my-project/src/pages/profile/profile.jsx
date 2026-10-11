@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   apiGetDesignerById,
   apiGetuser,
-  apiUpdateDesignerProfile
+  apiUpdateDesignerProfile,
+  apiUpdateUserProfile
 } from "../../api";
 
 import "./profile.css";
@@ -147,13 +148,6 @@ function Profile() {
       currentUser.role || userdata.role || savedUser.role || ""
     ).toLowerCase();
 
-    if (role !== "designer") {
-      setErrorMessage(
-        "Only designer accounts can update designer profiles."
-      );
-      return;
-    }
-
     setSaving(true);
     setErrorMessage("");
 
@@ -169,7 +163,16 @@ function Profile() {
           .filter(Boolean),
       };
 
-      const res = await apiUpdateDesignerProfile(userId, payload);
+      const res =
+        role === "designer"
+          ? await apiUpdateDesignerProfile(userId, payload)
+          : await apiUpdateUserProfile(userId, {
+            name: payload.name,
+            gender: payload.gender,
+            email: payload.email,
+            bio: payload.bio,
+          });
+
       const result = res?.data ?? res;
 
       if (result.status !== "success") {

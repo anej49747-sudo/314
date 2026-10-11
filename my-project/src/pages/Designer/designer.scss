@@ -2,11 +2,18 @@
     min-height: 100vh;
     box-sizing: border-box;
     padding: 32px 5% 64px;
+
     background: #f8f7f2;
     color: #405447;
+
     font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, "Helvetica Neue", Arial, sans-serif;
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
 }
 
 .designers-container {
@@ -15,21 +22,24 @@
     margin: 0 auto;
 }
 
-/* Back button */
-
+// Back Button
 .designers-back-link {
     display: inline-flex;
     align-items: center;
     gap: 9px;
+
     margin-bottom: 38px;
     padding: 11px 18px;
+
     border: 1px solid #d5dfd4;
     border-radius: 11px;
     background: #fff;
+
     color: #60826c;
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
+
     transition: all 0.2s ease;
 
     span {
@@ -43,13 +53,13 @@
     }
 }
 
-/* Page heading */
-
+// Page Heading
 .designers-heading {
     margin-bottom: 30px;
 
     h1 {
         margin: 0;
+
         color: #667d6e;
         font-family: Georgia, "Times New Roman", serif;
         font-size: clamp(36px, 4.5vw, 52px);
@@ -58,26 +68,28 @@
     }
 }
 
-/* Designer grid */
-
+// Designer Grid
 .designers-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
 }
 
-/* Individual card */
-
+// Individual Designer Card
 .designer-card {
     display: flex;
     flex-direction: column;
+
     min-width: 0;
     min-height: 340px;
     overflow: hidden;
+
     border: 1px solid #e0e5db;
     border-radius: 18px;
     background: #fff;
+
     box-shadow: 0 5px 20px rgba(61, 78, 61, 0.035);
+
     transition:
         transform 0.25s ease,
         box-shadow 0.25s ease,
@@ -90,13 +102,14 @@
     }
 }
 
-/* Card header */
-
+// Card Header
 .designer-card-top {
     display: flex;
     align-items: center;
     gap: 14px;
+
     padding: 23px 24px;
+
     border-bottom: 1px solid #e5eadf;
     background: #edf1e8;
 }
@@ -106,11 +119,14 @@
     flex: 0 0 46px;
     align-items: center;
     justify-content: center;
+
     width: 46px;
     height: 46px;
+
     border: 1px solid #d2ddcd;
     border-radius: 50%;
     background: #fff;
+
     color: #6c896e;
     font-size: 25px;
 }
@@ -123,24 +139,26 @@
     line-height: 1.5;
 }
 
-/* Card information */
-
+// Card Information
 .designer-card-content {
     display: flex;
     flex: 1;
     flex-direction: column;
     align-items: flex-start;
+
     padding: 25px 24px 22px;
 }
 
 .designer-card-name {
     width: 100%;
     margin: 0;
+
     color: #577662;
     font-family: Georgia, "Times New Roman", serif;
     font-size: 25px;
     font-weight: 600;
     line-height: 1.35;
+
     overflow-wrap: anywhere;
 }
 
@@ -148,10 +166,13 @@
     display: flex;
     align-items: center;
     gap: 8px;
+
     margin: 13px 0 0;
+
     color: #627765;
     font-size: 13px;
     font-weight: 500;
+
     overflow-wrap: anywhere;
 
     span {
@@ -162,34 +183,39 @@
 
 .designer-card-description {
     display: -webkit-box;
+
     width: 100%;
     margin: 17px 0 0;
     overflow: hidden;
+
     color: #788579;
     font-size: 14px;
     line-height: 1.85;
+
     overflow-wrap: anywhere;
     -webkit-box-orient: vertical;
-
 }
 
-/* Design style tags */
-
+// Design Style Tags
 .designer-card-styles {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 7px;
+
     margin-top: 18px;
 }
 
 .designer-style-tag {
     display: inline-flex;
     align-items: center;
+
     padding: 7px 11px;
+
     border: 1px solid #e0e8dc;
     border-radius: 999px;
     background: #f3f5ef;
+
     color: #627765;
     font-size: 11px;
     line-height: 1.4;
@@ -200,8 +226,7 @@
     font-size: 12px;
 }
 
-/* Card footer */
-
+// Card Footer
 .designer-card-footer {
     padding: 0 24px 24px;
 }
@@ -211,16 +236,20 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+
     width: 100%;
     box-sizing: border-box;
     padding: 13px 17px;
+
     border: 1px solid #829884;
     border-radius: 10px;
     background: #9bb89e;
+
     color: #fff;
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
+
     transition: all 0.2s ease;
 
     span {
@@ -241,18 +270,20 @@
 .designer-no-profile {
     display: block;
     padding: 13px 0;
+
     color: #929c90;
     font-size: 13px;
 }
 
-/* Loading, error and empty states */
-
+// Loading, Error and Empty States
 .designers-message,
 .designers-empty {
     padding: 40px 24px;
+
     border: 1px solid #e0e5db;
     border-radius: 16px;
     background: #fff;
+
     color: #758477;
     font-size: 14px;
     line-height: 1.8;
@@ -260,6 +291,7 @@
 
 .designers-error {
     color: #a05b52;
+
     border-color: #ead7d2;
     background: #fffaf8;
 }
@@ -268,17 +300,20 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
     text-align: center;
 }
 
 .empty-icon {
     margin-bottom: 10px;
+
     color: #8ca087;
     font-size: 35px;
 }
 
 .designers-empty h2 {
     margin: 0;
+
     color: #405447;
     font-family: Georgia, "Times New Roman", serif;
     font-size: 25px;
@@ -287,72 +322,7 @@
 
 .designers-empty p {
     margin: 10px 0 0;
+
     color: #859184;
     font-size: 14px;
-}
-
-/* Tablet */
-
-@media (max-width: 1000px) {
-    .designers-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
-    }
-
-    .designer-card-top {
-        padding: 20px;
-    }
-
-    .designer-card-content {
-        padding: 22px 20px;
-    }
-
-    .designer-card-footer {
-        padding: 0 20px 20px;
-    }
-}
-
-/* Mobile */
-
-@media (max-width: 600px) {
-    .designers-page {
-        padding: 22px 18px 40px;
-    }
-
-    .designers-back-link {
-        margin-bottom: 30px;
-    }
-
-    .designers-heading {
-        margin-bottom: 28px;
-
-        h1 {
-            font-size: 36px;
-        }
-    }
-
-    .designers-grid {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 18px;
-    }
-
-    .designer-card {
-        min-height: 0;
-    }
-
-    .designer-card-top {
-        padding: 20px 22px;
-    }
-
-    .designer-card-content {
-        padding: 23px 22px;
-    }
-
-    .designer-card-name {
-        font-size: 24px;
-    }
-
-    .designer-card-footer {
-        padding: 0 22px 22px;
-    }
 }

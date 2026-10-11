@@ -7,7 +7,7 @@ function Dashboard() {
 
   const userdata = location.state?.userdata || {};
 
-  console.log("收到的数据:", location.state);
+  console.log("Received data:", location.state);
 
   return (
     <div className="dashboard-page">

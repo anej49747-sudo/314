@@ -71,6 +71,7 @@ export function apiUpdateDesignerProfile(id, data) {
     });
 }
 
+// for manager, customer, admin
 export function apiUpdateUserProfile(id, data) {
     return newRequest({
         url: `/api/user/${id}/profile`,
