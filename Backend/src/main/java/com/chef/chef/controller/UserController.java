@@ -19,16 +19,14 @@ import com.chef.chef.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
+@RequestMapping("/api")
+
 public class UserController {
 
+    // final: fix UserService
     private final UserService userService;
 
-    /**
-     * 统一生成用户公开资料
-     * 不返回 password
-     */
     private Map<String, Object> toUserData(User user) {
         Map<String, Object> data = new LinkedHashMap<>();
 
@@ -40,9 +38,6 @@ public class UserController {
         return data;
     }
 
-    /**
-     * 设计师公开资料
-     */
     private Map<String, Object> toDesignerData(User user) {
         Map<String, Object> data = toUserData(user);
 
@@ -60,10 +55,6 @@ public class UserController {
         return data;
     }
 
-    /**
-     * 注册
-     * POST /api/register
-     */
     @PostMapping("/register")
     public Map<String, Object> register(@RequestBody Map<String, String> body) {
         Map<String, Object> response = new LinkedHashMap<>();
@@ -86,10 +77,6 @@ public class UserController {
         return response;
     }
 
-    /**
-     * 登录
-     * POST /api/login
-     */
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody Map<String, String> body) {
         Map<String, Object> response = new LinkedHashMap<>();
@@ -112,12 +99,9 @@ public class UserController {
         return response;
     }
 
-    /**
-     * 获取个人资料
-     * GET /api/getuser?userId=用户ID
-     */
     @GetMapping("/getuser")
     public Map<String, Object> getUser(
+        // 从/getuser取值
             @RequestParam("userId") String userId
     ) {
         Map<String, Object> response = new LinkedHashMap<>();
@@ -136,10 +120,6 @@ public class UserController {
         return response;
     }
 
-    /**
-     * 获取设计师列表
-     * GET /api/designer
-     */
     @GetMapping("/designer")
     public Map<String, Object> getDesigners() {
         List<Map<String, Object>> designers = userService.findDesigners()
@@ -154,12 +134,9 @@ public class UserController {
         return response;
     }
 
-    /**
-     * 获取单个设计师公开资料
-     * GET /api/designer/{id}
-     */
     @GetMapping("/designer/{id}")
     public Map<String, Object> getDesignerById(
+        // 从/designer/{id}取值
             @PathVariable("id") String id
     ) {
         Map<String, Object> response = new LinkedHashMap<>();
@@ -178,10 +155,6 @@ public class UserController {
         return response;
     }
 
-    /**
-     * 更新设计师个人资料11111aaa
-     * PUT /api/designer/{id}/profile
-     */
     @PutMapping("/designer/{id}/profile")
     public Map<String, Object> updateDesignerProfile(
             @PathVariable("id") String id,
@@ -220,6 +193,39 @@ public class UserController {
         return response;
     }
 
+@PutMapping("/user/{id}/profile")
+public Map<String, Object> updateUserProfile(
+        @PathVariable("id") String id,
+        @RequestBody Map<String, Object> body
+) {
+    Map<String, Object> response = new LinkedHashMap<>();
+
+    try {
+        String name = getString(body, "name");
+        String gender = getString(body, "gender");
+        String email = getString(body, "email");
+        String bio = getString(body, "bio");
+
+        User user = userService.updateUserProfile(
+                id,
+                name,
+                gender,
+                email,
+                bio
+        );
+
+        response.put("status", "success");
+        response.put("message", "Profile updated successfully");
+        response.put("userdata", toUserData(user));
+
+    } catch (IllegalArgumentException e) {
+        response.put("status", "error");
+        response.put("message", e.getMessage());
+    }
+
+    return response;
+}
+
     private String getString(Map<String, Object> body, String key) {
         Object value = body.get(key);
         return value == null ? "" : value.toString().trim();
@@ -235,9 +241,13 @@ public class UserController {
             return List.of();
         }
 
+        // stream流, 依次处理以下步骤
         return list.stream()
+                // 筛选所有String
                 .filter(item -> item instanceof String)
+                // map转换认定String元素 trim去掉前后空格
                 .map(item -> ((String) item).trim())
+                // 只保留符合条件的元素
                 .filter(item -> !item.isEmpty())
                 .toList();
     }

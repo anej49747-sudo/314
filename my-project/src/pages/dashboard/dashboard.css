@@ -1,3 +1,10 @@
+.dashboard-page,
+.dashboard-page *,
+.dashboard-page *::before,
+.dashboard-page *::after {
+  box-sizing: border-box;
+}
+
 .dashboard-page {
   min-height: 100vh;
   width: 100%;
@@ -5,7 +12,6 @@
   font-family: Arial, Helvetica, sans-serif;
   position: relative;
   overflow: hidden;
-  box-sizing: border-box;
 }
 
 .dashboard-background {
@@ -15,9 +21,13 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 1;
   z-index: 0;
   pointer-events: none;
+}
+
+.dashboard-back-btn,
+.dashboard-manager-btn {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .dashboard-back-btn {
@@ -35,7 +45,6 @@
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
   z-index: 10;
 }
 
@@ -45,14 +54,14 @@
   color: #536b5c;
 }
 
+.dashboard-back-btn:hover .dashboard-back-icon {
+  transform: translateX(-3px);
+}
+
 .dashboard-back-icon {
   font-size: 17px;
   line-height: 1;
   transition: transform 0.2s ease;
-}
-
-.dashboard-back-btn:hover .dashboard-back-icon {
-  transform: translateX(-3px);
 }
 
 .dashboard-container {
@@ -63,7 +72,6 @@
   min-height: 100vh;
   margin: 0 auto;
   padding: 55px 65px;
-  box-sizing: border-box;
   display: grid;
   grid-template-columns: 0.75fr 1.65fr;
   align-items: center;
@@ -110,7 +118,6 @@
   background-color: rgba(255, 255, 255, 0.95);
   border: 1px solid #dce5dd;
   border-radius: 20px;
-  box-sizing: border-box;
   box-shadow: 0 7px 22px rgba(71, 91, 78, 0.08);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
@@ -174,8 +181,6 @@
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
 }
 
 .dashboard-manager-btn:hover {
@@ -184,15 +189,15 @@
   color: #536b5c;
 }
 
+.dashboard-manager-btn:hover .dashboard-button-arrow {
+  transform: translateX(4px);
+}
+
 .dashboard-button-arrow {
   font-size: 20px;
   line-height: 1;
   color: #63766a;
   transition: transform 0.2s ease;
-}
-
-.dashboard-manager-btn:hover .dashboard-button-arrow {
-  transform: translateX(4px);
 }
 
 @media (max-width: 1000px) {

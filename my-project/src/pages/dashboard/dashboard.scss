@@ -1,13 +1,37 @@
-.dashboard-page {
-  min-height: 100vh;
-  width: 100%;
-  background-color: #fafbf8;
-  font-family: Arial, Helvetica, sans-serif;
-  position: relative;
-  overflow: hidden;
+$dashboard-bg: #fafbf8;
+$primary-color: #53685b;
+$title-color: #35483d;
+$content-color: #3d5145;
+$muted-color: #63766a;
+$border-color: #dce5dd;
+$light-border-color: #dfe8e2;
+$accent-color: #91aa96;
+$icon-bg: #eef3eb;
+$button-bg: #f6f8f5;
+$hover-bg: #f1f6f3;
+
+$transition-fast: 0.2s ease;
+$transition-card: 0.25s ease;
+
+// Apply consistent box sizing throughout the dashboard.
+.dashboard-page,
+.dashboard-page *,
+.dashboard-page *::before,
+.dashboard-page *::after {
   box-sizing: border-box;
 }
 
+// Main page
+.dashboard-page {
+  min-height: 100vh;
+  width: 100%;
+  background-color: $dashboard-bg;
+  font-family: Arial, Helvetica, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+// Background image
 .dashboard-background {
   position: fixed;
   inset: 0;
@@ -15,11 +39,20 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 1;
   z-index: 0;
   pointer-events: none;
 }
 
+// Shared hover styles
+.dashboard-back-btn,
+.dashboard-manager-btn {
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast;
+}
+
+// Back button
 .dashboard-back-btn {
   position: fixed;
   top: 25px;
@@ -28,33 +61,33 @@
   align-items: center;
   gap: 9px;
   padding: 10px 15px;
-  border: 1px solid #dfe8e2;
+  border: 1px solid $light-border-color;
   background-color: rgba(255, 255, 255, 0.9);
-  color: #53685b;
+  color: $primary-color;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
   z-index: 10;
 
   &:hover {
-    background-color: #f1f6f3;
+    background-color: $hover-bg;
     border-color: #cddcd2;
     color: #536b5c;
+  }
+
+  &:hover .dashboard-back-icon {
+    transform: translateX(-3px);
   }
 }
 
 .dashboard-back-icon {
   font-size: 17px;
   line-height: 1;
-  transition: transform 0.2s ease;
+  transition: transform $transition-fast;
 }
 
-.dashboard-back-btn:hover .dashboard-back-icon {
-  transform: translateX(-3px);
-}
-
+// Main content layout
 .dashboard-container {
   position: relative;
   z-index: 5;
@@ -63,37 +96,38 @@
   min-height: 100vh;
   margin: 0 auto;
   padding: 55px 65px;
-  box-sizing: border-box;
   display: grid;
   grid-template-columns: 0.75fr 1.65fr;
   align-items: center;
   gap: 70px;
 }
 
+// Title section
 .dashboard-title-section {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding-left: 10px;
-}
 
-.dashboard-title-section h1 {
-  margin: 0;
-  color: #35483d;
-  font-size: 52px;
-  line-height: 1.08;
-  font-weight: 700;
-  letter-spacing: -1.5px;
+  h1 {
+    margin: 0;
+    color: $title-color;
+    font-size: 52px;
+    line-height: 1.08;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+  }
 }
 
 .dashboard-title-line {
   width: 50px;
   height: 5px;
   margin-top: 25px;
-  background-color: #91aa96;
+  background-color: $accent-color;
   border-radius: 5px;
 }
 
+// Cards list
 .dashboard-cards {
   width: 100%;
   display: flex;
@@ -101,6 +135,7 @@
   gap: 22px;
 }
 
+// Individual card
 .dashboard-card {
   width: 100%;
   min-height: 165px;
@@ -108,22 +143,22 @@
   align-items: center;
   padding: 30px 34px;
   background-color: rgba(255, 255, 255, 0.95);
-  border: 1px solid #dce5dd;
+  border: 1px solid $border-color;
   border-radius: 20px;
-  box-sizing: border-box;
   box-shadow: 0 7px 22px rgba(71, 91, 78, 0.08);
   transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    border-color 0.25s ease;
+    transform $transition-card,
+    box-shadow $transition-card,
+    border-color $transition-card;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: #b9cbbd;
+    box-shadow: 0 13px 28px rgba(71, 91, 78, 0.13);
+  }
 }
 
-.dashboard-card:hover {
-  transform: translateY(-4px);
-  border-color: #b9cbbd;
-  box-shadow: 0 13px 28px rgba(71, 91, 78, 0.13);
-}
-
+// Card icon
 .dashboard-card-icon {
   width: 70px;
   height: 70px;
@@ -131,37 +166,40 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #eef3eb;
+  background-color: $icon-bg;
   border-radius: 50%;
-  color: #53685b;
+  color: $primary-color;
+
+  span {
+    font-size: 31px;
+    line-height: 1;
+  }
 }
 
-.dashboard-card-icon span {
-  font-size: 31px;
-  line-height: 1;
-}
-
+// Divider between icon and content
 .dashboard-card-divider {
   width: 1px;
   height: 85px;
   margin: 0 28px;
-  background-color: #dce5dd;
+  background-color: $border-color;
   flex-shrink: 0;
 }
 
+// Card content
 .dashboard-card-content {
   flex: 1;
   min-width: 0;
+
+  h2 {
+    margin: 0 0 16px;
+    color: $content-color;
+    font-size: 23px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
 }
 
-.dashboard-card-content h2 {
-  margin: 0 0 16px;
-  color: #3d5145;
-  font-size: 23px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
+// Manager action button
 .dashboard-manager-btn {
   width: 100%;
   height: 46px;
@@ -169,35 +207,34 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  border: 1px solid #dce5dd;
-  background-color: #f6f8f5;
-  color: #63766a;
+  border: 1px solid $border-color;
+  background-color: $button-bg;
+  color: $muted-color;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
 
   &:hover {
     background-color: #f1f5ef;
     border-color: #c9d6cb;
     color: #536b5c;
   }
+
+  &:hover .dashboard-button-arrow {
+    transform: translateX(4px);
+  }
 }
 
 .dashboard-button-arrow {
   font-size: 20px;
   line-height: 1;
-  color: #63766a;
-  transition: transform 0.2s ease;
+  color: $muted-color;
+  transition: transform $transition-fast;
 }
 
-.dashboard-manager-btn:hover .dashboard-button-arrow {
-  transform: translateX(4px);
-}
-
+// Tablet layout
 @media (max-width: 1000px) {
   .dashboard-container {
     grid-template-columns: 1fr;
@@ -210,10 +247,10 @@
     align-items: center;
     text-align: center;
     padding-left: 0;
-  }
 
-  .dashboard-title-section h1 {
-    font-size: 46px;
+    h1 {
+      font-size: 46px;
+    }
   }
 
   .dashboard-title-line {
@@ -221,6 +258,7 @@
   }
 }
 
+// Mobile layout
 @media (max-width: 600px) {
   .dashboard-back-btn {
     top: 18px;
@@ -244,10 +282,10 @@
   .dashboard-card-icon {
     width: 54px;
     height: 54px;
-  }
 
-  .dashboard-card-icon span {
-    font-size: 25px;
+    span {
+      font-size: 25px;
+    }
   }
 
   .dashboard-card-divider {

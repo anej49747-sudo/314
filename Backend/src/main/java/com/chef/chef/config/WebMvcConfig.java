@@ -14,7 +14,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 获取项目运行根目录下的 uploads 绝对路径
         String uploadPath = new File("uploads").getAbsolutePath() + File.separator;
 
-        // 映射：当访问 http://ip:8080/uploads/** 时，去本地磁盘的 uploads 文件夹去找文件
+        // 映射：当访问 http://ip:8080/uploads/ 时，去本地磁盘的 uploads 文件夹去找文件
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:" + uploadPath);
     }

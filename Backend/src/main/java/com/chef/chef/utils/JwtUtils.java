@@ -9,7 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 public class JwtUtils {
-    // 💡 注意：新版 JWT 要求密钥长度至少为 256 位（32个字节）。我们把密钥加长一点以确保安全：
+    // 新版JWT要求密钥长度要更长，把密钥加长一点以确保安全
     private static final String SECRET_STRING = "UserTokenSecretKeyMustBeAtLeast32BytesLong!";
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(StandardCharsets.UTF_8));
     private static final long EXPIRATION_TIME = 86400000; // 24小时

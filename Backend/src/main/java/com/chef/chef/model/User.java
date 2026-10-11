@@ -29,6 +29,6 @@ public class User {
     private String company;
     private String bio;
 
-    // Multiple design styles, e.g. Modern, Minimalist
+    // Multiple design styles
     private List<String> designStyles;
 }

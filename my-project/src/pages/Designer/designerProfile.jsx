@@ -113,7 +113,6 @@ function DesignerProfile() {
         },
         { label: "Gender", value: designer.gender, icon: "♀" },
         { label: "Email", value: designer.email, icon: "✉" },
-        { label: "Company", value: designer.company, icon: "⌂" },
     ];
 
     const introduction =

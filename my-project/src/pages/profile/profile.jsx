@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  apiGetuser,
   apiGetDesignerById,
-  apiUpdateDesignerProfile,
+  apiGetuser,
+  apiUpdateDesignerProfile
 } from "../../api";
 
 import "./profile.css";
@@ -30,7 +30,6 @@ function Profile() {
     name: userdata.name || userdata.fullName || "",
     gender: userdata.gender || "",
     email: userdata.email || "",
-    company: userdata.company || "",
     bio: userdata.bio || "",
     designStyles: Array.isArray(userdata.designStyles)
       ? userdata.designStyles.join(", ")
@@ -47,7 +46,6 @@ function Profile() {
       name: user.name || "",
       gender: user.gender || "",
       email: user.email || "",
-      company: user.company || "",
       bio: user.bio || "",
       designStyles: Array.isArray(user.designStyles)
         ? user.designStyles.join(", ")
@@ -107,7 +105,7 @@ function Profile() {
 
         setErrorMessage(
           error?.response?.data?.message ||
-          "Failed to load profile. Please try again."
+          "Whoops! Something wrong!"
         );
       } finally {
         setLoading(false);
@@ -116,7 +114,6 @@ function Profile() {
 
     getUser();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const handleChange = (e) => {
@@ -165,7 +162,6 @@ function Profile() {
         name: formData.name.trim(),
         gender: formData.gender.trim(),
         email: formData.email.trim(),
-        company: formData.company.trim(),
         bio: formData.bio.trim(),
         designStyles: formData.designStyles
           .split(",")
@@ -220,6 +216,7 @@ function Profile() {
 
   const role =
     currentUser.role || userdata.role || savedUser.role || "";
+  const isDesigner = String(role).toLowerCase() === "designer";
 
   return (
     <div className="profile-page">
@@ -320,19 +317,6 @@ function Profile() {
             </div>
 
             <div className="profile-field">
-              <label htmlFor="profile-company">Company:</label>
-              <input
-                id="profile-company"
-                type="text"
-                name="company"
-                placeholder="Enter company name or information"
-                value={formData.company}
-                onChange={handleChange}
-                disabled={!showedit || saving}
-              />
-            </div>
-
-            <div className="profile-field">
               <label htmlFor="profile-bio">Introduction:</label>
               <textarea
                 id="profile-bio"
@@ -345,22 +329,22 @@ function Profile() {
               />
             </div>
 
-            <div className="profile-field">
-              <label htmlFor="profile-styles">
-                Design Styles:
-              </label>
-              <input
-                id="profile-styles"
-                type="text"
-                name="designStyles"
-                placeholder="e.g. Modern, Minimalist, Scandinavian"
-                value={formData.designStyles}
-                onChange={handleChange}
-                disabled={!showedit || saving}
-              />
-
-
-            </div>
+            {isDesigner && (
+              <div className="profile-field">
+                <label htmlFor="profile-styles">
+                  Design Styles:
+                </label>
+                <input
+                  id="profile-styles"
+                  type="text"
+                  name="designStyles"
+                  placeholder="e.g. Modern, Minimalist, Scandinavian"
+                  value={formData.designStyles}
+                  onChange={handleChange}
+                  disabled={!showedit || saving}
+                />
+              </div>
+            )}
 
             <div className="but">
               {showedit ? (

@@ -18,7 +18,7 @@ export function apiRegistration(data) {
     });
 }
 
-// Get user information
+// Get users' information
 export function apiGetuser(userid) {
     return newRequest({
         url: "/api/getuser",
@@ -29,7 +29,7 @@ export function apiGetuser(userid) {
     });
 }
 
-// Get all designers
+// Get designers
 export function apiGetDesigner() {
     return newRequest({
         url: "/api/designer",
@@ -37,7 +37,7 @@ export function apiGetDesigner() {
     });
 }
 
-// Get one designer's profile by ID
+// Get designers' profile
 export function apiGetDesignerById(id) {
     return newRequest({
         url: `/api/designer/${id}`,
@@ -45,7 +45,7 @@ export function apiGetDesignerById(id) {
     });
 }
 
-// Get all Interior Design Projects (IDP)
+// Get IDP list
 export function apiGetProjects(params) {
     return newRequest({
         url: "/api/idp",
@@ -54,7 +54,7 @@ export function apiGetProjects(params) {
     });
 }
 
-// Get one Interior Design Project by ID
+// Get per IDP
 export function apiGetProjectById(id) {
     return newRequest({
         url: `/api/idp/${id}`,
@@ -62,12 +62,18 @@ export function apiGetProjectById(id) {
     });
 }
 
-
-// 更新设计师个人资料
-// Update designer profile
+// Update designers' profile
 export function apiUpdateDesignerProfile(id, data) {
     return newRequest({
         url: `/api/designer/${encodeURIComponent(id)}/profile`,
+        method: "put",
+        data,
+    });
+}
+
+export function apiUpdateUserProfile(id, data) {
+    return newRequest({
+        url: `/api/user/${id}/profile`,
         method: "put",
         data,
     });

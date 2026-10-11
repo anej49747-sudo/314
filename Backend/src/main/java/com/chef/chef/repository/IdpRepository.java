@@ -8,6 +8,5 @@ import com.chef.chef.model.posts;
 
 public interface IdpRepository extends MongoRepository<posts, String> {
 
-    // Find projects with the selected style
     List<posts> findByStyle(String style);
 }

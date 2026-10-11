@@ -19,8 +19,6 @@ public class IdpController {
 
     private final IdpService idpService;
 
-    // GET /api/idp
-    // GET /api/idp?style=Modern
     @GetMapping
     public List<posts> getProjects(
             @RequestParam(value = "style", required = false)
@@ -29,7 +27,6 @@ public class IdpController {
         return idpService.getProjects(style);
     }
 
-    // GET /api/idp/styles
     @GetMapping("/styles")
     public List<String> getStyles() {
         return idpService.getStyles();

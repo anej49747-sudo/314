@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../dashboard/dashboard.scss";
 
 function Dashboard() {
@@ -41,7 +41,6 @@ function Dashboard() {
           <div className="dashboard-title-line"></div>
         </div>
 
-
         {userdata.role == "designer" ? (
 
           <div className="dashboard-cards">
@@ -73,7 +72,6 @@ function Dashboard() {
               </div>
             </div>
 
-
             <div className="dashboard-card">
               <div className="dashboard-card-icon">
                 <span>⌂</span>
@@ -93,7 +91,6 @@ function Dashboard() {
                 </button>
               </div>
             </div>
-
 
             <div className="dashboard-card">
               <div className="dashboard-card-icon">
@@ -116,7 +113,6 @@ function Dashboard() {
             </div>
 
           </div>
-
 
         ) : userdata.role == "admin" ? (
 
@@ -149,7 +145,6 @@ function Dashboard() {
               </div>
             </div>
 
-
             <div className="dashboard-card">
               <div className="dashboard-card-icon">
                 <span>⚙</span>
@@ -172,7 +167,6 @@ function Dashboard() {
             </div>
 
           </div>
-
 
         ) : userdata.role == "customer" ? (
 
@@ -207,7 +201,6 @@ function Dashboard() {
 
           </div>
 
-
         ) : userdata.role == "manager" ? (
 
           <div className="dashboard-cards">
@@ -239,7 +232,6 @@ function Dashboard() {
               </div>
             </div>
 
-
             <div className="dashboard-card">
               <div className="dashboard-card-icon">
                 <span>❖</span>
@@ -260,7 +252,6 @@ function Dashboard() {
                 </button>
               </div>
             </div>
-
 
             <div className="dashboard-card">
               <div className="dashboard-card-icon">
