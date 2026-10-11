@@ -21,7 +21,6 @@
   }
 
   // Background image
-
   .profile-background {
     position: fixed;
     inset: 0;
@@ -36,7 +35,6 @@
   }
 
   // Navigation button
-
   .profile-navigation {
     display: flex;
     align-items: flex-start;
@@ -85,7 +83,6 @@
   }
 
   // Profile container
-
   .profile-container {
     display: flex;
     flex-direction: column;
@@ -100,7 +97,6 @@
   }
 
   // Page heading
-
   .profile-header {
     width: 100%;
     text-align: center;
@@ -125,7 +121,6 @@
   }
 
   // Main profile content
-
   .profile-content {
     display: grid;
     grid-template-columns: 290px 1px minmax(0, 1fr);
@@ -144,7 +139,6 @@
   }
 
   // Left profile panel
-
   .profile-left {
     display: flex;
     flex-direction: column;
@@ -166,7 +160,6 @@
   }
 
   // Default avatar
-
   .default-avatar {
     display: flex;
     align-items: center;
@@ -189,7 +182,6 @@
   }
 
   // Username
-
   .username {
     width: 100%;
     margin: 18px 0 0;
@@ -205,7 +197,6 @@
   }
 
   // User role
-
   .profile-left {
     .profile-role {
       display: flex;
@@ -227,14 +218,12 @@
   }
 
   // Divider between panels
-
   .profile-divider {
     width: 1px;
     background-color: #d9e0d9;
   }
 
   // Right form panel
-
   .right {
     display: flex;
     flex-direction: column;
@@ -249,7 +238,6 @@
   }
 
   // Form fields
-
   .profile-field {
     display: grid;
     grid-template-columns: 135px minmax(0, 1fr);
@@ -305,7 +293,6 @@
     }
 
     // Disabled fields
-
     >input:disabled,
     >select:disabled,
     >textarea:disabled {
@@ -316,7 +303,6 @@
     }
 
     // Editable fields
-
     >input:not(:disabled),
     >select:not(:disabled),
     >textarea:not(:disabled) {
@@ -325,14 +311,12 @@
     }
 
     // Input placeholders
-
     >input::placeholder,
     >textarea::placeholder {
       color: #a1aaa3;
     }
 
     // Focus effect
-
     >input:focus,
     >select:focus,
     >textarea:focus {
@@ -341,7 +325,6 @@
     }
 
     // Field helper text
-
     >small {
       grid-column: 2;
       margin-top: 4px;
@@ -352,7 +335,6 @@
   }
 
   // Status and error messages
-
   .profile-status,
   .profile-error {
     margin: 0;
@@ -370,7 +352,6 @@
   }
 
   // Action buttons
-
   .but {
     display: flex;
     justify-content: center;
