@@ -134,6 +134,30 @@ public class UserController {
         return response;
     }
 
+    @PostMapping("/admin/create-designer")
+public Map<String, Object> createDesigner(
+        @RequestBody Map<String, String> body
+) {
+    Map<String, Object> response = new LinkedHashMap<>();
+
+    try {
+        User user = userService.createDesigner(
+                body.get("username"),
+                body.get("password"),
+                body.get("name")
+        );
+
+        response.put("status", "success");
+        response.put("message", "Designer created successfully");
+        response.put("designer", toDesignerData(user));
+
+    } catch (IllegalArgumentException e) {
+        response.put("status", "error");
+        response.put("message", e.getMessage());
+    }
+
+    return response;
+}
     @GetMapping("/designer/{id}")
     public Map<String, Object> getDesignerById(
         // 从/designer/{id}取值

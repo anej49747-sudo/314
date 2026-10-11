@@ -80,6 +80,35 @@ public class UserService {
         return userRepository.findByRole("designer");
     }
 
+
+public User createDesigner(String username, String password, String name) {
+    if (username == null || username.isBlank()
+            || password == null || password.isBlank()
+            || name == null || name.isBlank()) {
+        throw new IllegalArgumentException(
+                "Username, password and full name are required"
+        );
+    }
+
+    username = username.trim();
+    name = name.trim();
+
+    if (userRepository.existsByUsername(username)) {
+        throw new IllegalArgumentException(
+                "Username already exists"
+        );
+    }
+
+    User user = new User();
+    user.setUsername(username);
+    user.setPassword(password);
+    user.setName(name);
+
+    user.setRole("designer");
+
+    return userRepository.save(user);
+}
+
     public User getDesignerById(String id) {
         User user = getUser(id);
 

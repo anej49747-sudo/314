@@ -22,6 +22,11 @@ const IDPDetail = lazy(
   () => import("../pages/IDP/idpDetail")
 );
 
+// Create Designer page
+const CreateDesigner = lazy(
+  () => import("../pages/CreateDesigner/createdesigner")
+);
+
 const Router = [
   {
     path: "/",
@@ -58,6 +63,11 @@ const Router = [
   {
     path: "/idp/:id",
     element: <IDPDetail />,
+  },
+
+  {
+    path: "/admin/create-designer",
+    element: <CreateDesigner />,
   },
 ];
 

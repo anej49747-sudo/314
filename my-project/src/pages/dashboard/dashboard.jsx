@@ -100,13 +100,13 @@ function Dashboard() {
               <div className="dashboard-card-divider"></div>
 
               <div className="dashboard-card-content">
-                <h2>My Portfolio & Interest Tracking</h2>
+                <h2>My Portfolio &amp; Interest Tracking</h2>
 
                 <button
                   type="button"
                   className="dashboard-manager-btn"
                 >
-                  <span>Manage Portfolio & View Interest</span>
+                  <span>Manage Portfolio &amp; View Interest</span>
                   <span className="dashboard-button-arrow">→</span>
                 </button>
               </div>
@@ -163,6 +163,33 @@ function Dashboard() {
                   <span>Manage Users</span>
                   <span className="dashboard-button-arrow">→</span>
                 </button>
+              </div>
+            </div>
+
+            <div className="dashboard-card">
+              <div className="dashboard-card-icon">
+                <span>♙</span>
+              </div>
+
+              <div className="dashboard-card-divider"></div>
+
+              <div className="dashboard-card-content">
+                <h2>Create Designer Account</h2>
+
+
+                <button
+                  type="button"
+                  className="dashboard-manager-btn"
+                  onClick={() =>
+                    navigate("/admin/create-designer", {
+                      state: { userdata },
+                    })
+                  }
+                >
+                  <span>Create Designer Account</span>
+                  <span className="dashboard-button-arrow">→</span>
+                </button>
+
               </div>
             </div>
 
