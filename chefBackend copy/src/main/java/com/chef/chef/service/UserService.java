@@ -29,6 +29,13 @@ public class UserService {
 
         User user = userOpt.get();
 
+// Reject deactivated accounts. Existing accounts without an active field remain enabled.
+if (Boolean.FALSE.equals(user.getActive())) {
+    throw new IllegalArgumentException(
+            "Your account has been deactivated"
+    );
+}
+
         if (user.getPassword() == null
                 || !user.getPassword().equals(password)) {
             throw new IllegalArgumentException(
@@ -57,6 +64,7 @@ public class UserService {
         user.setUsername(username);
         user.setPassword(password);
         user.setRole("customer");
+        user.setActive(true);
 
         return userRepository.save(user);
     }
