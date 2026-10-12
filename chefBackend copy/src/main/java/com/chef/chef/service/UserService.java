@@ -29,8 +29,9 @@ public class UserService {
 
         User user = userOpt.get();
 
-// Reject deactivated accounts. Existing accounts without an active field remain enabled.
-if (Boolean.FALSE.equals(user.getActive())) {
+// Reject customer accounts.
+if ("customer".equalsIgnoreCase(user.getRole())
+        && Boolean.FALSE.equals(user.getActive())) {
     throw new IllegalArgumentException(
             "Your account has been deactivated"
     );
@@ -194,32 +195,50 @@ if (Boolean.FALSE.equals(user.getActive())) {
         return userRepository.save(user);
     }
 
-    // Delete the customer's own account
-    public void deleteCustAccount(String userId) {
-        if (userId == null || userId.isBlank()) {
-            throw new IllegalArgumentException(
-                    "User ID is required"
-            );
-        }
+ // View all customer accounts
+public List<User> findCustomers() {
+    return userRepository.findByRole("customer");
+}
 
-        User user = getUser(userId);
-
-        String role = user.getRole() == null
-                ? ""
-                : user.getRole().trim().toLowerCase();
-
-        if ("admin".equals(role) || "manager".equals(role)) {
-            throw new IllegalArgumentException(
-                    "Admin and Manager cannot delete their own accounts"
-            );
-        }
-
-        if (!"customer".equals(role) && !"designer".equals(role)) {
-            throw new IllegalArgumentException(
-                    "This role is not allowed to delete its account"
-            );
-        }
-
-        userRepository.deleteById(user.getId());
+// Search customer accounts by username
+public List<User> searchCustomers(String username) {
+    if (username == null || username.isBlank()) {
+        return findCustomers();
     }
+
+    return userRepository.findByRoleAndUsernameContainingIgnoreCase(
+            "customer",
+            username.trim()
+    );
+}
+
+// Deactivate a customer account
+public User deactivateCustomer(String id) {
+    User user = getUser(id);
+
+    if (user.getRole() == null
+            || !user.getRole().equalsIgnoreCase("customer")) {
+        throw new IllegalArgumentException(
+                "Customer account not found"
+        );
+    }
+
+    user.setActive(false);
+    return userRepository.save(user);
+}
+
+// Reactivate a customer account
+public User reactivateCustomer(String id) {
+    User user = getUser(id);
+
+    if (user.getRole() == null
+            || !user.getRole().equalsIgnoreCase("customer")) {
+        throw new IllegalArgumentException(
+                "Customer account not found"
+        );
+    }
+
+    user.setActive(true);
+    return userRepository.save(user);
+}
 }
