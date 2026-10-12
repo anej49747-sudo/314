@@ -153,16 +153,22 @@ function Dashboard() {
               <div className="dashboard-card-divider"></div>
 
               <div className="dashboard-card-content">
+
                 <h2>User Management</h2>
 
                 <button
                   type="button"
                   className="dashboard-manager-btn"
-                  onClick={() => navigate("/admin")}
+                  onClick={() =>
+                    navigate("/customermanagement", {
+                      state: { userdata },
+                    })
+                  }
                 >
                   <span>Manage Users</span>
                   <span className="dashboard-button-arrow">→</span>
                 </button>
+
               </div>
             </div>
 

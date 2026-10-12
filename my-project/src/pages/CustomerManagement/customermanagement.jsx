@@ -1,195 +1,201 @@
-
 import { useEffect, useState } from "react";
 import newRequest from "../../utils/request";
 import "./customermanagement.scss";
 
-const CustomerManagement = () => {
+function CustomerManagement() {
     const [customers, setCustomers] = useState([]);
-    const [searchUsername, setSearchUsername] = useState("");
+    const [username, setUsername] = useState("");
     const [loading, setLoading] = useState(false);
-    const [actionId, setActionId] = useState(null);
+    const [actionLoading, setActionLoading] = useState("");
     const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
+    const [success, setSuccess] = useState("");
 
-    // Load all customers
-    const fetchCustomers = async (username = "") => {
+    // Load all customers when the page opens
+    useEffect(() => {
+        fetchCustomers();
+    }, []);
+
+    // Get all customers or search by username
+    const fetchCustomers = async (searchUsername = "") => {
         setLoading(true);
         setError("");
-        setMessage("");
+        setSuccess("");
 
         try {
             let response;
 
-            if (username.trim()) {
-                response = await newRequest.get(
-                    "/api/admin/customers/search",
-                    {
-                        params: { username: username.trim() },
-                    }
-                );
+            if (searchUsername.trim()) {
+                response = await newRequest({
+                    url: "/api/admin/customers/search",
+                    method: "get",
+                    params: {
+                        username: searchUsername.trim(),
+                    },
+                });
             } else {
-                response = await newRequest.get("/api/admin/customers");
+                response = await newRequest({
+                    url: "/api/admin/customers",
+                    method: "get",
+                });
             }
 
-            const data = response.data;
-
-            if (data.status !== "success") {
-                throw new Error(data.message || "Failed to load customers.");
+            // request.jsx returns response data directly
+            if (!response || response.status !== "success") {
+                throw new Error(
+                    response?.message || "Failed to load customer accounts."
+                );
             }
 
-            setCustomers(data.customers || []);
+            setCustomers(
+                Array.isArray(response.customers) ? response.customers : []
+            );
         } catch (err) {
+            console.error("Failed to load customers:", err);
+
+            setCustomers([]);
             setError(
                 err.response?.data?.message ||
                 err.message ||
-                "Unable to load customers. Please try again."
+                "Unable to load customer accounts. Please try again."
             );
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchCustomers();
-    }, []);
-
-    // Search by username
+    // Search customers by username
     const handleSearch = (event) => {
         event.preventDefault();
-        fetchCustomers(searchUsername);
+        fetchCustomers(username);
     };
 
-    // Reset search
-    const handleReset = () => {
-        setSearchUsername("");
-        fetchCustomers("");
-    };
-
-    // Deactivate or reactivate customer
+    // Deactivate or reactivate a customer account
     const handleStatusChange = async (customer) => {
         const isActive = customer.active !== false;
-
         const action = isActive ? "deactivate" : "reactivate";
-        const actionLabel = isActive ? "deactivate" : "reactivate";
 
         const confirmed = window.confirm(
-            `Are you sure you want to ${actionLabel} the account "${customer.username}"?`
+            isActive
+                ? `Are you sure you want to deactivate "${customer.username}" ? `
+                : `Are you sure you want to reactivate "${customer.username}" ? `
         );
 
-        if (!confirmed) return;
+        if (!confirmed) {
+            return;
+        }
 
-        setActionId(customer.id);
+        const customerId = customer.id || customer._id;
+
+        if (!customerId) {
+            setError("Customer ID is missing. Unable to update this account.");
+            return;
+        }
+
+        setActionLoading(customerId);
         setError("");
-        setMessage("");
+        setSuccess("");
 
         try {
-            const response = await newRequest.put(
-                `/api/admin/customers/${customer.id}/${action}`
-            );
+            const response = await newRequest({
+                url: `/api/admin/customers/ ${customerId}/${action}`,
+                method: "put",
+            });
 
-            const data = response.data;
-
-            if (data.status !== "success") {
-                throw new Error(data.message || "Unable to update account status.");
+            // request.jsx returns response.data directly
+            if (!response || response.status !== "success") {
+                throw new Error(
+                    response?.message || "Unable to update customer account status."
+                );
             }
 
-            setMessage(
-                data.message ||
-                `Customer account ${action === "deactivate" ? "deactivated" : "reactivated"} successfully.`
+            setSuccess(
+                response.message ||
+                (action === "deactivate"
+                    ? "Customer account deactivated successfully."
+                    : "Customer account reactivated successfully.")
             );
 
-            // Reload the list to show the latest status
-            await fetchCustomers(searchUsername);
+            // Refresh the current search results
+            await fetchCustomers(username);
         } catch (err) {
+            console.error("Failed to update customer status:", err);
+
             setError(
                 err.response?.data?.message ||
                 err.message ||
-                "Unable to update account status."
+                "Unable to update customer account status. Please try again."
             );
         } finally {
-            setActionId(null);
+            setActionLoading("");
         }
+    };
+
+    // Display account status
+    const getAccountStatus = (customer) => {
+        return customer.active === false ? "Inactive" : "Active";
     };
 
     return (
         <div className="customer-management">
-            <div className="customer-page-header">
+            <div className="customer-management-header">
                 <div>
-                    <p className="customer-eyebrow">USER ADMINISTRATION</p>
+                    <p className="customer-management-label">USER ADMINISTRATION</p>
                     <h1>Customer Management</h1>
-                    <p className="customer-subtitle">
-                        View, search and manage registered customer accounts.
-                    </p>
                 </div>
 
-                <button
-                    type="button"
-                    className="customer-refresh-button"
-                    onClick={() => fetchCustomers(searchUsername)}
-                    disabled={loading}
-                >
-                    ↻ Refresh
-                </button>
             </div>
 
-            <section className="customer-summary">
-                <div className="customer-summary-icon">👥</div>
-                <div>
-                    <p className="customer-summary-label">Customers Found</p>
-                    <h2>{customers.length}</h2>
-                </div>
-            </section>
+            <section className="customer-search-card">
+                <form className="customer-search-form" onSubmit={handleSearch}>
+                    <div className="customer-search-input-group">
+                        <label htmlFor="customer-username">Search by Username</label>
 
-            <section className="customer-list-card">
-                <div className="customer-list-heading">
-                    <div>
-                        <h2>Customer List</h2>
-                        <p>Search accounts and manage their access.</p>
-                    </div>
-                </div>
-
-                <form className="customer-search" onSubmit={handleSearch}>
-                    <div className="customer-search-input-wrapper">
-                        <span className="customer-search-icon">⌕</span>
                         <input
+                            id="customer-username"
                             type="text"
-                            placeholder="Search by username..."
-                            value={searchUsername}
-                            onChange={(event) =>
-                                setSearchUsername(event.target.value)
-                            }
-                            aria-label="Search customer by username"
+                            value={username}
+                            onChange={(event) => setUsername(event.target.value)}
+                            placeholder="Enter customer username"
                         />
                     </div>
 
-                    <button type="submit" disabled={loading}>
-                        Search
-                    </button>
+                    <div className="customer-search-actions">
+                        <button
+                            type="submit"
+                            className="customer-search-btn"
+                            disabled={loading}
+                        >
+                            Search
+                        </button>
 
-                    <button
-                        type="button"
-                        className="customer-reset-button"
-                        onClick={handleReset}
-                        disabled={loading}
-                    >
-                        Reset
-                    </button>
+                    </div>
                 </form>
+            </section>
 
-                {error && (
-                    <div className="customer-alert customer-alert-error" role="alert">
-                        {error}
-                    </div>
-                )}
+            {success && (
+                <div className="customer-success-message" role="status">
+                    {success}
+                </div>
+            )}
 
-                {message && (
-                    <div
-                        className="customer-alert customer-alert-success"
-                        role="status"
-                    >
-                        {message}
+            {error && (
+                <div className="customer-error-message" role="alert">
+                    {error}
+                </div>
+            )}
+
+            <section className="customer-list-card">
+                <div className="customer-list-header">
+                    <div>
+                        <h2>Customer List</h2>
+                        <p>
+                            {loading
+                                ? "Loading customer accounts..."
+                                : `${customers.length} customer${customers.length === 1 ? "" : "s"
+                                } found`}
+                        </p>
                     </div>
-                )}
+                </div>
 
                 <div className="customer-table-wrapper">
                     <table className="customer-table">
@@ -207,29 +213,34 @@ const CustomerManagement = () => {
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan="6" className="customer-table-empty">
-                                        Loading customers...
+                                    <td colSpan="6" className="customer-empty-message">
+                                        Loading customer accounts...
                                     </td>
                                 </tr>
                             ) : customers.length === 0 ? (
                                 <tr>
-                                    <td colSpan="6" className="customer-table-empty">
+                                    <td colSpan="6" className="customer-empty-message">
                                         No customer accounts found.
                                     </td>
                                 </tr>
                             ) : (
                                 customers.map((customer, index) => {
                                     const isActive = customer.active !== false;
+                                    const customerId = customer.id || customer._id;
+                                    const isUpdating = actionLoading === customerId;
 
                                     return (
-                                        <tr key={customer.id || customer.username}>
+                                        <tr key={customerId || customer.username || index}>
                                             <td>{index + 1}</td>
 
-                                            <td className="customer-username">
-                                                {customer.username || "-"}
-                                            </td>
+                                            <td>{customer.username || "-"}</td>
 
-                                            <td>{customer.name || "-"}</td>
+                                            <td>
+                                                {customer.name ||
+                                                    customer.fullName ||
+                                                    customer.fullname ||
+                                                    "-"}
+                                            </td>
 
                                             <td>
                                                 <span className="customer-role">
@@ -239,27 +250,26 @@ const CustomerManagement = () => {
 
                                             <td>
                                                 <span
-                                                    className={`customer-status ${isActive ? "status-active" : "status-inactive"
+                                                    className={`customer-status ${isActive
+                                                        ? "customer-status-active"
+                                                        : "customer-status-inactive"
                                                         }`}
                                                 >
-                                                    <span className="status-dot" />
-                                                    {isActive ? "Active" : "Deactivated"}
+                                                    {getAccountStatus(customer)}
                                                 </span>
                                             </td>
 
                                             <td>
                                                 <button
                                                     type="button"
-                                                    className={`customer-action-button ${isActive
-                                                            ? "deactivate-button"
-                                                            : "reactivate-button"
+                                                    className={`customer-action-btn ${isActive
+                                                        ? "customer-deactivate-btn"
+                                                        : "customer-reactivate-btn"
                                                         }`}
                                                     onClick={() => handleStatusChange(customer)}
-                                                    disabled={
-                                                        actionId === customer.id || !customer.id
-                                                    }
+                                                    disabled={isUpdating || !customerId}
                                                 >
-                                                    {actionId === customer.id
+                                                    {isUpdating
                                                         ? "Processing..."
                                                         : isActive
                                                             ? "Deactivate"
@@ -273,14 +283,9 @@ const CustomerManagement = () => {
                         </tbody>
                     </table>
                 </div>
-
-                <div className="customer-table-footer">
-                    Showing {customers.length} customer
-                    {customers.length === 1 ? "" : "s"}
-                </div>
             </section>
         </div>
     );
-};
+}
 
 export default CustomerManagement;

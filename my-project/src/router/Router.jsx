@@ -27,6 +27,11 @@ const CreateDesigner = lazy(
   () => import("../pages/CreateDesigner/createdesigner")
 );
 
+// Customer Management page
+const CustomerManagement = lazy(
+  () => import("../pages/CustomerManagement/customermanagement")
+);
+
 const Router = [
   {
     path: "/",
@@ -64,10 +69,13 @@ const Router = [
     path: "/idp/:id",
     element: <IDPDetail />,
   },
-
   {
     path: "/admin/create-designer",
     element: <CreateDesigner />,
+  },
+  {
+    path: "/customermanagement",
+    element: <CustomerManagement />,
   },
 ];
 
