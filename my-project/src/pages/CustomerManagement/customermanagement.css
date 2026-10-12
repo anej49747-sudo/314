@@ -1,0 +1,335 @@
+.customer-management {
+  min-height: 100vh;
+  padding: 32px;
+  background: #f5f8f5;
+  color: #26352b;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.customer-management .customer-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.customer-management .customer-page-header h1 {
+  margin: 6px 0 10px;
+  color: #234d35;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.customer-management .customer-eyebrow {
+  margin: 0;
+  color: #43815b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.customer-management .customer-subtitle {
+  margin: 0;
+  color: #758078;
+  font-size: 14px;
+}
+
+.customer-management button {
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.customer-management button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.customer-management button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.customer-management .customer-refresh-button {
+  padding: 11px 16px;
+  border: 1px solid #d6e4d9;
+  background: #ffffff;
+  color: #356746;
+}
+
+.customer-management .customer-refresh-button:hover {
+  background: #edf5ef;
+}
+
+.customer-management .customer-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: fit-content;
+  min-width: 240px;
+  margin-bottom: 26px;
+  padding: 20px 24px;
+  border: 1px solid #e2ebe3;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 3px 12px rgba(37, 75, 48, 0.04);
+}
+
+.customer-management .customer-summary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #e8f3e9;
+  font-size: 23px;
+}
+
+.customer-management .customer-summary-label {
+  margin: 0 0 5px;
+  color: #7b877e;
+  font-size: 13px;
+}
+
+.customer-management .customer-summary h2 {
+  margin: 0;
+  color: #28583a;
+  font-size: 27px;
+}
+
+.customer-management .customer-list-card {
+  overflow: hidden;
+  border: 1px solid #e1e9e2;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 18px rgba(37, 75, 48, 0.04);
+}
+
+.customer-management .customer-list-heading {
+  padding: 24px 24px 18px;
+}
+
+.customer-management .customer-list-heading h2 {
+  margin: 0 0 7px;
+  color: #2d4935;
+  font-size: 20px;
+}
+
+.customer-management .customer-list-heading p {
+  margin: 0;
+  color: #849087;
+  font-size: 13px;
+}
+
+.customer-management .customer-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 24px 22px;
+}
+
+.customer-management .customer-search-input-wrapper {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  max-width: 420px;
+  padding: 0 13px;
+  border: 1px solid #dce5dd;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.customer-management .customer-search-input-wrapper:focus-within {
+  border-color: #6b9d78;
+  box-shadow: 0 0 0 3px rgba(75, 135, 91, 0.1);
+}
+
+.customer-management .customer-search-input-wrapper input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #344439;
+  font-size: 13px;
+}
+
+.customer-management .customer-search-input-wrapper input::placeholder {
+  color: #a0aaa2;
+}
+
+.customer-management .customer-search-icon {
+  color: #64846b;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.customer-management .customer-search > button {
+  padding: 12px 20px;
+  background: #36734a;
+  color: #ffffff;
+}
+
+.customer-management .customer-search > button:hover {
+  background: #285b39;
+}
+
+.customer-management .customer-search > .customer-reset-button {
+  border: 1px solid #dce5dd;
+  background: #ffffff;
+  color: #526457;
+}
+
+.customer-management .customer-search > .customer-reset-button:hover {
+  background: #f3f7f3;
+}
+
+.customer-management .customer-alert {
+  margin: 0 24px 18px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.customer-management .customer-alert-error {
+  border: 1px solid #f0cccc;
+  background: #fff3f3;
+  color: #a53232;
+}
+
+.customer-management .customer-alert-success {
+  border: 1px solid #cce5d1;
+  background: #eff9f0;
+  color: #28653a;
+}
+
+.customer-management .customer-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.customer-management .customer-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.customer-management .customer-table thead {
+  background: #f3f7f3;
+}
+
+.customer-management .customer-table th {
+  padding: 15px 18px;
+  color: #728075;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+
+.customer-management .customer-table td {
+  padding: 17px 18px;
+  border-top: 1px solid #edf1ed;
+  color: #59665c;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.customer-management .customer-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.customer-management .customer-table tbody tr:hover {
+  background: #fafcf9;
+}
+
+.customer-management .customer-table .customer-username {
+  color: #2c5338;
+  font-weight: 700;
+}
+
+.customer-management .customer-table .customer-table-empty {
+  padding: 38px 18px;
+  color: #879188;
+  text-align: center;
+}
+
+.customer-management .customer-role {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: #edf5ee;
+  color: #3b6d48;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+.customer-management .customer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.customer-management .status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.customer-management .status-active {
+  color: #317348;
+}
+
+.customer-management .status-active .status-dot {
+  background: #48a765;
+}
+
+.customer-management .status-inactive {
+  color: #a34c4c;
+}
+
+.customer-management .status-inactive .status-dot {
+  background: #d56a6a;
+}
+
+.customer-management .customer-action-button {
+  min-width: 100px;
+  padding: 9px 12px;
+  font-size: 12px;
+}
+
+.customer-management .deactivate-button {
+  border: 1px solid #f0d0d0;
+  background: #fff4f4;
+  color: #a34444;
+}
+
+.customer-management .deactivate-button:hover {
+  background: #ffe8e8;
+}
+
+.customer-management .reactivate-button {
+  border: 1px solid #cfe5d2;
+  background: #edf8ef;
+  color: #317447;
+}
+
+.customer-management .reactivate-button:hover {
+  background: #dff1e2;
+}
+
+.customer-management .customer-table-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #edf1ed;
+  color: #849087;
+  font-size: 12px;
+}

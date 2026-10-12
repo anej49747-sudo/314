@@ -33,6 +33,7 @@ public class UserController {
         data.put("username", user.getUsername());
         data.put("role", user.getRole());
         data.put("name", user.getName());
+        data.put("active", !Boolean.FALSE.equals(user.getActive()));
 
         return data;
     }
@@ -327,4 +328,91 @@ public Map<String, Object> deleteCustAccount(
                 .filter(item -> !item.isEmpty())
                 .toList();
     }
+
+    // View all customer accounts
+    @GetMapping("/admin/customers")
+    public Map<String, Object> getCustomers() {
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        List<Map<String, Object>> customers =
+                userService.findCustomers()
+                        .stream()
+                        .map(this::toUserData)
+                        .toList();
+
+        response.put("status", "success");
+        response.put("customers", customers);
+
+        return response;
+    }
+
+    // Search customers by username
+    @GetMapping("/admin/customers/search")
+    public Map<String, Object> searchCustomers(
+            @RequestParam("username") String username) {
+
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        List<Map<String, Object>> customers =
+                userService.searchCustomers(username)
+                        .stream()
+                        .map(this::toUserData)
+                        .toList();
+
+        response.put("status", "success");
+        response.put("customers", customers);
+
+        return response;
+    }
+
+    // Deactivate a customer account
+    @PutMapping("/admin/customers/{id}/deactivate")
+    public Map<String, Object> deactivateCustomer(
+            @PathVariable("id") String id) {
+
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        try {
+            User user = userService.deactivateCustomer(id);
+
+            response.put("status", "success");
+            response.put(
+                    "message",
+                    "Customer account deactivated successfully"
+            );
+            response.put("customer", toUserData(user));
+
+        } catch (IllegalArgumentException e) {
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+        }
+
+        return response;
+    }
+
+    // Reactivate a customer account
+    @PutMapping("/admin/customers/{id}/reactivate")
+    public Map<String, Object> reactivateCustomer(
+            @PathVariable("id") String id) {
+
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        try {
+            User user = userService.reactivateCustomer(id);
+
+            response.put("status", "success");
+            response.put(
+                    "message",
+                    "Customer account reactivated successfully"
+            );
+            response.put("customer", toUserData(user));
+
+        } catch (IllegalArgumentException e) {
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+        }
+
+        return response;
+    }
+
 }
