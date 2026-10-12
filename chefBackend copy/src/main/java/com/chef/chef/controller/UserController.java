@@ -39,6 +39,10 @@ public class UserController {
         data.put("email", user.getEmail());
         data.put("company", user.getCompany());
         data.put("bio", user.getBio());
+        data.put("companyDescription", user.getCompanyDescription());
+        data.put("companyContact", user.getCompanyContact());
+        data.put("companyAddress", user.getCompanyAddress());
+
         data.put(
                 "designStyles",
                 user.getDesignStyles() == null
@@ -55,6 +59,7 @@ public class UserController {
     @PostMapping("/register")
     public Map<String, Object> register(
             @RequestBody Map<String, String> body) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -77,6 +82,7 @@ public class UserController {
     @PostMapping("/login")
     public Map<String, Object> login(
             @RequestBody Map<String, String> body) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -99,6 +105,7 @@ public class UserController {
     @GetMapping("/getuser")
     public Map<String, Object> getUser(
             @RequestParam("userId") String userId) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -132,6 +139,7 @@ public class UserController {
     @PostMapping("/admin/create-designer")
     public Map<String, Object> createDesigner(
             @RequestBody Map<String, String> body) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -155,6 +163,7 @@ public class UserController {
     @GetMapping("/designer/{id}")
     public Map<String, Object> getDesignerById(
             @PathVariable("id") String id) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -174,6 +183,7 @@ public class UserController {
     @DeleteMapping("/designer/{id}")
     public Map<String, Object> deleteDesigner(
             @PathVariable("id") String id) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -193,6 +203,7 @@ public class UserController {
     @DeleteMapping("/user/{id}/account")
     public Map<String, Object> deleteCustAccount(
             @PathVariable("id") String id) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -213,6 +224,7 @@ public class UserController {
     public Map<String, Object> updateDesignerProfile(
             @PathVariable("id") String id,
             @RequestBody Map<String, Object> body) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -245,10 +257,45 @@ public class UserController {
         return response;
     }
 
+    @PutMapping("/designer/{id}/company-information")
+    public Map<String, Object> updateDesignerCompanyInformation(
+            @PathVariable("id") String id,
+            @RequestBody Map<String, Object> body) {
+
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        try {
+            String company = getString(body, "company");
+            String companyDescription = getString(body, "companyDescription");
+            String companyContact = getString(body, "companyContact");
+            String companyAddress = getString(body, "companyAddress");
+
+            User user = userService.updateDesignerCompanyInformation(
+                    id,
+                    company,
+                    companyDescription,
+                    companyContact,
+                    companyAddress);
+
+            response.put("status", "success");
+            response.put(
+                    "message",
+                    "Company information updated successfully");
+            response.put("designer", toDesignerData(user));
+
+        } catch (IllegalArgumentException e) {
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+        }
+
+        return response;
+    }
+
     @PutMapping("/user/{id}/profile")
     public Map<String, Object> updateUserProfile(
             @PathVariable("id") String id,
             @RequestBody Map<String, Object> body) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -279,6 +326,7 @@ public class UserController {
     private String getString(
             Map<String, Object> body,
             String key) {
+
         Object value = body.get(key);
         return value == null ? "" : value.toString().trim();
     }
@@ -286,6 +334,7 @@ public class UserController {
     private List<String> getStringList(
             Map<String, Object> body,
             String key) {
+
         Object value = body.get(key);
 
         if (!(value instanceof List<?> list)) {
@@ -317,6 +366,7 @@ public class UserController {
     @GetMapping("/admin/customers/search")
     public Map<String, Object> searchCustomers(
             @RequestParam("username") String username) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         List<Map<String, Object>> customers = userService.searchCustomers(username)
@@ -333,6 +383,7 @@ public class UserController {
     @PutMapping("/admin/customers/{id}/deactivate")
     public Map<String, Object> deactivateCustomer(
             @PathVariable("id") String id) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -355,6 +406,7 @@ public class UserController {
     @PutMapping("/admin/customers/{id}/reactivate")
     public Map<String, Object> reactivateCustomer(
             @PathVariable("id") String id) {
+
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {

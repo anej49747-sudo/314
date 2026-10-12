@@ -4,16 +4,14 @@ import "../dashboard/dashboard.scss";
 function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
-
   const userdata = location.state?.userdata || {};
-
-  console.log("Received data:", location.state);
 
   return (
     <div className="dashboard-page">
       <div className="dashboard-background"></div>
 
       <button
+        type="button"
         className="dashboard-back-btn"
         onClick={() => navigate("/home")}
       >
@@ -22,16 +20,15 @@ function Dashboard() {
       </button>
 
       <div className="dashboard-container">
-
         <div className="dashboard-title-section">
           <h1>
-            {userdata.role == "designer"
+            {userdata.role === "designer"
               ? "Designer"
-              : userdata.role == "customer"
+              : userdata.role === "customer"
                 ? "Customer"
-                : userdata.role == "admin"
+                : userdata.role === "admin"
                   ? "Admin"
-                  : userdata.role == "manager"
+                  : userdata.role === "manager"
                     ? "Manager"
                     : ""}
             <br />
@@ -41,10 +38,8 @@ function Dashboard() {
           <div className="dashboard-title-line"></div>
         </div>
 
-        {userdata.role == "designer" ? (
-
+        {userdata.role === "designer" ? (
           <div className="dashboard-cards">
-
             <div className="dashboard-card">
               <div className="dashboard-card-icon">
                 <span>♙</span>
@@ -60,9 +55,7 @@ function Dashboard() {
                   className="dashboard-manager-btn"
                   onClick={() =>
                     navigate("/profile", {
-                      state: {
-                        userdata: userdata,
-                      },
+                      state: { userdata },
                     })
                   }
                 >
@@ -85,6 +78,11 @@ function Dashboard() {
                 <button
                   type="button"
                   className="dashboard-manager-btn"
+                  onClick={() =>
+                    navigate("/designer/company-information", {
+                      state: { userdata },
+                    })
+                  }
                 >
                   <span>Manage Company Information</span>
                   <span className="dashboard-button-arrow">→</span>
@@ -111,13 +109,9 @@ function Dashboard() {
                 </button>
               </div>
             </div>
-
           </div>
-
-        ) : userdata.role == "admin" ? (
-
+        ) : userdata.role === "admin" ? (
           <div className="dashboard-cards">
-
             <div className="dashboard-card">
               <div className="dashboard-card-icon">
                 <span>♙</span>
@@ -133,9 +127,7 @@ function Dashboard() {
                   className="dashboard-manager-btn"
                   onClick={() =>
                     navigate("/profile", {
-                      state: {
-                        userdata: userdata,
-                      },
+                      state: { userdata },
                     })
                   }
                 >
@@ -153,7 +145,6 @@ function Dashboard() {
               <div className="dashboard-card-divider"></div>
 
               <div className="dashboard-card-content">
-
                 <h2>User Management</h2>
 
                 <button
@@ -168,7 +159,6 @@ function Dashboard() {
                   <span>Manage Users</span>
                   <span className="dashboard-button-arrow">→</span>
                 </button>
-
               </div>
             </div>
 
@@ -182,7 +172,6 @@ function Dashboard() {
               <div className="dashboard-card-content">
                 <h2>Create Designer Account</h2>
 
-
                 <button
                   type="button"
                   className="dashboard-manager-btn"
@@ -195,16 +184,11 @@ function Dashboard() {
                   <span>Create Designer Account</span>
                   <span className="dashboard-button-arrow">→</span>
                 </button>
-
               </div>
             </div>
-
           </div>
-
-        ) : userdata.role == "customer" ? (
-
+        ) : userdata.role === "customer" ? (
           <div className="dashboard-cards">
-
             <div className="dashboard-card">
               <div className="dashboard-card-icon">
                 <span>♙</span>
@@ -220,9 +204,7 @@ function Dashboard() {
                   className="dashboard-manager-btn"
                   onClick={() =>
                     navigate("/profile", {
-                      state: {
-                        userdata: userdata,
-                      },
+                      state: { userdata },
                     })
                   }
                 >
@@ -231,13 +213,9 @@ function Dashboard() {
                 </button>
               </div>
             </div>
-
           </div>
-
-        ) : userdata.role == "manager" ? (
-
+        ) : userdata.role === "manager" ? (
           <div className="dashboard-cards">
-
             <div className="dashboard-card">
               <div className="dashboard-card-icon">
                 <span>♙</span>
@@ -253,9 +231,7 @@ function Dashboard() {
                   className="dashboard-manager-btn"
                   onClick={() =>
                     navigate("/profile", {
-                      state: {
-                        userdata: userdata,
-                      },
+                      state: { userdata },
                     })
                   }
                 >
@@ -306,11 +282,8 @@ function Dashboard() {
                 </button>
               </div>
             </div>
-
           </div>
-
         ) : null}
-
       </div>
     </div>
   );

@@ -17,52 +17,40 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    // Login
     public User checkLogin(String username, String password) {
-        Optional<User> userOpt =
-                userRepository.findByUsername(username);
+        Optional<User> userOpt = userRepository.findByUsername(username);
 
         if (userOpt.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "User does not exist"
-            );
+            throw new IllegalArgumentException("User does not exist");
         }
 
         User user = userOpt.get();
 
-        // Reject deactivated customer accounts
         if ("customer".equalsIgnoreCase(user.getRole())
                 && Boolean.FALSE.equals(user.getActive())) {
             throw new IllegalArgumentException(
-                    "Your account has been deactivated"
-            );
+                    "Your account has been deactivated");
         }
 
         if (user.getPassword() == null
                 || !user.getPassword().equals(password)) {
-            throw new IllegalArgumentException(
-                    "Incorrect password"
-            );
+            throw new IllegalArgumentException("Incorrect password");
         }
 
         return user;
     }
 
-    // Register a new customer account
     public User register(String username, String password) {
         if (username == null || username.isBlank()
                 || password == null || password.isBlank()) {
             throw new IllegalArgumentException(
-                    "Username and password are required"
-            );
+                    "Username and password are required");
         }
 
         username = username.trim();
 
         if (userRepository.existsByUsername(username)) {
-            throw new IllegalArgumentException(
-                    "Username already exists"
-            );
+            throw new IllegalArgumentException("Username already exists");
         }
 
         User user = new User();
@@ -74,28 +62,19 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // Get user by ID
     public User getUser(String userId) {
         if (userId == null || userId.isBlank()) {
-            throw new IllegalArgumentException(
-                    "User ID is required"
-            );
+            throw new IllegalArgumentException("User ID is required");
         }
 
         return userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "User not found"
-                        )
-                );
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
-    // Find all designers
     public List<User> findDesigners() {
         return userRepository.findByRole("designer");
     }
 
-    // Create a designer account
     public User createDesigner(
             String username,
             String password,
@@ -105,17 +84,14 @@ public class UserService {
                 || password == null || password.isBlank()
                 || name == null || name.isBlank()) {
             throw new IllegalArgumentException(
-                    "Username, password and full name are required"
-            );
+                    "Username, password and full name are required");
         }
 
         username = username.trim();
         name = name.trim();
 
         if (userRepository.existsByUsername(username)) {
-            throw new IllegalArgumentException(
-                    "Username already exists"
-            );
+            throw new IllegalArgumentException("Username already exists");
         }
 
         User user = new User();
@@ -127,34 +103,26 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // Get designer by ID
     public User getDesignerById(String id) {
         User user = getUser(id);
 
         if (user.getRole() == null
                 || !user.getRole().equalsIgnoreCase("designer")) {
-            throw new IllegalArgumentException(
-                    "Designer not found"
-            );
+            throw new IllegalArgumentException("Designer not found");
         }
 
         return user;
     }
 
-    // Delete designer account
     public void deleteDesigner(String id) {
         if (id == null || id.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Designer ID is required"
-            );
+            throw new IllegalArgumentException("Designer ID is required");
         }
 
         User designer = getDesignerById(id);
-
         userRepository.deleteById(designer.getId());
     }
 
-    // Update designer profile
     public User updateDesignerProfile(
             String userId,
             String name,
@@ -187,7 +155,27 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // Update user profile
+    public User updateDesignerCompanyInformation(
+            String userId,
+            String company,
+            String companyDescription,
+            String companyContact,
+            String companyAddress) {
+
+        User user = getDesignerById(userId);
+
+        user.setCompany(normalize(company));
+        user.setCompanyDescription(normalize(companyDescription));
+        user.setCompanyContact(normalize(companyContact));
+        user.setCompanyAddress(normalize(companyAddress));
+
+        return userRepository.save(user);
+    }
+
+    private String normalize(String value) {
+        return value == null ? "" : value.trim();
+    }
+
     public User updateUserProfile(
             String userId,
             String name,
@@ -205,12 +193,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // View all customer accounts
     public List<User> findCustomers() {
         return userRepository.findByRole("customer");
     }
 
-    // Search customers by username
     public List<User> searchCustomers(String username) {
         if (username == null || username.isBlank()) {
             return findCustomers();
@@ -218,19 +204,15 @@ public class UserService {
 
         return userRepository.findByRoleAndUsernameContainingIgnoreCase(
                 "customer",
-                username.trim()
-        );
+                username.trim());
     }
 
-    // Deactivate a customer account
     public User deactivateCustomer(String id) {
         User user = getUser(id);
 
         if (user.getRole() == null
                 || !user.getRole().equalsIgnoreCase("customer")) {
-            throw new IllegalArgumentException(
-                    "Customer account not found"
-            );
+            throw new IllegalArgumentException("Customer account not found");
         }
 
         user.setActive(false);
@@ -238,15 +220,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // Reactivate a customer account
     public User reactivateCustomer(String id) {
         User user = getUser(id);
 
         if (user.getRole() == null
                 || !user.getRole().equalsIgnoreCase("customer")) {
-            throw new IllegalArgumentException(
-                    "Customer account not found"
-            );
+            throw new IllegalArgumentException("Customer account not found");
         }
 
         user.setActive(true);
@@ -254,12 +233,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // Delete the customer's own account
     public void deleteCustAccount(String userId) {
         if (userId == null || userId.isBlank()) {
-            throw new IllegalArgumentException(
-                    "User ID is required"
-            );
+            throw new IllegalArgumentException("User ID is required");
         }
 
         User user = getUser(userId);
@@ -270,14 +246,12 @@ public class UserService {
 
         if ("admin".equals(role) || "manager".equals(role)) {
             throw new IllegalArgumentException(
-                    "Admin and Manager cannot delete their own accounts"
-            );
+                    "Admin and Manager cannot delete their own accounts");
         }
 
         if (!"customer".equals(role) && !"designer".equals(role)) {
             throw new IllegalArgumentException(
-                    "This role is not allowed to delete its account"
-            );
+                    "This role is not allowed to delete its account");
         }
 
         userRepository.deleteById(user.getId());

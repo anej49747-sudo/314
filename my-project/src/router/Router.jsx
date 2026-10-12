@@ -6,30 +6,24 @@ const Login = lazy(() => import("../pages/Login/login"));
 const Profile = lazy(() => import("../pages/profile/profile"));
 const Dashboard = lazy(() => import("../pages/dashboard/dashboard.jsx"));
 
-const Designer = lazy(
-  () => import("../pages/Designer/designer")
-);
-
+const Designer = lazy(() => import("../pages/Designer/designer"));
 const DesignerProfile = lazy(
   () => import("../pages/Designer/designerProfile")
 );
 
-const IDP = lazy(
-  () => import("../pages/IDP/idp")
-);
+const IDP = lazy(() => import("../pages/IDP/idp"));
+const IDPDetail = lazy(() => import("../pages/IDP/idpDetail"));
 
-const IDPDetail = lazy(
-  () => import("../pages/IDP/idpDetail")
-);
-
-// Create Designer page
 const CreateDesigner = lazy(
   () => import("../pages/CreateDesigner/createdesigner")
 );
 
-// Customer Management page
 const CustomerManagement = lazy(
   () => import("../pages/CustomerManagement/customermanagement")
+);
+
+const CompanyInformation = lazy(
+  () => import("../pages/CompanyInformation/companyinformation")
 );
 
 const Router = [
@@ -60,6 +54,10 @@ const Router = [
   {
     path: "/designer/:id",
     element: <DesignerProfile />,
+  },
+  {
+    path: "/designer/company-information",
+    element: <CompanyInformation />,
   },
   {
     path: "/idp",

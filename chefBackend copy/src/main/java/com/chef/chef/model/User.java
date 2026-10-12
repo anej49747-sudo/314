@@ -23,13 +23,14 @@ public class User {
     private String role;
     private Boolean active;
 
-    // Designer profile information
     private String name;
     private String gender;
     private String email;
     private String company;
     private String bio;
-
-    // Multiple design styles
     private List<String> designStyles;
+
+    private String companyDescription;
+    private String companyContact;
+    private String companyAddress;
 }
