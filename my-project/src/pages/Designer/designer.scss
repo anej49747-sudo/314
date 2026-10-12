@@ -162,24 +162,32 @@
     overflow-wrap: anywhere;
 }
 
+
 .designer-card-company {
     display: flex;
     align-items: center;
     gap: 8px;
-
     margin: 13px 0 0;
-
     color: #627765;
-    font-size: 13px;
+    font-size: 12px !important;
     font-weight: 500;
-
     overflow-wrap: anywhere;
 
-    span {
+    .designer-card-company-icon {
         color: #849b81;
         font-size: 19px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .designer-card-company-name {
+        color: #627765;
+        font-size: 12px !important;
+        font-weight: 500;
+        line-height: 1.4;
     }
 }
+
 
 .designer-card-description {
     display: -webkit-box;

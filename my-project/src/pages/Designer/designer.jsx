@@ -129,12 +129,16 @@ function Designer() {
                                     <div className="designer-card-content">
                                         <h2 className="designer-card-name">{name}</h2>
 
-                                        {designer.company && (
-                                            <p className="designer-card-company">
-                                                <span aria-hidden="true">⌂</span>
-                                                {designer.company}
-                                            </p>
-                                        )}
+
+                                        <div className="designer-card-company">
+                                            <span className="designer-card-company-icon" aria-hidden="true">
+                                                ⌂
+                                            </span>
+                                            <span className="designer-card-company-name">
+                                                {designer.company?.trim() || "Company not provided"}
+                                            </span>
+                                        </div>
+
 
                                         <p className="designer-card-description">
                                             {introduction}
@@ -164,9 +168,9 @@ function Designer() {
                                         {id ? (
                                             <Link
                                                 className="designer-view-link"
-                                                to={`/designer/ ${id} `}
+                                                to={`/designer/${encodeURIComponent(id)}`}
                                             >
-                                                View Profile
+                                                View Details
                                                 <span aria-hidden="true">→</span>
                                             </Link>
                                         ) : (

@@ -59,7 +59,7 @@ function Dashboard() {
                     })
                   }
                 >
-                  <span>View Profile</span>
+                  <span>View Details</span>
                   <span className="dashboard-button-arrow">→</span>
                 </button>
               </div>
@@ -131,7 +131,7 @@ function Dashboard() {
                     })
                   }
                 >
-                  <span>View Profile</span>
+                  <span>View Details</span>
                   <span className="dashboard-button-arrow">→</span>
                 </button>
               </div>
@@ -208,7 +208,7 @@ function Dashboard() {
                     })
                   }
                 >
-                  <span>View Profile</span>
+                  <span>View Details</span>
                   <span className="dashboard-button-arrow">→</span>
                 </button>
               </div>
@@ -235,7 +235,7 @@ function Dashboard() {
                     })
                   }
                 >
-                  <span>View Profile</span>
+                  <span>View Details</span>
                   <span className="dashboard-button-arrow">→</span>
                 </button>
               </div>

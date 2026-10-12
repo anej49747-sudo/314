@@ -79,7 +79,7 @@
 .directory-page .designer-info-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 16px;
+  gap: 20px 16px;
 }
 
 .directory-page .designer-info-item {
@@ -144,6 +144,7 @@
 }
 
 .directory-page .designer-about {
+  margin-top: 24px;
   padding: 20px 22px;
   border-radius: 13px;
   background: #f5f6f0;

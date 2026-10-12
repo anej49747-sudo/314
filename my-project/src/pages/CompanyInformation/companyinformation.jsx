@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import newRequest from "../../utils/request";
@@ -44,7 +43,7 @@ function CompanyInformation() {
         const loadCompanyInformation = async () => {
             try {
                 const response = await newRequest({
-                    url: `/designer/${userId}`,
+                    url: `/api/designer/${userId}`,
                     method: "GET",
                 });
 
@@ -108,7 +107,7 @@ function CompanyInformation() {
         event.preventDefault();
 
         if (!userId) {
-            setError("Designer ID is missing. Please log in again.");
+            setError("Designer ID is missing.");
             return;
         }
 
@@ -118,7 +117,7 @@ function CompanyInformation() {
 
         try {
             const response = await newRequest({
-                url: `/designer/${userId}/company-information`,
+                url: `/api/designer/${userId}/company-information`,
                 method: "PUT",
                 data: formData,
             });
@@ -150,6 +149,10 @@ function CompanyInformation() {
             });
 
             setMessage("Company information saved successfully.");
+
+            window.setTimeout(() => {
+                setMessage("");
+            }, 2000);
         } catch (err) {
             setError(
                 err.response?.data?.message ||
@@ -161,6 +164,12 @@ function CompanyInformation() {
         }
     };
 
+    const handleCancel = () => {
+        navigate("/dashboard", {
+            state: { userdata },
+        });
+    };
+
     return (
         <div className="company-information-page">
             <div className="company-information-background"></div>
@@ -168,11 +177,7 @@ function CompanyInformation() {
             <button
                 type="button"
                 className="company-information-back"
-                onClick={() =>
-                    navigate("/dashboard", {
-                        state: { userdata },
-                    })
-                }
+                onClick={handleCancel}
             >
                 <span>←</span>
                 Back to Dashboard
@@ -180,15 +185,13 @@ function CompanyInformation() {
 
             <main className="company-information-container">
                 <header className="company-information-header">
-                    <p className="company-information-eyebrow">
-                        DESIGNER DASHBOARD
-                    </p>
+                    <p className="company-information-eyebrow">DESIGNER DASHBOARD</p>
 
                     <h1>Company Information</h1>
 
                     <p className="company-information-subtitle">
-                        Create and manage your company profile so customers can learn
-                        about your business, services and operating location.
+                        Create and manage your company profile so customers can know your
+                        company data.
                     </p>
                 </header>
 
@@ -273,47 +276,44 @@ function CompanyInformation() {
                                 </div>
                             </div>
 
-                            {error && (
-                                <div className="company-information-message error">
-                                    {error}
-                                </div>
-                            )}
-
-                            {message && (
-                                <div className="company-information-message success">
-                                    {message}
-                                </div>
-                            )}
-
                             <div className="company-information-actions">
-                                <button
-                                    type="button"
-                                    className="company-information-cancel"
-                                    onClick={() =>
-                                        navigate("/dashboard", {
-                                            state: { userdata },
-                                        })
-                                    }
-                                    disabled={saving}
-                                >
-                                    Cancel
-                                </button>
+                                <div className="company-information-feedback" aria-live="polite">
+                                    {error && (
+                                        <span className="company-information-message error">
+                                            {error}
+                                        </span>
+                                    )}
 
-                                <button
-                                    type="submit"
-                                    className="company-information-save"
-                                    disabled={saving}
-                                >
-                                    {saving ? "Saving..." : "Save Company Information"}
-                                </button>
+                                    {message && !error && (
+                                        <span className="company-information-message success">
+                                            {message}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="company-information-buttons">
+                                    <button
+                                        type="button"
+                                        className="company-information-cancel"
+                                        onClick={handleCancel}
+                                        disabled={saving}
+                                    >
+                                        Cancel
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        className="company-information-save"
+                                        disabled={saving}
+                                    >
+                                        {saving ? "Saving..." : "Save"}
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     )}
                 </section>
 
-                <p className="company-information-footer">
-                    Your company information will be saved to your designer account.
-                </p>
             </main>
         </div>
     );

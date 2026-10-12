@@ -19,15 +19,12 @@ function DesignerProfile() {
                 setLoading(true);
                 setError("");
 
-
-                console.log("Designer ID from URL:", id);
+                if (!id) {
+                    throw new Error("Designer ID is missing.");
+                }
 
                 const res = await apiGetDesignerById(id);
-
-                console.log("Full API response:", res);
-
                 const responseData = res?.data ?? res;
-
 
                 const data =
                     responseData?.designer ??
@@ -42,7 +39,9 @@ function DesignerProfile() {
                     responseData?.status === "error" ||
                     data.status === "error"
                 ) {
-                    throw new Error("Designer not found");
+                    throw new Error(
+                        responseData?.message || "Designer not found."
+                    );
                 }
 
                 if (!cancelled) {
@@ -54,6 +53,7 @@ function DesignerProfile() {
                 if (!cancelled) {
                     setError(
                         err?.response?.data?.message ||
+                        err.message ||
                         "Unable to load this designer's profile."
                     );
                 }
@@ -64,12 +64,7 @@ function DesignerProfile() {
             }
         }
 
-        if (id) {
-            loadDesigner();
-        } else {
-            setError("Designer ID is missing.");
-            setLoading(false);
-        }
+        loadDesigner();
 
         return () => {
             cancelled = true;
@@ -78,7 +73,11 @@ function DesignerProfile() {
 
     if (loading) {
         return (
-            <div>Loading......</div>
+            <main className="directory-page">
+                <div className="profile-message">
+                    Loading designer profile...
+                </div>
+            </main>
         );
     }
 
@@ -86,8 +85,10 @@ function DesignerProfile() {
         return (
             <main className="directory-page">
                 <Link className="back-link" to="/designer">
-                    ← Back to Designers
+                    <span aria-hidden="true">←</span>
+                    Back to Designers
                 </Link>
+
                 <p className="profile-message">
                     {error || "Designer not found."}
                 </p>
@@ -105,14 +106,26 @@ function DesignerProfile() {
             : [];
 
     const information = [
-        { label: "Username", value: designer.username, icon: "♙" },
+        {
+            label: "Username",
+            value: designer.username,
+            icon: "♙",
+        },
         {
             label: "Name",
             value: designer.name || designer.fullName,
             icon: "✧",
         },
-        { label: "Gender", value: designer.gender, icon: "♀" },
-        { label: "Email", value: designer.email, icon: "✉" },
+        {
+            label: "Gender",
+            value: designer.gender,
+            icon: "♀",
+        },
+        {
+            label: "Email",
+            value: designer.email,
+            icon: "✉",
+        },
     ];
 
     const introduction =
@@ -121,7 +134,8 @@ function DesignerProfile() {
     return (
         <main className="directory-page">
             <Link className="back-link" to="/designer">
-                ← Back to Designers
+                <span aria-hidden="true">←</span>
+                Back to Designers
             </Link>
 
             <article className="directory-card">
@@ -144,7 +158,10 @@ function DesignerProfile() {
                                     className="designer-info-item"
                                     key={item.label}
                                 >
-                                    <div className="info-icon" aria-hidden="true">
+                                    <div
+                                        className="info-icon"
+                                        aria-hidden="true"
+                                    >
                                         {item.icon}
                                     </div>
 
@@ -152,6 +169,7 @@ function DesignerProfile() {
                                         <span className="info-label">
                                             {item.label}
                                         </span>
+
                                         <p className="info-value">
                                             {item.value || "Not provided"}
                                         </p>
@@ -179,7 +197,7 @@ function DesignerProfile() {
                                 {designStyles.map((style, index) => (
                                     <span
                                         className="style-tag"
-                                        key={`${style} -${index} `}
+                                        key={`${style}-${index}`}
                                     >
                                         {style}
                                     </span>
@@ -188,6 +206,85 @@ function DesignerProfile() {
                         ) : (
                             <p className="empty-styles">Not provided</p>
                         )}
+                    </section>
+
+                    <section className="profile-section company-section">
+                        <h2 className="section-title">
+                            Company Information
+                        </h2>
+
+                        <div className="designer-info-grid">
+                            <div className="designer-info-item">
+                                <div
+                                    className="info-icon"
+                                    aria-hidden="true"
+                                >
+                                    ⌂
+                                </div>
+
+                                <div className="info-text">
+                                    <span className="info-label">
+                                        COMPANY NAME
+                                    </span>
+
+                                    <p className="info-value">
+                                        {designer.company?.trim() ||
+                                            "Not provided"}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="designer-info-item">
+                                <div
+                                    className="info-icon"
+                                    aria-hidden="true"
+                                >
+                                    ✉
+                                </div>
+
+                                <div className="info-text">
+                                    <span className="info-label">
+                                        COMPANY CONTACT
+                                    </span>
+
+                                    <p className="info-value">
+                                        {designer.companyContact?.trim() ||
+                                            "Not provided"}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="designer-info-item">
+                                <div
+                                    className="info-icon"
+                                    aria-hidden="true"
+                                >
+                                    ⌖
+                                </div>
+
+                                <div className="info-text">
+                                    <span className="info-label">
+                                        COMPANY ADDRESS
+                                    </span>
+
+                                    <p className="info-value">
+                                        {designer.companyAddress?.trim() ||
+                                            "Not provided"}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="designer-about company-description">
+                            <span className="info-label">
+                                COMPANY DESCRIPTION
+                            </span>
+
+                            <p className="about-text">
+                                {designer.companyDescription?.trim() ||
+                                    "Not provided"}
+                            </p>
+                        </div>
                     </section>
                 </div>
             </article>
