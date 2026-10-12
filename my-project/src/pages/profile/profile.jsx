@@ -1,5 +1,8 @@
+
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import {
   apiGetDesignerById,
   apiGetuser,
@@ -8,6 +11,11 @@ import {
 } from "../../api";
 
 import "./profile.css";
+
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://314-production.up.railway.app"
+).replace(/\/+$/, "");
 
 function Profile() {
   const navigate = useNavigate();
@@ -22,8 +30,13 @@ function Profile() {
   });
 
   const userdata = location.state?.userdata || savedUser;
+
   const userId =
-    userdata.id || userdata.userid || savedUser.id || savedUser.userid || "";
+    userdata.id ||
+    userdata.userid ||
+    savedUser.id ||
+    savedUser.userid ||
+    "";
 
   const [currentUser, setCurrentUser] = useState(userdata);
 
@@ -40,6 +53,7 @@ function Profile() {
   const [showedit, setshowedit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const fillForm = (user) => {
@@ -106,7 +120,7 @@ function Profile() {
 
         setErrorMessage(
           error?.response?.data?.message ||
-          "Whoops! Something wrong!"
+          "Whoops! Something went wrong!"
         );
       } finally {
         setLoading(false);
@@ -114,7 +128,6 @@ function Profile() {
     };
 
     getUser();
-
   }, [userId]);
 
   const handleChange = (e) => {
@@ -217,9 +230,66 @@ function Profile() {
     }
   };
 
-  const role =
-    currentUser.role || userdata.role || savedUser.role || "";
-  const isDesigner = String(role).toLowerCase() === "designer";
+  const role = String(
+    currentUser.role || userdata.role || savedUser.role || ""
+  ).toLowerCase();
+
+  const isDesigner = role === "designer";
+  const canDeleteAccount = role === "customer" || role === "designer";
+
+  const handleDeleteAccount = async () => {
+    if (!userId) {
+      setErrorMessage("Cannot find your user ID. Please log in again.");
+      return;
+    }
+
+    if (!canDeleteAccount) {
+      setErrorMessage(
+        "Admin and Manager cannot delete their own accounts."
+      );
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "Are you sure you want to permanently delete your account? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    setDeleting(true);
+    setErrorMessage("");
+
+    try {
+      const response = await axios.delete(
+        `${API_BASE_URL}/api/user/${encodeURIComponent(userId)}/account`
+      );
+
+      const result = response?.data ?? response;
+
+      if (result.status !== "success") {
+        setErrorMessage(
+          result.message || "Failed to delete your account."
+        );
+        return;
+      }
+
+      localStorage.removeItem("userdata");
+      sessionStorage.clear();
+
+      window.alert("Your account has been deleted successfully.");
+
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Failed to delete account:", error);
+
+      setErrorMessage(
+        error?.response?.data?.message ||
+        "Failed to delete your account. Please try again."
+      );
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <div className="profile-page">
@@ -251,9 +321,7 @@ function Profile() {
             </div>
 
             <div className="username">
-              {currentUser.username ||
-                userdata.username ||
-                "Username"}
+              {currentUser.username || userdata.username || "Username"}
             </div>
 
             <div className="profile-role">{role}</div>
@@ -263,9 +331,7 @@ function Profile() {
 
           <div className="right">
             {loading && (
-              <p className="profile-status">
-                Loading profile...
-              </p>
+              <p className="profile-status">Loading profile...</p>
             )}
 
             {errorMessage && (
@@ -283,7 +349,7 @@ function Profile() {
                 placeholder="Enter your name"
                 value={formData.name}
                 onChange={handleChange}
-                disabled={!showedit || saving}
+                disabled={!showedit || saving || deleting}
               />
             </div>
 
@@ -294,7 +360,7 @@ function Profile() {
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                disabled={!showedit || saving}
+                disabled={!showedit || saving || deleting}
               >
                 <option value="">Select gender</option>
                 <option value="Female">Female</option>
@@ -315,7 +381,7 @@ function Profile() {
                 placeholder="Enter email"
                 value={formData.email}
                 onChange={handleChange}
-                disabled={!showedit || saving}
+                disabled={!showedit || saving || deleting}
               />
             </div>
 
@@ -327,16 +393,14 @@ function Profile() {
                 placeholder="Introduce yourself and your experience"
                 value={formData.bio}
                 onChange={handleChange}
-                disabled={!showedit || saving}
+                disabled={!showedit || saving || deleting}
                 rows={3}
               />
             </div>
 
             {isDesigner && (
               <div className="profile-field">
-                <label htmlFor="profile-styles">
-                  Design Styles:
-                </label>
+                <label htmlFor="profile-styles">Design Styles:</label>
                 <input
                   id="profile-styles"
                   type="text"
@@ -344,7 +408,7 @@ function Profile() {
                   placeholder="e.g. Modern, Minimalist, Scandinavian"
                   value={formData.designStyles}
                   onChange={handleChange}
-                  disabled={!showedit || saving}
+                  disabled={!showedit || saving || deleting}
                 />
               </div>
             )}
@@ -355,7 +419,7 @@ function Profile() {
                   <button
                     type="button"
                     onClick={handleCancel}
-                    disabled={saving}
+                    disabled={saving || deleting}
                   >
                     Cancel
                   </button>
@@ -363,7 +427,7 @@ function Profile() {
                   <button
                     type="button"
                     onClick={submit}
-                    disabled={saving || loading}
+                    disabled={saving || loading || deleting}
                   >
                     {saving ? "Saving..." : "Save"}
                   </button>
@@ -372,12 +436,33 @@ function Profile() {
                 <button
                   type="button"
                   onClick={edit}
-                  disabled={loading}
+                  disabled={loading || deleting}
                 >
                   Edit
                 </button>
               )}
             </div>
+
+            {canDeleteAccount && (
+              <div className="profile-danger-zone">
+                <h3>Danger Zone</h3>
+
+                <p>
+                  Permanently delete your account and remove your
+                  account information from the platform. This action
+                  cannot be undone.
+                </p>
+
+                <button
+                  type="button"
+                  className="profile-delete-button"
+                  onClick={handleDeleteAccount}
+                  disabled={loading || saving || deleting}
+                >
+                  {deleting ? "Deleting..." : "Delete My Account"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

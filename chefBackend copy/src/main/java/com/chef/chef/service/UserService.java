@@ -80,7 +80,11 @@ public class UserService {
         return userRepository.findByRole("designer");
     }
 
-    public User createDesigner(String username, String password, String name) {
+    public User createDesigner(
+            String username,
+            String password,
+            String name) {
+
         if (username == null || username.isBlank()
                 || password == null || password.isBlank()
                 || name == null || name.isBlank()) {
@@ -102,7 +106,6 @@ public class UserService {
         user.setUsername(username);
         user.setPassword(password);
         user.setName(name);
-
         user.setRole("designer");
 
         return userRepository.save(user);
@@ -121,7 +124,7 @@ public class UserService {
         return user;
     }
 
-    // delete designer account
+    // Delete designer account
     public void deleteDesigner(String id) {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException(
@@ -141,8 +144,8 @@ public class UserService {
             String email,
             String company,
             String bio,
-            List<String> designStyles
-    ) {
+            List<String> designStyles) {
+
         User user = getDesignerById(userId);
 
         user.setName(name);
@@ -171,8 +174,8 @@ public class UserService {
             String name,
             String gender,
             String email,
-            String bio
-    ) {
+            String bio) {
+
         User user = getUser(userId);
 
         user.setName(name);
@@ -181,5 +184,34 @@ public class UserService {
         user.setBio(bio);
 
         return userRepository.save(user);
+    }
+
+    // Delete the customer's own account
+    public void deleteCustAccount(String userId) {
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "User ID is required"
+            );
+        }
+
+        User user = getUser(userId);
+
+        String role = user.getRole() == null
+                ? ""
+                : user.getRole().trim().toLowerCase();
+
+        if ("admin".equals(role) || "manager".equals(role)) {
+            throw new IllegalArgumentException(
+                    "Admin and Manager cannot delete their own accounts"
+            );
+        }
+
+        if (!"customer".equals(role) && !"designer".equals(role)) {
+            throw new IllegalArgumentException(
+                    "This role is not allowed to delete its account"
+            );
+        }
+
+        userRepository.deleteById(user.getId());
     }
 }

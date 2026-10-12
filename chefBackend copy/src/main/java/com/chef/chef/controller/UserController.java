@@ -205,6 +205,30 @@ public class UserController {
         return response;
     }
 
+
+
+@DeleteMapping("/user/{id}/account")
+public Map<String, Object> deleteCustAccount(
+        @PathVariable("id") String id
+) {
+    Map<String, Object> response = new LinkedHashMap<>();
+
+    try {
+        userService.deleteCustAccount(id);
+
+        response.put("status", "success");
+        response.put("message", "Account deleted successfully");
+
+    } catch (IllegalArgumentException e) {
+        response.put("status", "error");
+        response.put("message", e.getMessage());
+    }
+
+    return response;
+}
+
+
+
     @PutMapping("/designer/{id}/profile")
     public Map<String, Object> updateDesignerProfile(
             @PathVariable("id") String id,
