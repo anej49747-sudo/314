@@ -1,3 +1,4 @@
+
 package com.chef.chef.service;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    // Login
     public User checkLogin(String username, String password) {
         Optional<User> userOpt =
                 userRepository.findByUsername(username);
@@ -29,13 +31,13 @@ public class UserService {
 
         User user = userOpt.get();
 
-// Reject customer accounts.
-if ("customer".equalsIgnoreCase(user.getRole())
-        && Boolean.FALSE.equals(user.getActive())) {
-    throw new IllegalArgumentException(
-            "Your account has been deactivated"
-    );
-}
+        // Reject deactivated customer accounts
+        if ("customer".equalsIgnoreCase(user.getRole())
+                && Boolean.FALSE.equals(user.getActive())) {
+            throw new IllegalArgumentException(
+                    "Your account has been deactivated"
+            );
+        }
 
         if (user.getPassword() == null
                 || !user.getPassword().equals(password)) {
@@ -47,6 +49,7 @@ if ("customer".equalsIgnoreCase(user.getRole())
         return user;
     }
 
+    // Register a new customer account
     public User register(String username, String password) {
         if (username == null || username.isBlank()
                 || password == null || password.isBlank()) {
@@ -54,6 +57,8 @@ if ("customer".equalsIgnoreCase(user.getRole())
                     "Username and password are required"
             );
         }
+
+        username = username.trim();
 
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException(
@@ -70,6 +75,7 @@ if ("customer".equalsIgnoreCase(user.getRole())
         return userRepository.save(user);
     }
 
+    // Get user by ID
     public User getUser(String userId) {
         if (userId == null || userId.isBlank()) {
             throw new IllegalArgumentException(
@@ -85,10 +91,12 @@ if ("customer".equalsIgnoreCase(user.getRole())
                 );
     }
 
+    // Find all designers
     public List<User> findDesigners() {
         return userRepository.findByRole("designer");
     }
 
+    // Create a designer account
     public User createDesigner(
             String username,
             String password,
@@ -120,6 +128,7 @@ if ("customer".equalsIgnoreCase(user.getRole())
         return userRepository.save(user);
     }
 
+    // Get designer by ID
     public User getDesignerById(String id) {
         User user = getUser(id);
 
@@ -146,6 +155,7 @@ if ("customer".equalsIgnoreCase(user.getRole())
         userRepository.deleteById(designer.getId());
     }
 
+    // Update designer profile
     public User updateDesignerProfile(
             String userId,
             String name,
@@ -178,6 +188,7 @@ if ("customer".equalsIgnoreCase(user.getRole())
         return userRepository.save(user);
     }
 
+    // Update user profile
     public User updateUserProfile(
             String userId,
             String name,
@@ -195,50 +206,81 @@ if ("customer".equalsIgnoreCase(user.getRole())
         return userRepository.save(user);
     }
 
- // View all customer accounts
-public List<User> findCustomers() {
-    return userRepository.findByRole("customer");
-}
-
-// Search customer accounts by username
-public List<User> searchCustomers(String username) {
-    if (username == null || username.isBlank()) {
-        return findCustomers();
+    // View all customer accounts
+    public List<User> findCustomers() {
+        return userRepository.findByRole("customer");
     }
 
-    return userRepository.findByRoleAndUsernameContainingIgnoreCase(
-            "customer",
-            username.trim()
-    );
-}
+    // Search customers by username
+    public List<User> searchCustomers(String username) {
+        if (username == null || username.isBlank()) {
+            return findCustomers();
+        }
 
-// Deactivate a customer account
-public User deactivateCustomer(String id) {
-    User user = getUser(id);
-
-    if (user.getRole() == null
-            || !user.getRole().equalsIgnoreCase("customer")) {
-        throw new IllegalArgumentException(
-                "Customer account not found"
+        return userRepository.findByRoleAndUsernameContainingIgnoreCase(
+                "customer",
+                username.trim()
         );
     }
 
-    user.setActive(false);
-    return userRepository.save(user);
-}
+    // Deactivate a customer account
+    public User deactivateCustomer(String id) {
+        User user = getUser(id);
 
-// Reactivate a customer account
-public User reactivateCustomer(String id) {
-    User user = getUser(id);
+        if (user.getRole() == null
+                || !user.getRole().equalsIgnoreCase("customer")) {
+            throw new IllegalArgumentException(
+                    "Customer account not found"
+            );
+        }
 
-    if (user.getRole() == null
-            || !user.getRole().equalsIgnoreCase("customer")) {
-        throw new IllegalArgumentException(
-                "Customer account not found"
-        );
+        user.setActive(false);
+
+        return userRepository.save(user);
     }
 
-    user.setActive(true);
-    return userRepository.save(user);
-}
+    // Reactivate a customer account
+    public User reactivateCustomer(String id) {
+        User user = getUser(id);
+
+        if (user.getRole() == null
+                || !user.getRole().equalsIgnoreCase("customer")) {
+            throw new IllegalArgumentException(
+                    "Customer account not found"
+            );
+        }
+
+        user.setActive(true);
+
+        return userRepository.save(user);
+    }
+
+    // Delete the customer's own account
+    public void deleteCustAccount(String userId) {
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "User ID is required"
+            );
+        }
+
+        User user = getUser(userId);
+
+        String role = user.getRole() == null
+                ? ""
+                : user.getRole().trim().toLowerCase();
+
+        if ("admin".equals(role) || "manager".equals(role)) {
+            throw new IllegalArgumentException(
+                    "Admin and Manager cannot delete their own accounts"
+            );
+        }
+
+        if (!"customer".equals(role) && !"designer".equals(role)) {
+            throw new IllegalArgumentException(
+                    "This role is not allowed to delete its account"
+            );
+        }
+
+        userRepository.deleteById(user.getId());
+    }
 }
