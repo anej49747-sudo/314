@@ -11,6 +11,29 @@
   box-sizing: border-box;
 }
 
+.customer-management .back-dashboard-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 10px 16px;
+  color: #569d6f;
+  background: #ffffff;
+  border: 1px solid #d9e5dc;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.customer-management .back-dashboard-btn:hover {
+  color: #ffffff;
+  background: #88ac94;
+  border-color: #8fc3a1;
+  transform: translateY(-1px);
+}
+
 .customer-management .customer-management-header {
   display: flex;
   align-items: center;
@@ -32,11 +55,17 @@
   font-weight: 700;
 }
 
+.customer-management .customer-management-description {
+  margin: 10px 0 0;
+  color: #7a857d;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
 .customer-management button {
   font-family: inherit;
   font-size: 13px;
   font-weight: 600;
-  border: none;
   border-radius: 7px;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
@@ -46,18 +75,6 @@
   cursor: not-allowed;
   opacity: 0.55;
   transform: none;
-}
-
-.customer-management .customer-refresh-btn {
-  flex-shrink: 0;
-  padding: 11px 20px;
-  color: #ffffff;
-  background: #397a50;
-}
-
-.customer-management .customer-refresh-btn:hover:not(:disabled) {
-  background: #2e6641;
-  transform: translateY(-1px);
 }
 
 .customer-management .customer-search-card {
@@ -83,7 +100,7 @@
 }
 
 .customer-management .customer-search-input-group label {
-  color: #35483a;
+  color: #71937a;
   font-size: 13px;
   font-weight: 600;
 }
@@ -122,11 +139,28 @@
   height: 42px;
   padding: 0 18px;
   color: #ffffff;
-  background: #397a50;
+  background: #7ea68c;
+  border: 1px solid #7bad8c;
 }
 
 .customer-management .customer-search-btn:hover:not(:disabled) {
-  background: #2e6641;
+  background: #5f9673;
+  border-color: #88ae95;
+}
+
+.customer-management .customer-reset-btn {
+  min-width: 80px;
+  height: 42px;
+  padding: 0 18px;
+  color: #526257;
+  background: #f2f5f2;
+  border: 1px solid #dce4dd;
+}
+
+.customer-management .customer-reset-btn:hover:not(:disabled) {
+  color: #2e6641;
+  background: #e8f0e9;
+  border-color: #b8d0bd;
 }
 
 .customer-management .customer-success-message,

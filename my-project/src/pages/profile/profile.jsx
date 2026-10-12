@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -7,7 +6,7 @@ import {
   apiGetDesignerById,
   apiGetuser,
   apiUpdateDesignerProfile,
-  apiUpdateUserProfile
+  apiUpdateUserProfile,
 } from "../../api";
 
 import "./profile.css";
@@ -38,6 +37,10 @@ function Profile() {
     savedUser.userid ||
     "";
 
+  const roleForFetch = String(
+    userdata.role || savedUser.role || ""
+  ).toLowerCase();
+
   const [currentUser, setCurrentUser] = useState(userdata);
 
   const [formData, setFormData] = useState({
@@ -58,7 +61,7 @@ function Profile() {
 
   const fillForm = (user) => {
     setFormData({
-      name: user.name || "",
+      name: user.name || user.fullName || "",
       gender: user.gender || "",
       email: user.email || "",
       bio: user.bio || "",
@@ -69,11 +72,11 @@ function Profile() {
   };
 
   useEffect(() => {
+    let cancelled = false;
+
     const getUser = async () => {
       if (!userId) {
-        setErrorMessage(
-          "Cannot find your user ID. Please log in again."
-        );
+        setErrorMessage("Cannot find your user ID. Please log in again.");
         return;
       }
 
@@ -81,56 +84,69 @@ function Profile() {
       setErrorMessage("");
 
       try {
-        const role = String(
-          userdata.role || savedUser.role || ""
-        ).toLowerCase();
-
         const res =
-          role === "designer"
+          roleForFetch === "designer"
             ? await apiGetDesignerById(userId)
             : await apiGetuser(userId);
 
         const result = res?.data ?? res;
 
-        if (result.status !== "success") {
-          setErrorMessage(
-            result.message || "Unable to load your profile."
+        if (result?.status !== "success") {
+          throw new Error(
+            result?.message || "Unable to load your profile."
           );
-          return;
         }
 
         const user = result.designer || result.userdata;
 
         if (!user) {
-          setErrorMessage("No profile data was returned.");
-          return;
+          throw new Error("No profile data was returned.");
         }
 
-        setCurrentUser(user);
-        fillForm(user);
+        if (cancelled) return;
+
+        const completeUser = {
+          ...userdata,
+          ...user,
+          id: user.id || userId,
+        };
+
+        setCurrentUser(completeUser);
+        fillForm(completeUser);
+
+        const latestSavedUser = JSON.parse(
+          localStorage.getItem("userdata") || "{}"
+        );
 
         localStorage.setItem(
           "userdata",
           JSON.stringify({
-            ...savedUser,
-            ...user,
-            id: user.id || userId,
+            ...latestSavedUser,
+            ...completeUser,
           })
         );
       } catch (error) {
-        console.error("Failed to load profile:", error);
-
-        setErrorMessage(
-          error?.response?.data?.message ||
-          "Whoops! Something went wrong!"
-        );
+        if (!cancelled) {
+          console.error("Failed to load profile:", error);
+          setErrorMessage(
+            error?.response?.data?.message ||
+            error.message ||
+            "Whoops! Something went wrong!"
+          );
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
     getUser();
-  }, [userId]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, roleForFetch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -155,9 +171,7 @@ function Profile() {
 
   const submit = async () => {
     if (!userId) {
-      setErrorMessage(
-        "Cannot find your user ID. Please log in again."
-      );
+      setErrorMessage("Cannot find your user ID. Please log in again.");
       return;
     }
 
@@ -192,16 +206,18 @@ function Profile() {
 
       const result = res?.data ?? res;
 
-      if (result.status !== "success") {
-        setErrorMessage(
-          result.message || "Failed to update profile."
+      if (result?.status !== "success") {
+        throw new Error(
+          result?.message || "Failed to update profile."
         );
-        return;
       }
 
-      const updatedUser = result.designer || {
+      const updatedUser = {
         ...currentUser,
+        ...(result.userdata || {}),
+        ...(result.designer || {}),
         ...payload,
+        id: result.userdata?.id || result.designer?.id || userId,
       };
 
       setCurrentUser(updatedUser);
@@ -216,17 +232,16 @@ function Profile() {
         JSON.stringify({
           ...latestSavedUser,
           ...updatedUser,
-          id: updatedUser.id || userId,
         })
       );
 
       setshowedit(false);
-      alert("Profile updated successfully!");
+      window.alert("Profile updated successfully!");
     } catch (error) {
       console.error("Failed to update profile:", error);
-
       setErrorMessage(
         error?.response?.data?.message ||
+        error.message ||
         "Failed to save your profile. Please try again."
       );
     } finally {
@@ -244,9 +259,7 @@ function Profile() {
 
   const handleDeleteAccount = async () => {
     if (!userId) {
-      setErrorMessage(
-        "Cannot find your user ID. Please log in again."
-      );
+      setErrorMessage("Cannot find your user ID. Please log in again.");
       return;
     }
 
@@ -274,25 +287,21 @@ function Profile() {
       const result = response?.data ?? response;
 
       if (result.status !== "success") {
-        setErrorMessage(
+        throw new Error(
           result.message || "Failed to delete your account."
         );
-        return;
       }
 
       localStorage.removeItem("userdata");
       sessionStorage.clear();
 
-      window.alert(
-        "Your account has been deleted successfully."
-      );
-
+      window.alert("Your account has been deleted successfully.");
       navigate("/login", { replace: true });
     } catch (error) {
       console.error("Failed to delete account:", error);
-
       setErrorMessage(
         error?.response?.data?.message ||
+        error.message ||
         "Failed to delete your account. Please try again."
       );
     } finally {
@@ -321,7 +330,6 @@ function Profile() {
           <div className="profile-title-line" />
         </div>
 
-        {/* Personal profile card */}
         <div className="profile-content">
           <div className="profile-left">
             <div className="avatar-wrapper">
@@ -331,9 +339,7 @@ function Profile() {
             </div>
 
             <div className="username">
-              {currentUser.username ||
-                userdata.username ||
-                "Username"}
+              {currentUser.username || userdata.username || "Username"}
             </div>
 
             <div className="profile-role">{role}</div>
@@ -343,9 +349,7 @@ function Profile() {
 
           <div className="right">
             {loading && (
-              <p className="profile-status">
-                Loading profile...
-              </p>
+              <p className="profile-status">Loading profile...</p>
             )}
 
             {errorMessage && (
@@ -414,9 +418,7 @@ function Profile() {
 
             {isDesigner && (
               <div className="profile-field">
-                <label htmlFor="profile-styles">
-                  Design Styles:
-                </label>
+                <label htmlFor="profile-styles">Design Styles:</label>
                 <input
                   id="profile-styles"
                   type="text"
@@ -461,12 +463,11 @@ function Profile() {
           </div>
         </div>
 
-        {/* Delete account section BELOW the profile card */}
         {canDeleteAccount && (
           <div className="profile-danger-zone">
             <p>
-              Permanently delete your account. This action cannot
-              be undone.
+              Permanently delete your account. This action cannot be
+              undone.
             </p>
 
             <button

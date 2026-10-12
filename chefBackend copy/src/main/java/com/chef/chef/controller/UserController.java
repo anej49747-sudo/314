@@ -32,15 +32,9 @@ public class UserController {
         data.put("id", user.getId());
         data.put("username", user.getUsername());
         data.put("role", user.getRole());
-        data.put("name", user.getName());
         data.put("active", !Boolean.FALSE.equals(user.getActive()));
 
-        return data;
-    }
-
-    private Map<String, Object> toDesignerData(User user) {
-        Map<String, Object> data = toUserData(user);
-
+        data.put("name", user.getName());
         data.put("gender", user.getGender());
         data.put("email", user.getEmail());
         data.put("company", user.getCompany());
@@ -49,23 +43,24 @@ public class UserController {
                 "designStyles",
                 user.getDesignStyles() == null
                         ? List.of()
-                        : user.getDesignStyles()
-        );
+                        : user.getDesignStyles());
 
         return data;
     }
 
+    private Map<String, Object> toDesignerData(User user) {
+        return toUserData(user);
+    }
+
     @PostMapping("/register")
     public Map<String, Object> register(
-            @RequestBody Map<String, String> body
-    ) {
+            @RequestBody Map<String, String> body) {
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
-            String username = body.get("username");
-            String password = body.get("password");
-
-            User user = userService.register(username, password);
+            User user = userService.register(
+                    body.get("username"),
+                    body.get("password"));
 
             response.put("status", "success");
             response.put("message", "Registration successful");
@@ -81,15 +76,13 @@ public class UserController {
 
     @PostMapping("/login")
     public Map<String, Object> login(
-            @RequestBody Map<String, String> body
-    ) {
+            @RequestBody Map<String, String> body) {
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
-            String username = body.get("username");
-            String password = body.get("password");
-
-            User user = userService.checkLogin(username, password);
+            User user = userService.checkLogin(
+                    body.get("username"),
+                    body.get("password"));
 
             response.put("status", "success");
             response.put("message", "Login successful");
@@ -105,9 +98,7 @@ public class UserController {
 
     @GetMapping("/getuser")
     public Map<String, Object> getUser(
-            // 从/getuser取值
-            @RequestParam("userId") String userId
-    ) {
+            @RequestParam("userId") String userId) {
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -140,16 +131,14 @@ public class UserController {
 
     @PostMapping("/admin/create-designer")
     public Map<String, Object> createDesigner(
-            @RequestBody Map<String, String> body
-    ) {
+            @RequestBody Map<String, String> body) {
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
             User user = userService.createDesigner(
                     body.get("username"),
                     body.get("password"),
-                    body.get("name")
-            );
+                    body.get("name"));
 
             response.put("status", "success");
             response.put("message", "Designer created successfully");
@@ -165,9 +154,7 @@ public class UserController {
 
     @GetMapping("/designer/{id}")
     public Map<String, Object> getDesignerById(
-            // 从/designer/{id}取值
-            @PathVariable("id") String id
-    ) {
+            @PathVariable("id") String id) {
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -184,11 +171,9 @@ public class UserController {
         return response;
     }
 
-    // 新增：删除指定的 Designer 账号
     @DeleteMapping("/designer/{id}")
     public Map<String, Object> deleteDesigner(
-            @PathVariable("id") String id
-    ) {
+            @PathVariable("id") String id) {
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -205,35 +190,29 @@ public class UserController {
         return response;
     }
 
+    @DeleteMapping("/user/{id}/account")
+    public Map<String, Object> deleteCustAccount(
+            @PathVariable("id") String id) {
+        Map<String, Object> response = new LinkedHashMap<>();
 
+        try {
+            userService.deleteCustAccount(id);
 
-@DeleteMapping("/user/{id}/account")
-public Map<String, Object> deleteCustAccount(
-        @PathVariable("id") String id
-) {
-    Map<String, Object> response = new LinkedHashMap<>();
+            response.put("status", "success");
+            response.put("message", "Account deleted successfully");
 
-    try {
-        userService.deleteCustAccount(id);
+        } catch (IllegalArgumentException e) {
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+        }
 
-        response.put("status", "success");
-        response.put("message", "Account deleted successfully");
-
-    } catch (IllegalArgumentException e) {
-        response.put("status", "error");
-        response.put("message", e.getMessage());
+        return response;
     }
-
-    return response;
-}
-
-
 
     @PutMapping("/designer/{id}/profile")
     public Map<String, Object> updateDesignerProfile(
             @PathVariable("id") String id,
-            @RequestBody Map<String, Object> body
-    ) {
+            @RequestBody Map<String, Object> body) {
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -252,8 +231,7 @@ public Map<String, Object> deleteCustAccount(
                     email,
                     company,
                     bio,
-                    designStyles
-            );
+                    designStyles);
 
             response.put("status", "success");
             response.put("message", "Profile updated successfully");
@@ -270,8 +248,7 @@ public Map<String, Object> deleteCustAccount(
     @PutMapping("/user/{id}/profile")
     public Map<String, Object> updateUserProfile(
             @PathVariable("id") String id,
-            @RequestBody Map<String, Object> body
-    ) {
+            @RequestBody Map<String, Object> body) {
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -285,8 +262,7 @@ public Map<String, Object> deleteCustAccount(
                     name,
                     gender,
                     email,
-                    bio
-            );
+                    bio);
 
             response.put("status", "success");
             response.put("message", "Profile updated successfully");
@@ -302,43 +278,35 @@ public Map<String, Object> deleteCustAccount(
 
     private String getString(
             Map<String, Object> body,
-            String key
-    ) {
+            String key) {
         Object value = body.get(key);
         return value == null ? "" : value.toString().trim();
     }
 
     private List<String> getStringList(
             Map<String, Object> body,
-            String key
-    ) {
+            String key) {
         Object value = body.get(key);
 
         if (!(value instanceof List<?> list)) {
             return List.of();
         }
 
-        // stream流, 依次处理以下步骤
         return list.stream()
-                // 筛选所有String
                 .filter(item -> item instanceof String)
-                // map转换认定String元素 trim去掉前后空格
                 .map(item -> ((String) item).trim())
-                // 只保留符合条件的元素
                 .filter(item -> !item.isEmpty())
                 .toList();
     }
 
-    // View all customer accounts
     @GetMapping("/admin/customers")
     public Map<String, Object> getCustomers() {
         Map<String, Object> response = new LinkedHashMap<>();
 
-        List<Map<String, Object>> customers =
-                userService.findCustomers()
-                        .stream()
-                        .map(this::toUserData)
-                        .toList();
+        List<Map<String, Object>> customers = userService.findCustomers()
+                .stream()
+                .map(this::toUserData)
+                .toList();
 
         response.put("status", "success");
         response.put("customers", customers);
@@ -346,18 +314,15 @@ public Map<String, Object> deleteCustAccount(
         return response;
     }
 
-    // Search customers by username
     @GetMapping("/admin/customers/search")
     public Map<String, Object> searchCustomers(
             @RequestParam("username") String username) {
-
         Map<String, Object> response = new LinkedHashMap<>();
 
-        List<Map<String, Object>> customers =
-                userService.searchCustomers(username)
-                        .stream()
-                        .map(this::toUserData)
-                        .toList();
+        List<Map<String, Object>> customers = userService.searchCustomers(username)
+                .stream()
+                .map(this::toUserData)
+                .toList();
 
         response.put("status", "success");
         response.put("customers", customers);
@@ -365,11 +330,9 @@ public Map<String, Object> deleteCustAccount(
         return response;
     }
 
-    // Deactivate a customer account
     @PutMapping("/admin/customers/{id}/deactivate")
     public Map<String, Object> deactivateCustomer(
             @PathVariable("id") String id) {
-
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -378,8 +341,7 @@ public Map<String, Object> deleteCustAccount(
             response.put("status", "success");
             response.put(
                     "message",
-                    "Customer account deactivated successfully"
-            );
+                    "Customer account deactivated successfully");
             response.put("customer", toUserData(user));
 
         } catch (IllegalArgumentException e) {
@@ -390,11 +352,9 @@ public Map<String, Object> deleteCustAccount(
         return response;
     }
 
-    // Reactivate a customer account
     @PutMapping("/admin/customers/{id}/reactivate")
     public Map<String, Object> reactivateCustomer(
             @PathVariable("id") String id) {
-
         Map<String, Object> response = new LinkedHashMap<>();
 
         try {
@@ -403,8 +363,7 @@ public Map<String, Object> deleteCustAccount(
             response.put("status", "success");
             response.put(
                     "message",
-                    "Customer account reactivated successfully"
-            );
+                    "Customer account reactivated successfully");
             response.put("customer", toUserData(user));
 
         } catch (IllegalArgumentException e) {
@@ -414,5 +373,4 @@ public Map<String, Object> deleteCustAccount(
 
         return response;
     }
-
 }
