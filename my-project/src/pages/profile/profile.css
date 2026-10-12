@@ -321,3 +321,48 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.profile-page .profile-danger-zone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  max-width: 760px;
+  margin: 24px auto 0;
+  padding: 16px 20px;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.profile-page .profile-danger-zone p {
+  flex: 1;
+  margin: 0;
+  color: #777777;
+  font-size: 18px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.profile-page .profile-delete-button {
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #656060;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.profile-page .profile-delete-button:hover:not(:disabled) {
+  color: #ad2920;
+}
+
+.profile-page .profile-delete-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

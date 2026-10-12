@@ -71,7 +71,9 @@ function Profile() {
   useEffect(() => {
     const getUser = async () => {
       if (!userId) {
-        setErrorMessage("Cannot find your user ID. Please log in again.");
+        setErrorMessage(
+          "Cannot find your user ID. Please log in again."
+        );
         return;
       }
 
@@ -153,7 +155,9 @@ function Profile() {
 
   const submit = async () => {
     if (!userId) {
-      setErrorMessage("Cannot find your user ID. Please log in again.");
+      setErrorMessage(
+        "Cannot find your user ID. Please log in again."
+      );
       return;
     }
 
@@ -235,11 +239,14 @@ function Profile() {
   ).toLowerCase();
 
   const isDesigner = role === "designer";
-  const canDeleteAccount = role === "customer" || role === "designer";
+  const canDeleteAccount =
+    role === "customer" || role === "designer";
 
   const handleDeleteAccount = async () => {
     if (!userId) {
-      setErrorMessage("Cannot find your user ID. Please log in again.");
+      setErrorMessage(
+        "Cannot find your user ID. Please log in again."
+      );
       return;
     }
 
@@ -276,7 +283,9 @@ function Profile() {
       localStorage.removeItem("userdata");
       sessionStorage.clear();
 
-      window.alert("Your account has been deleted successfully.");
+      window.alert(
+        "Your account has been deleted successfully."
+      );
 
       navigate("/login", { replace: true });
     } catch (error) {
@@ -312,6 +321,7 @@ function Profile() {
           <div className="profile-title-line" />
         </div>
 
+        {/* Personal profile card */}
         <div className="profile-content">
           <div className="profile-left">
             <div className="avatar-wrapper">
@@ -321,7 +331,9 @@ function Profile() {
             </div>
 
             <div className="username">
-              {currentUser.username || userdata.username || "Username"}
+              {currentUser.username ||
+                userdata.username ||
+                "Username"}
             </div>
 
             <div className="profile-role">{role}</div>
@@ -331,7 +343,9 @@ function Profile() {
 
           <div className="right">
             {loading && (
-              <p className="profile-status">Loading profile...</p>
+              <p className="profile-status">
+                Loading profile...
+              </p>
             )}
 
             {errorMessage && (
@@ -400,7 +414,9 @@ function Profile() {
 
             {isDesigner && (
               <div className="profile-field">
-                <label htmlFor="profile-styles">Design Styles:</label>
+                <label htmlFor="profile-styles">
+                  Design Styles:
+                </label>
                 <input
                   id="profile-styles"
                   type="text"
@@ -442,29 +458,27 @@ function Profile() {
                 </button>
               )}
             </div>
-
-            {canDeleteAccount && (
-              <div className="profile-danger-zone">
-                <h3>Danger Zone</h3>
-
-                <p>
-                  Permanently delete your account and remove your
-                  account information from the platform. This action
-                  cannot be undone.
-                </p>
-
-                <button
-                  type="button"
-                  className="profile-delete-button"
-                  onClick={handleDeleteAccount}
-                  disabled={loading || saving || deleting}
-                >
-                  {deleting ? "Deleting..." : "Delete My Account"}
-                </button>
-              </div>
-            )}
           </div>
         </div>
+
+        {/* Delete account section BELOW the profile card */}
+        {canDeleteAccount && (
+          <div className="profile-danger-zone">
+            <p>
+              Permanently delete your account. This action cannot
+              be undone.
+            </p>
+
+            <button
+              type="button"
+              className="profile-delete-button"
+              onClick={handleDeleteAccount}
+              disabled={loading || saving || deleting}
+            >
+              {deleting ? "Deleting..." : "Delete My Account"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
