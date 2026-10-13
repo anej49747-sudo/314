@@ -1,6 +1,5 @@
 package com.chef.chef.service;
 
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,27 +122,6 @@ public class IdpService {
 
         if (idp.getImage() == null) {
             idp.setImage(new ArrayList<>());
-        }
-
-        for (String imageUrl : idp.getImage()) {
-            if (imageUrl == null || imageUrl.isBlank()) {
-                throw new IllegalArgumentException(
-                        "Image URL cannot be empty");
-            }
-
-            try {
-                URI uri = URI.create(imageUrl.trim());
-
-                if (uri.getHost() == null
-                        || (!"http".equalsIgnoreCase(uri.getScheme())
-                                && !"https".equalsIgnoreCase(uri.getScheme()))) {
-                    throw new IllegalArgumentException(
-                            "Image URL must use HTTP or HTTPS");
-                }
-            } catch (IllegalArgumentException exception) {
-                throw new IllegalArgumentException(
-                        "Invalid image URL: " + imageUrl);
-            }
         }
     }
 }

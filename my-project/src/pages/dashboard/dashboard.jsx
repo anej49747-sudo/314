@@ -100,13 +100,20 @@ function Dashboard() {
               <div className="dashboard-card-content">
                 <h2>My Portfolio &amp; Interest Tracking</h2>
 
+
                 <button
                   type="button"
                   className="dashboard-manager-btn"
+                  onClick={() =>
+                    navigate("/designer/idp", {
+                      state: { userdata },
+                    })
+                  }
                 >
-                  <span>Manage Portfolio &amp; View Interest</span>
+                  <span>Manage Portfolio & View Interest</span>
                   <span className="dashboard-button-arrow">→</span>
                 </button>
+
               </div>
             </div>
           </div>

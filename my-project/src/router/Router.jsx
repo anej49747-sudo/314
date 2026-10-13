@@ -26,6 +26,8 @@ const CompanyInformation = lazy(
   () => import("../pages/CompanyInformation/companyinformation")
 );
 
+const DesignerIDP = lazy(() => import("../pages/Designer/IDP"));
+
 const Router = [
   {
     path: "/",
@@ -58,6 +60,10 @@ const Router = [
   {
     path: "/designer/company-information",
     element: <CompanyInformation />,
+  },
+  {
+    path: "/designer/idp",
+    element: <DesignerIDP />,
   },
   {
     path: "/idp",
