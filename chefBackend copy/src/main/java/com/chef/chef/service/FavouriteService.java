@@ -6,8 +6,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.chef.chef.model.Favourite;
 import com.chef.chef.model.IDP;
-import com.chef.chef.repository.Favourite;
 import com.chef.chef.repository.FavouriteRepository;
 import com.chef.chef.repository.IdpRepository;
 

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.chef.chef.model.Favourite;
 import com.chef.chef.model.IDP;
-import com.chef.chef.repository.Favourite;
 import com.chef.chef.service.FavouriteService;
 
 @RestController
