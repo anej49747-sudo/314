@@ -1,8 +1,11 @@
 import { Alert, Button, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { apiGetFavourites, apiRemoveFavourite } from "../../api";
-import "./favourites.css";
+import {
+    apiGetFavourites,
+    apiRemoveFavourite,
+} from "../../api";
+import "./favourites.scss";
 
 function Favourites() {
     const navigate = useNavigate();
@@ -12,12 +15,13 @@ function Favourites() {
     const [error, setError] = useState("");
     const [removingId, setRemovingId] = useState("");
 
-    const user = JSON.parse(localStorage.getItem("userdata") || "null");
-    const customerId = user?._id;
+    const user = JSON.parse(
+        localStorage.getItem("userdata") || "null",
+    );
+    const customerId = user?.userid;
 
     useEffect(() => {
         if (!customerId) {
-            setError("Please log in to view your saved projects.");
             setLoading(false);
             return;
         }
@@ -25,6 +29,7 @@ function Favourites() {
         async function loadFavourites() {
             try {
                 const res = await apiGetFavourites(customerId);
+
                 const list = Array.isArray(res)
                     ? res
                     : res?.data ?? res?.projects ?? [];
@@ -50,9 +55,13 @@ function Favourites() {
 
         try {
             setRemovingId(id);
+
             await apiRemoveFavourite(customerId, id);
+
             setProjects((current) =>
-                current.filter((project) => (project.id ?? project._id) !== id),
+                current.filter(
+                    (project) => (project.id ?? project._id) !== id,
+                ),
             );
         } catch (err) {
             console.error(err);
@@ -62,85 +71,109 @@ function Favourites() {
         }
     };
 
-    if (!customerId) {
-        return (
-            <main className="favourites-page">
-                <h1>Saved Projects</h1>
-                <Alert
-                    type="warning"
-                    message="Please log in to view your saved projects."
-                />
-                <Button onClick={() => navigate("/login")}>Login</Button>
-            </main>
-        );
-    }
-
-    if (loading) {
-        return (
-            <main className="favourites-page">
-                <Spin />
-                <p>Loading saved projects...</p>
-            </main>
-        );
-    }
-
     return (
         <main className="favourites-page">
+            <Button
+                className="back-home-button"
+                onClick={() => navigate("/home")}
+            >
+                ← Back to Home
+            </Button>
+
             <div className="favourites-header">
                 <h1>Saved Projects</h1>
-                <Button onClick={() => navigate("/idp")}>Browse Projects</Button>
             </div>
 
-            {error && (
+            {!customerId ? (
                 <Alert
-                    type="error"
-                    message={error}
-                    closable
-                    onClose={() => setError("")}
+                    type="info"
+                    title="Log in to view your saved projects."
+                    action={
+                        <Button
+                            size="small"
+                            onClick={() => navigate("/login")}
+                        >
+                            Login
+                        </Button>
+                    }
                 />
-            )}
-
-            <p>{projects.length} saved project(s)</p>
-
-            {projects.length === 0 ? (
-                <p>You have not saved any projects yet.</p>
-            ) : (
-                <div className="favourites-grid">
-                    {projects.map((project) => {
-                        const id = project.id ?? project._id;
-                        const title = project.title || project.name || "Untitled Project";
-                        const images = project.image;
-                        const imageUrl =
-                            project.imageUrl ||
-                            (Array.isArray(images) ? images[0] : images);
-
-                        return (
-                            <article className="favourite-card" key={id}>
-                                {imageUrl && (
-                                    <img src={imageUrl} alt={title} className="favourite-image" />
-                                )}
-
-                                <h2>{title}</h2>
-                                <p>{project.description || "No description available."}</p>
-
-                                {id && (
-                                    <Link to={`/idp/${id}`} className="favourite-view-link">
-                                        View Project
-                                    </Link>
-                                )}
-
-                                <Button
-                                    danger
-                                    loading={removingId === id}
-                                    disabled={!id || Boolean(removingId)}
-                                    onClick={() => handleRemove(id)}
-                                >
-                                    Remove from Saved
-                                </Button>
-                            </article>
-                        );
-                    })}
+            ) : loading ? (
+                <div>
+                    <Spin />
+                    <p>Loading saved projects...</p>
                 </div>
+            ) : (
+                <>
+                    {error && (
+                        <Alert
+                            type="error"
+                            title={error}
+                            closable
+                            onClose={() => setError("")}
+                        />
+                    )}
+
+                    <p>{projects.length} saved project(s)</p>
+
+                    {projects.length === 0 ? (
+                        <p>You have not saved any projects yet.</p>
+                    ) : (
+                        <div className="favourites-grid">
+                            {projects.map((project) => {
+                                const id = project.id ?? project._id;
+                                const title =
+                                    project.title ||
+                                    project.name ||
+                                    "Untitled Project";
+
+                                const images = project.image;
+                                const imageUrl =
+                                    project.imageUrl ||
+                                    (Array.isArray(images) ? images[0] : images);
+
+                                return (
+                                    <article
+                                        className="favourite-card"
+                                        key={id}
+                                    >
+                                        {imageUrl && (
+                                            <img
+                                                src={imageUrl}
+                                                alt={title}
+                                                className="favourite-image"
+                                            />
+                                        )}
+
+                                        <h2>{title}</h2>
+
+                                        <p>
+                                            {project.description ||
+                                                "No description available."}
+                                        </p>
+
+                                        {id && (
+                                            <Link
+                                                to={`/ idp / ${id} `}
+                                                className="favourite-view-link"
+                                            >
+                                                View Project
+                                            </Link>
+                                        )}
+
+                                        <Button
+                                            danger
+                                            loading={removingId === id}
+                                            disabled={!id || Boolean(removingId)}
+                                            onClick={() => handleRemove(id)}
+                                        >
+                                            Remove from Saved
+                                        </Button>
+                                    </article>
+                                );
+                            })}
+                        </div>
+                    )}
+                </>
             )}
         </main>
     );
