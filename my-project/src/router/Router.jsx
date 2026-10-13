@@ -28,6 +28,10 @@ const CompanyInformation = lazy(
 
 const DesignerIDP = lazy(() => import("../pages/Designer/IDP"));
 
+const Favourites = lazy(
+  () => import("../pages/Favourites/favourites")
+);
+
 const Router = [
   {
     path: "/",
@@ -80,6 +84,10 @@ const Router = [
   {
     path: "/customermanagement",
     element: <CustomerManagement />,
+  },
+  {
+    path: "/favourites",
+    element: <Favourites />,
   },
 ];
 

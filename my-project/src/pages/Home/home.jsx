@@ -82,9 +82,7 @@ function Home() {
         />
       )}
 
-      {/* Header */}
       <header className="header">
-        {/* Left navigation box */}
         <nav className="header-nav">
           <button
             type="button"
@@ -95,7 +93,6 @@ function Home() {
           </button>
         </nav>
 
-        {/* Right user actions */}
         <div className="header-actions">
           {loginStatus ? (
             <>
@@ -109,7 +106,6 @@ function Home() {
                     ? role.charAt(0).toUpperCase() + role.slice(1)
                     : "User"}{" "}
                   : {username}
-
                   <span className="dropdown-arrow">
                     {showMenu ? "⌃" : "⌄"}
                   </span>
@@ -153,21 +149,15 @@ function Home() {
         </div>
       </header>
 
-      {/* Main content */}
       <div className="homecontent">
         <section className="home-main">
           <div className="home-title">
             <h1>Interior Design Projects</h1>
-
             <div className="title-line"></div>
-
-            <p>
-              Discover and manage interior design projects.
-            </p>
+            <p>Discover and manage interior design projects.</p>
           </div>
 
           <div className="feature-section">
-            {/* Search */}
             <div className="feature-card">
               <div className="feature-icon">⌕</div>
 
@@ -179,14 +169,13 @@ function Home() {
               <button
                 type="button"
                 className="feature-button"
-                onClick={() => navigate("/home")}
+                onClick={() => navigate("/idp?mode=search")}
               >
                 <span>Search Projects</span>
                 <span>→</span>
               </button>
             </div>
 
-            {/* View */}
             <div className="feature-card">
               <div className="feature-icon">◇</div>
 
@@ -198,14 +187,13 @@ function Home() {
               <button
                 type="button"
                 className="feature-button"
-                onClick={() => navigate("/home")}
+                onClick={() => navigate("/idp")}
               >
                 <span>View Projects</span>
                 <span>→</span>
               </button>
             </div>
 
-            {/* Save */}
             <div className="feature-card">
               <div className="feature-icon">♡</div>
 
@@ -217,7 +205,7 @@ function Home() {
               <button
                 type="button"
                 className="feature-button"
-                onClick={() => navigate("/home")}
+                onClick={() => navigate("/favourites")}
               >
                 <span>Saved Projects</span>
                 <span>→</span>
