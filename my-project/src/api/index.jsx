@@ -78,29 +78,28 @@ export function apiUpdateUserProfile(id, data) {
         method: "put",
         data,
     });
+}
 
-    // Add IDP to favourites
-    export function apiAddFavourite(customerId, idpId) {
-        return newRequest({
-            url: `/api/favourites/${encodeURIComponent(customerId)}/${encodeURIComponent(idpId)}`,
-            method: "post",
-        });
-    }
+// Add IDP to favourites
+export function apiAddFavourite(customerId, idpId) {
+    return newRequest({
+        url: `/api/favourites/${encodeURIComponent(customerId)}/${encodeURIComponent(idpId)}`,
+        method: "post",
+    });
+}
 
-    // Get customer's favourite IDPs
-    export function apiGetFavourites(customerId) {
-        return newRequest({
-            url: `/api/favourites/${encodeURIComponent(customerId)}`,
-            method: "get",
-        });
-    }
+// Get customer's favourite IDPs
+export function apiGetFavourites(customerId) {
+    return newRequest({
+        url: `/api/favourites/${encodeURIComponent(customerId)}`,
+        method: "get",
+    });
+}
 
-    // Remove IDP from favourites
-    export function apiRemoveFavourite(customerId, idpId) {
-        return newRequest({
-            url: `/api/favourites/${encodeURIComponent(customerId)}/${encodeURIComponent(idpId)}`,
-            method: "delete",
-        });
-    }
-
+// Remove IDP from favourites
+export function apiRemoveFavourite(customerId, idpId) {
+    return newRequest({
+        url: `/api/favourites/${encodeURIComponent(customerId)}/${encodeURIComponent(idpId)}`,
+        method: "delete",
+    });
 }
