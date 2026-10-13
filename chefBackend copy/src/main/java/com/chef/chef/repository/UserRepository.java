@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import com.chef.chef.model.User;
 
@@ -20,7 +21,8 @@ public interface UserRepository extends MongoRepository<User, String> {
             String role,
             String username);
 
-    long countByRoleAndCreateTimeGreaterThanEqualAndCreateTimeLessThan(
+    @Query("{ 'role': ?0, 'createTime': { '$gte': ?1, '$lt': ?2 } }")
+    long countCustomersCreatedBetween(
             String role,
             LocalDateTime start,
             LocalDateTime end);

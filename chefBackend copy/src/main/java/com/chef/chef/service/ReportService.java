@@ -32,8 +32,9 @@ public class ReportService {
     }
 
     public Map<String, Object> generateReport(String period) {
-        if (period == null || !List.of("daily", "weekly", "monthly")
-                .contains(period.toLowerCase())) {
+        if (period == null
+                || !List.of("daily", "weekly", "monthly")
+                        .contains(period.toLowerCase())) {
             throw new IllegalArgumentException(
                     "Period must be daily, weekly or monthly");
         }
@@ -50,8 +51,8 @@ public class ReportService {
                 numberOfBuckets = 7;
             }
             case "weekly" -> {
-                startDate = today.with(
-                        TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                startDate = today
+                        .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                         .minusWeeks(7);
                 numberOfBuckets = 8;
             }
@@ -93,17 +94,14 @@ public class ReportService {
             LocalDateTime start = bucketStart.atStartOfDay();
             LocalDateTime end = bucketEnd.atStartOfDay();
 
-            long customers = userRepository
-                    .countByRoleAndCreateTimeGreaterThanEqualAndCreateTimeLessThan(
-                            "customer", start, end);
+            long customers = userRepository.countCustomersCreatedBetween(
+                    "customer", start, end);
 
-            long idps = idpRepository
-                    .countByCreateTimeGreaterThanEqualAndCreateTimeLessThan(
-                            start, end);
+            long idps = idpRepository.countIdpsCreatedBetween(
+                    start, end);
 
-            long favourites = favouriteRepository
-                    .countByCreateTimeGreaterThanEqualAndCreateTimeLessThan(
-                            start, end);
+            long favourites = favouriteRepository.countFavouritesCreatedBetween(
+                    start, end);
 
             Map<String, Object> point = new LinkedHashMap<>();
 

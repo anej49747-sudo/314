@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import com.chef.chef.model.Favourite;
 
@@ -26,7 +27,8 @@ public interface FavouriteRepository extends MongoRepository<Favourite, String> 
 
     long countByIdpId(String idpId);
 
-    long countByCreateTimeGreaterThanEqualAndCreateTimeLessThan(
+    @Query("{ 'createTime': { '$gte': ?0, '$lt': ?1 } }")
+    long countFavouritesCreatedBetween(
             LocalDateTime start,
             LocalDateTime end);
 }
