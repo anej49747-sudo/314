@@ -7,20 +7,27 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
+import com.chef.chef.model.Category;
 import com.chef.chef.model.IDP;
+import com.chef.chef.repository.CategoryRepository;
 import com.chef.chef.repository.IdpRepository;
 
 @Service
 public class IdpService {
 
     private final IdpRepository idpRepository;
+    private final CategoryRepository categoryRepository;
 
-    public IdpService(IdpRepository idpRepository) {
+    public IdpService(
+            IdpRepository idpRepository,
+            CategoryRepository categoryRepository) {
         this.idpRepository = idpRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public IDP createIdp(IDP idp) {
         validateIdp(idp);
+        validateCategory(idp.getCategoryId());
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -57,6 +64,7 @@ public class IdpService {
 
         checkOwnership(existingIdp, designerId);
         validateIdp(updatedIdp);
+        validateCategory(updatedIdp.getCategoryId());
 
         existingIdp.setTitle(updatedIdp.getTitle().trim());
         existingIdp.setDescription(
@@ -65,6 +73,7 @@ public class IdpService {
                 new ArrayList<>(updatedIdp.getImage()));
         existingIdp.setStatus(
                 updatedIdp.getStatus().toLowerCase());
+        existingIdp.setCategoryId(updatedIdp.getCategoryId());
 
         existingIdp.setUpdateTime(LocalDateTime.now());
 
@@ -90,6 +99,22 @@ public class IdpService {
                 .findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
                         searchTerm,
                         searchTerm);
+    }
+
+    private void validateCategory(String categoryId) {
+        if (categoryId == null || categoryId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Please select a category");
+        }
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Selected category does not exist"));
+
+        if (category.getId() == null) {
+            throw new IllegalArgumentException(
+                    "Selected category is invalid");
+        }
     }
 
     private void checkOwnership(IDP idp, String designerId) {

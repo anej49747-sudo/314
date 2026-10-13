@@ -1,12 +1,12 @@
-
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./IDP.scss";
 
-const API_BASE_URL =
+const API_BASE_URL = (
     import.meta.env.VITE_API_BASE_URL ||
-    "https://314-production.up.railway.app";
+    "https://314-production.up.railway.app"
+).replace(/\/$/, "");
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -17,6 +17,7 @@ const emptyForm = {
     description: "",
     imageText: "",
     status: "current",
+    categoryId: "",
 };
 
 function IDP() {
@@ -42,6 +43,7 @@ function IDP() {
         userdata.userId;
 
     const [projects, setProjects] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [favouriteCounts, setFavouriteCounts] = useState({});
     const [form, setForm] = useState(emptyForm);
     const [editingId, setEditingId] = useState(null);
@@ -52,6 +54,33 @@ function IDP() {
     const [message, setMessage] = useState("");
     const [filter, setFilter] = useState("all");
     const [sortByPopularity, setSortByPopularity] = useState(false);
+
+    const categoryMap = useMemo(() => {
+        return new Map(
+            categories.map((category) => [
+                String(category.id ?? category._id),
+                category.name,
+            ])
+        );
+    }, [categories]);
+
+    const loadCategories = async () => {
+        try {
+            const response = await api.get("/api/categories");
+
+            const categoryList = Array.isArray(response.data)
+                ? response.data
+                : [];
+
+            setCategories(categoryList);
+        } catch (err) {
+            console.error("Unable to load categories:", err);
+            setError(
+                err.response?.data?.message ||
+                "Unable to load categories. Please try again."
+            );
+        }
+    };
 
     const loadProjects = async () => {
         if (!designerId) {
@@ -87,12 +116,16 @@ function IDP() {
                             `/api/favourites/count/${encodeURIComponent(id)}`
                         );
 
-                        return [id, Number(countResponse.data) || 0];
+                        return [
+                            id,
+                            Number(countResponse.data) || 0,
+                        ];
                     } catch (countError) {
                         console.error(
                             `Unable to load favourite count for ${id}:`,
                             countError
                         );
+
                         return [id, 0];
                     }
                 })
@@ -108,6 +141,10 @@ function IDP() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        loadCategories();
+    }, []);
 
     useEffect(() => {
         loadProjects();
@@ -129,6 +166,9 @@ function IDP() {
                 ? project.image.join("\n")
                 : "",
             status: project.status || "current",
+            categoryId: project.categoryId
+                ? String(project.categoryId)
+                : "",
         });
 
         setEditingId(project.id || project._id);
@@ -160,6 +200,11 @@ function IDP() {
             return;
         }
 
+        if (!form.categoryId) {
+            setError("Please select a category.");
+            return;
+        }
+
         const image = form.imageText
             .split(/[\n,]+/)
             .map((url) => url.trim())
@@ -171,6 +216,7 @@ function IDP() {
             description: form.description.trim(),
             image,
             status: form.status,
+            categoryId: form.categoryId,
         };
 
         setSaving(true);
@@ -395,7 +441,9 @@ function IDP() {
                         </div>
 
                         <form onSubmit={handleSubmit}>
-                            <label htmlFor="idp-title">Project Title</label>
+                            <label htmlFor="idp-title">
+                                Project Title
+                            </label>
                             <input
                                 id="idp-title"
                                 name="title"
@@ -406,7 +454,9 @@ function IDP() {
                                 required
                             />
 
-                            <label htmlFor="idp-description">Description</label>
+                            <label htmlFor="idp-description">
+                                Description
+                            </label>
                             <textarea
                                 id="idp-description"
                                 name="description"
@@ -417,7 +467,43 @@ function IDP() {
                                 required
                             />
 
-                            <label htmlFor="idp-image">Image URLs</label>
+                            <label htmlFor="idp-category">
+                                Category
+                            </label>
+                            <select
+                                id="idp-category"
+                                name="categoryId"
+                                value={form.categoryId}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">
+                                    Select a category
+                                </option>
+
+                                {categories.map((category) => {
+                                    const id = String(
+                                        category.id ?? category._id
+                                    );
+
+                                    return (
+                                        <option key={id} value={id}>
+                                            {category.name}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+
+                            {categories.length === 0 && (
+                                <p>
+                                    No categories available. Please create a
+                                    category in Categories Management first.
+                                </p>
+                            )}
+
+                            <label htmlFor="idp-image">
+                                Image URLs
+                            </label>
                             <textarea
                                 id="idp-image"
                                 name="imageText"
@@ -427,7 +513,9 @@ function IDP() {
                                 rows={3}
                             />
 
-                            <label htmlFor="idp-status">Project Status</label>
+                            <label htmlFor="idp-status">
+                                Project Status
+                            </label>
                             <select
                                 id="idp-status"
                                 name="status"
@@ -451,7 +539,9 @@ function IDP() {
                                 <button
                                     type="submit"
                                     className="idp-primary-btn"
-                                    disabled={saving}
+                                    disabled={
+                                        saving || categories.length === 0
+                                    }
                                 >
                                     {saving
                                         ? "Saving..."
@@ -507,7 +597,8 @@ function IDP() {
                     <div className="idp-empty-state">
                         <h3>No projects found</h3>
                         <p>
-                            Create your first IDP to start showcasing your design work.
+                            Create your first IDP to start showcasing your
+                            design work.
                         </p>
                     </div>
                 ) : (
@@ -516,6 +607,11 @@ function IDP() {
                             const projectId = project.id || project._id;
                             const favouriteCount =
                                 favouriteCounts[projectId] || 0;
+
+                            const categoryName =
+                                categoryMap.get(
+                                    String(project.categoryId || "")
+                                ) || "Uncategorized";
 
                             return (
                                 <article
@@ -534,14 +630,16 @@ function IDP() {
                                             />
                                         ) : (
                                             <div className="idp-image-placeholder">
-                                                <span>Interior Design Project</span>
+                                                <span>
+                                                    Interior Design Project
+                                                </span>
                                             </div>
                                         )}
 
                                         <span
                                             className={`idp-status ${project.status === "completed"
-                                                ? "completed"
-                                                : "current"
+                                                    ? "completed"
+                                                    : "current"
                                                 }`}
                                         >
                                             {project.status === "completed"
@@ -566,6 +664,11 @@ function IDP() {
                                                 : "customers"}
                                         </p>
 
+                                        <p className="idp-project-category">
+                                            <strong>Category:</strong>{" "}
+                                            {categoryName}
+                                        </p>
+
                                         <p className="idp-project-description">
                                             {project.description}
                                         </p>
@@ -578,11 +681,13 @@ function IDP() {
 
                                         <div className="idp-project-dates">
                                             <span>
-                                                Created: {formatDate(project.createTime)}
+                                                Created:{" "}
+                                                {formatDate(project.createTime)}
                                             </span>
 
                                             <span>
-                                                Updated: {formatDate(project.updateTime)}
+                                                Updated:{" "}
+                                                {formatDate(project.updateTime)}
                                             </span>
                                         </div>
 
