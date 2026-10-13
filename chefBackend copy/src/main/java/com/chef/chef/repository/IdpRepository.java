@@ -9,4 +9,8 @@ import com.chef.chef.model.IDP;
 public interface IdpRepository extends MongoRepository<IDP, String> {
 
     List<IDP> findByDesignerId(String designerId);
+
+    List<IDP> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+            String title,
+            String description);
 }

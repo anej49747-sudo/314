@@ -29,6 +29,12 @@ public class IdpController {
         return idpService.createIdp(idp);
     }
 
+    @GetMapping
+    public List<IDP> getAllIdps(
+            @RequestParam(required = false) String keyword) {
+        return idpService.searchIdps(keyword);
+    }
+
     @GetMapping("/designer/{designerId}")
     public List<IDP> getIdpsByDesigner(
             @PathVariable String designerId) {

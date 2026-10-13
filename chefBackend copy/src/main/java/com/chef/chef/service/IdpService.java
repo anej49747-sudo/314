@@ -79,6 +79,19 @@ public class IdpService {
         idpRepository.delete(existingIdp);
     }
 
+    public List<IDP> searchIdps(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return idpRepository.findAll();
+        }
+
+        String searchTerm = keyword.trim();
+
+        return idpRepository
+                .findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        searchTerm,
+                        searchTerm);
+    }
+
     private void checkOwnership(IDP idp, String designerId) {
         if (designerId == null
                 || designerId.isBlank()
