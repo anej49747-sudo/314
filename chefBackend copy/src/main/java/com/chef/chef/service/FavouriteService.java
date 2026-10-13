@@ -1,5 +1,6 @@
 package com.chef.chef.service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -41,6 +42,7 @@ public class FavouriteService {
         Favourite favourite = new Favourite();
         favourite.setCustomerId(customerId);
         favourite.setIdpId(idpId);
+        favourite.setCreateTime(LocalDateTime.now());
 
         return favouriteRepository.save(favourite);
     }
@@ -93,7 +95,8 @@ public class FavouriteService {
                 .stream()
                 .sorted(
                         Comparator.comparingLong(
-                                (IDP idp) -> getFavouriteCount(idp.getId())).reversed())
+                                (IDP idp) -> getFavouriteCount(idp.getId()))
+                                .reversed())
                 .toList();
     }
 

@@ -1,5 +1,6 @@
 package com.chef.chef.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +25,8 @@ public interface FavouriteRepository extends MongoRepository<Favourite, String> 
             String idpId);
 
     long countByIdpId(String idpId);
+
+    long countByCreateTimeGreaterThanEqualAndCreateTimeLessThan(
+            LocalDateTime start,
+            LocalDateTime end);
 }

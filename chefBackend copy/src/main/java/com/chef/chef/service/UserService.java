@@ -1,5 +1,6 @@
 package com.chef.chef.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +59,7 @@ public class UserService {
         user.setPassword(password);
         user.setRole("customer");
         user.setActive(true);
+        user.setCreateTime(LocalDateTime.now());
 
         return userRepository.save(user);
     }
@@ -99,6 +101,7 @@ public class UserService {
         user.setPassword(password);
         user.setName(name);
         user.setRole("designer");
+        user.setCreateTime(LocalDateTime.now());
 
         return userRepository.save(user);
     }

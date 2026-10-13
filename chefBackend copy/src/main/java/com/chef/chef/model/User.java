@@ -1,5 +1,6 @@
 package com.chef.chef.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -33,4 +34,6 @@ public class User {
     private String companyDescription;
     private String companyContact;
     private String companyAddress;
+
+    private LocalDateTime createTime;
 }

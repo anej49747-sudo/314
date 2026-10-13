@@ -1,5 +1,6 @@
 package com.chef.chef.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,8 +16,12 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     boolean existsByUsername(String username);
 
-    // Search customers by username
     List<User> findByRoleAndUsernameContainingIgnoreCase(
             String role,
             String username);
+
+    long countByRoleAndCreateTimeGreaterThanEqualAndCreateTimeLessThan(
+            String role,
+            LocalDateTime start,
+            LocalDateTime end);
 }
