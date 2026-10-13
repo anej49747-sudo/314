@@ -1,0 +1,214 @@
+.idp-detail-page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 32px 40px;
+  background: #f8faf8;
+  color: #243b2e;
+}
+
+.idp-detail-page .idp-detail-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.idp-detail-page .idp-detail-topbar .ant-btn {
+  height: 40px;
+  padding: 0 18px;
+  border: 1px solid #287a50;
+  border-radius: 8px;
+  color: #287a50;
+  background: #ffffff;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.idp-detail-page .idp-detail-topbar .ant-btn:hover {
+  border-color: #1f633f !important;
+  color: #1f633f !important;
+}
+
+.idp-detail-page .idp-detail-card {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 36px;
+  border: 1px solid #e2e9e3;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 6px 24px rgba(35, 65, 45, 0.06);
+}
+
+.idp-detail-page .idp-detail-heading {
+  margin-bottom: 28px;
+}
+
+.idp-detail-page .idp-detail-heading .idp-detail-eyebrow {
+  margin: 0 0 10px;
+  color: #287a50;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.idp-detail-page .idp-detail-heading h1 {
+  margin: 0;
+  color: #243b2e;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.idp-detail-page .idp-detail-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.idp-detail-page .idp-detail-gallery img {
+  display: block;
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  background: #edf2ed;
+  object-fit: cover;
+}
+
+.idp-detail-page .idp-detail-no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  margin-bottom: 32px;
+  border: 1px dashed #cbdccf;
+  border-radius: 12px;
+  background: #f1f5f1;
+  color: #68736b;
+  font-size: 14px;
+}
+
+.idp-detail-page .idp-detail-information h2 {
+  margin: 0 0 14px;
+  color: #243b2e;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.idp-detail-page .idp-detail-information > p {
+  margin: 0;
+  color: #59665d;
+  font-size: 15px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.idp-detail-page .idp-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 36px;
+  margin-top: 28px;
+  padding: 22px 0;
+  border-top: 1px solid #e7ece7;
+  border-bottom: 1px solid #e7ece7;
+}
+
+.idp-detail-page .idp-detail-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.idp-detail-page .idp-detail-meta span {
+  color: #788279;
+  font-size: 13px;
+}
+
+.idp-detail-page .idp-detail-meta strong {
+  color: #243b2e;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.idp-detail-page .idp-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.idp-detail-page .idp-detail-actions .idp-detail-designer-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  color: #287a50;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.idp-detail-page .idp-detail-actions .idp-detail-designer-link:hover {
+  color: #1f633f;
+  text-decoration: underline;
+}
+
+.idp-detail-page .idp-detail-actions .ant-btn {
+  min-height: 40px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.idp-detail-page .idp-detail-actions .ant-btn-primary {
+  border-color: #287a50;
+  color: #ffffff;
+  background: #287a50;
+  box-shadow: none;
+}
+
+.idp-detail-page .idp-detail-actions .ant-btn-primary:hover {
+  border-color: #1f633f !important;
+  color: #ffffff !important;
+  background: #1f633f !important;
+}
+
+.idp-detail-page .idp-detail-actions .ant-btn-default {
+  border-color: #cbdccf;
+  color: #287a50;
+  background: #edf6ef;
+}
+
+.idp-detail-page .idp-detail-actions .ant-btn-default:hover {
+  border-color: #287a50 !important;
+  color: #1f633f !important;
+  background: #e2f0e5 !important;
+}
+
+.idp-detail-page .idp-detail-actions .ant-btn-loading {
+  opacity: 0.8;
+}
+
+.idp-detail-page > .ant-alert {
+  max-width: 1100px;
+  margin: 24px auto;
+  border-radius: 10px;
+}
+
+.idp-detail-page > .ant-btn {
+  margin-bottom: 24px;
+  border-radius: 8px;
+  border-color: #287a50;
+  color: #287a50;
+  background: #ffffff;
+}
+
+.idp-detail-page > .ant-btn:hover {
+  border-color: #1f633f !important;
+  color: #1f633f !important;
+}

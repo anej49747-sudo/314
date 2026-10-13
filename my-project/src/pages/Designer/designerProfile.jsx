@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { apiGetDesignerById } from "../../api";
 import "./designerProfile.scss";
 
 function DesignerProfile() {
     const { id: rawId } = useParams();
     const id = rawId?.trim();
+    const location = useLocation();
+    const backTo = location.state?.from || "/designer";
+    const fromProject = Boolean(location.state?.from);
 
     const [designer, setDesigner] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -84,9 +87,13 @@ function DesignerProfile() {
     if (error || !designer) {
         return (
             <main className="directory-page">
-                <Link className="back-link" to="/designer">
+                <Link
+                    className="back-link"
+                    to={backTo}
+                    state={fromProject ? { from: "/idp" } : undefined}
+                >
                     <span aria-hidden="true">←</span>
-                    Back to Designers
+                    {fromProject ? "Back to Project" : "Back to Designers"}
                 </Link>
 
                 <p className="profile-message">
@@ -133,9 +140,13 @@ function DesignerProfile() {
 
     return (
         <main className="directory-page">
-            <Link className="back-link" to="/designer">
+            <Link
+                className="back-link"
+                to={backTo}
+                state={fromProject ? { from: "/idp" } : undefined}
+            >
                 <span aria-hidden="true">←</span>
-                Back to Designers
+                {fromProject ? "Back to Project" : "Back to Designers"}
             </Link>
 
             <article className="directory-card">

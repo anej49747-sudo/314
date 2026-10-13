@@ -207,7 +207,7 @@
 .home .feature-section {
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 25px;
 }
 
@@ -236,12 +236,6 @@
 
 .home .feature-card:nth-child(2) .feature-icon {
   font-size: 25px;
-}
-
-.home .feature-card:nth-child(3) .feature-icon {
-  font-size: 20px;
-  font-weight: 700;
-  -webkit-text-stroke: 0.8px #53685b;
 }
 
 .home .feature-icon {

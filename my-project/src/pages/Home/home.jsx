@@ -25,34 +25,6 @@ function Home() {
   const username = user?.username;
   const role = user?.role;
 
-  const profileRoutes = {
-    admin: "/admin",
-    designer: "/designer",
-    customer: "/customer",
-    management: "/management",
-  };
-
-  const goToDashboard = () => {
-    const currentUser = JSON.parse(
-      localStorage.getItem("userdata") || "null",
-    );
-
-    if (!currentUser) {
-      navigate("/login");
-      return;
-    }
-
-    const path = profileRoutes[currentUser.role];
-
-    setShowMenu(false);
-
-    if (path) {
-      navigate(path);
-    } else {
-      console.log("Unknown role:", currentUser.role);
-    }
-  };
-
   const LogOut = () => {
     localStorage.removeItem("userdata");
 
@@ -158,30 +130,14 @@ function Home() {
           </div>
 
           <div className="feature-section">
-            <div className="feature-card">
+            <div className="feature-card feature-card-view-search">
               <div className="feature-icon">⌕</div>
 
               <div className="feature-content">
-                <h2>Search</h2>
-                <p>Search your interest.</p>
-              </div>
-
-              <button
-                type="button"
-                className="feature-button"
-                onClick={() => navigate("/idp?mode=search")}
-              >
-                <span>Search Projects</span>
-                <span>→</span>
-              </button>
-            </div>
-
-            <div className="feature-card">
-              <div className="feature-icon">◇</div>
-
-              <div className="feature-content">
-                <h2>View</h2>
-                <p>Explore different design ideas.</p>
+                <h2>View &amp; Search</h2>
+                <p>
+                  Search and explore different interior design projects.
+                </p>
               </div>
 
               <button
@@ -189,12 +145,12 @@ function Home() {
                 className="feature-button"
                 onClick={() => navigate("/idp")}
               >
-                <span>View Projects</span>
+                <span>Explore Projects</span>
                 <span>→</span>
               </button>
             </div>
 
-            <div className="feature-card">
+            <div className="feature-card feature-card-save">
               <div className="feature-icon">♡</div>
 
               <div className="feature-content">

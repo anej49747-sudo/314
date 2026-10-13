@@ -35,7 +35,10 @@ function IDP() {
     });
 
     const designerId =
-        userdata.id || userdata._id || userdata.userId;
+        userdata.id ||
+        userdata._id ||
+        userdata.userid ||
+        userdata.userId;
 
     const [projects, setProjects] = useState([]);
     const [form, setForm] = useState(emptyForm);
@@ -148,13 +151,14 @@ function IDP() {
                 await api.put(
                     `/api/idp/${encodeURIComponent(editingId)}`,
                     payload,
-                    { params: { designerId } }
+                    {
+                        params: { designerId },
+                    }
                 );
 
                 setMessage("Project updated successfully.");
             } else {
                 await api.post("/api/idp", payload);
-
                 setMessage("Project created successfully.");
             }
 
@@ -185,7 +189,9 @@ function IDP() {
         try {
             await api.delete(
                 `/api/idp/${encodeURIComponent(project.id)}`,
-                { params: { designerId } }
+                {
+                    params: { designerId },
+                }
             );
 
             setProjects((previous) =>
@@ -202,7 +208,10 @@ function IDP() {
     };
 
     const filteredProjects = projects.filter((project) => {
-        if (filter === "all") return true;
+        if (filter === "all") {
+            return true;
+        }
+
         return project.status === filter;
     });
 
@@ -215,11 +224,15 @@ function IDP() {
     ).length;
 
     const formatDate = (value) => {
-        if (!value) return "—";
+        if (!value) {
+            return "—";
+        }
 
         const date = new Date(value);
 
-        if (Number.isNaN(date.getTime())) return "—";
+        if (Number.isNaN(date.getTime())) {
+            return "—";
+        }
 
         return date.toLocaleDateString();
     };
@@ -246,6 +259,7 @@ function IDP() {
                     <p className="idp-eyebrow">
                         DESIGNER WORKSPACE
                     </p>
+
                     <h1>My Portfolio &amp; Interest Tracking</h1>
                 </header>
 
@@ -305,7 +319,9 @@ function IDP() {
                     <section className="idp-form-card">
                         <div className="idp-form-heading">
                             <h2>
-                                {editingId ? "Edit Project" : "Create New IDP"}
+                                {editingId
+                                    ? "Edit Project"
+                                    : "Create New IDP"}
                             </h2>
 
                             <button
@@ -322,6 +338,7 @@ function IDP() {
                             <label htmlFor="idp-title">
                                 Project Title
                             </label>
+
                             <input
                                 id="idp-title"
                                 name="title"
@@ -335,6 +352,7 @@ function IDP() {
                             <label htmlFor="idp-description">
                                 Description
                             </label>
+
                             <textarea
                                 id="idp-description"
                                 name="description"
@@ -348,6 +366,7 @@ function IDP() {
                             <label htmlFor="idp-image">
                                 Image URLs
                             </label>
+
                             <textarea
                                 id="idp-image"
                                 name="imageText"
@@ -360,14 +379,20 @@ function IDP() {
                             <label htmlFor="idp-status">
                                 Project Status
                             </label>
+
                             <select
                                 id="idp-status"
                                 name="status"
                                 value={form.status}
                                 onChange={handleChange}
                             >
-                                <option value="current">Current</option>
-                                <option value="completed">Completed</option>
+                                <option value="current">
+                                    Current
+                                </option>
+
+                                <option value="completed">
+                                    Completed
+                                </option>
                             </select>
 
                             <div className="idp-form-actions">
@@ -418,12 +443,11 @@ function IDP() {
                 </div>
 
                 {loading ? (
-                    <div className="idp-empty-state">
-                        Loading projects...
-                    </div>
+                    <>Loading projects...</>
                 ) : filteredProjects.length === 0 ? (
                     <div className="idp-empty-state">
                         <h3>No projects found</h3>
+
                         <p>
                             Create your first IDP to start showcasing your design work.
                         </p>
@@ -441,7 +465,8 @@ function IDP() {
                                             src={project.image[0]}
                                             alt={project.title}
                                             onError={(event) => {
-                                                event.currentTarget.style.display = "none";
+                                                event.currentTarget.style.display =
+                                                    "none";
                                             }}
                                         />
                                     ) : (
@@ -454,8 +479,8 @@ function IDP() {
 
                                     <span
                                         className={`idp-status ${project.status === "completed"
-                                            ? "completed"
-                                            : "current"
+                                                ? "completed"
+                                                : "current"
                                             }`}
                                     >
                                         {project.status === "completed"
@@ -479,10 +504,13 @@ function IDP() {
 
                                     <div className="idp-project-dates">
                                         <span>
-                                            Created: {formatDate(project.createTime)}
+                                            Created:{" "}
+                                            {formatDate(project.createTime)}
                                         </span>
+
                                         <span>
-                                            Updated: {formatDate(project.updateTime)}
+                                            Updated:{" "}
+                                            {formatDate(project.updateTime)}
                                         </span>
                                     </div>
 
@@ -490,7 +518,9 @@ function IDP() {
                                         <button
                                             type="button"
                                             className="idp-edit-btn"
-                                            onClick={() => openEditForm(project)}
+                                            onClick={() =>
+                                                openEditForm(project)
+                                            }
                                         >
                                             Edit
                                         </button>
@@ -498,7 +528,9 @@ function IDP() {
                                         <button
                                             type="button"
                                             className="idp-delete-btn"
-                                            onClick={() => handleDelete(project)}
+                                            onClick={() =>
+                                                handleDelete(project)
+                                            }
                                         >
                                             Delete
                                         </button>

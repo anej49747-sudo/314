@@ -1,4 +1,4 @@
-import { Alert, Button, Spin } from "antd";
+import { Alert, Button } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -16,7 +16,7 @@ function Favourites() {
     const [removingId, setRemovingId] = useState("");
 
     const user = JSON.parse(
-        localStorage.getItem("userdata") || "null",
+        localStorage.getItem("userdata") || "null"
     );
     const customerId = user?.userid;
 
@@ -40,7 +40,7 @@ function Favourites() {
 
                 setProjects(list);
             } catch (err) {
-                console.error(err);
+                console.error("Unable to load favourites:", err);
                 setError("Unable to load saved projects. Please try again.");
             } finally {
                 setLoading(false);
@@ -55,16 +55,15 @@ function Favourites() {
 
         try {
             setRemovingId(id);
-
             await apiRemoveFavourite(customerId, id);
 
             setProjects((current) =>
                 current.filter(
-                    (project) => (project.id ?? project._id) !== id,
-                ),
+                    (project) => (project.id ?? project._id) !== id
+                )
             );
         } catch (err) {
-            console.error(err);
+            console.error("Unable to remove favourite:", err);
             setError("Unable to remove this project from favourites.");
         } finally {
             setRemovingId("");
@@ -87,6 +86,7 @@ function Favourites() {
             {!customerId ? (
                 <Alert
                     type="info"
+                    showIcon
                     title="Log in to view your saved projects."
                     action={
                         <Button
@@ -98,25 +98,34 @@ function Favourites() {
                     }
                 />
             ) : loading ? (
-                <div>
-                    <Spin />
-                    <p>Loading saved projects...</p>
-                </div>
+                null
             ) : (
                 <>
                     {error && (
                         <Alert
                             type="error"
+                            showIcon
                             title={error}
                             closable
                             onClose={() => setError("")}
                         />
                     )}
 
-                    <p>{projects.length} saved project(s)</p>
+                    <p className="favourites-count">
+                        {projects.length} saved project(s)
+                    </p>
 
                     {projects.length === 0 ? (
-                        <p>You have not saved any projects yet.</p>
+                        <div className="favourites-empty">
+                            <h2>No saved projects yet</h2>
+
+                            <Button
+                                type="primary"
+                                onClick={() => navigate("/idp")}
+                            >
+                                View Projects
+                            </Button>
+                        </div>
                     ) : (
                         <div className="favourites-grid">
                             {projects.map((project) => {
@@ -129,19 +138,25 @@ function Favourites() {
                                 const images = project.image;
                                 const imageUrl =
                                     project.imageUrl ||
-                                    (Array.isArray(images) ? images[0] : images);
+                                    (Array.isArray(images)
+                                        ? images[0]
+                                        : images);
 
                                 return (
                                     <article
                                         className="favourite-card"
                                         key={id}
                                     >
-                                        {imageUrl && (
+                                        {imageUrl ? (
                                             <img
                                                 src={imageUrl}
                                                 alt={title}
                                                 className="favourite-image"
                                             />
+                                        ) : (
+                                            <div className="favourite-no-image">
+                                                No image available
+                                            </div>
                                         )}
 
                                         <h2>{title}</h2>
@@ -153,7 +168,7 @@ function Favourites() {
 
                                         {id && (
                                             <Link
-                                                to={`/ idp / ${id} `}
+                                                to={`/idp/${id}`}
                                                 className="favourite-view-link"
                                             >
                                                 View Project
@@ -163,7 +178,9 @@ function Favourites() {
                                         <Button
                                             danger
                                             loading={removingId === id}
-                                            disabled={!id || Boolean(removingId)}
+                                            disabled={
+                                                !id || Boolean(removingId)
+                                            }
                                             onClick={() => handleRemove(id)}
                                         >
                                             Remove from Saved

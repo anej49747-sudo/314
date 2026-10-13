@@ -42,4 +42,16 @@ public class FavouriteController {
             @PathVariable String idpId) {
         favouriteService.removeFavourite(customerId, idpId);
     }
+
+    @GetMapping("/count/{idpId}")
+    public long getFavouriteCount(
+            @PathVariable String idpId) {
+        return favouriteService.getFavouriteCount(idpId);
+    }
+
+    @GetMapping("/popular/{designerId}")
+    public List<IDP> getPopularIdps(
+            @PathVariable String designerId) {
+        return favouriteService.getPopularIdps(designerId);
+    }
 }

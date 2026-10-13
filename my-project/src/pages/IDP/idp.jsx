@@ -1,9 +1,12 @@
+import { Button } from "antd";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { apiGetProjects } from "../../api";
-import "./idp.css";
+import "./idp.scss";
 
 function IDP() {
+    const navigate = useNavigate();
+
     const [projects, setProjects] = useState([]);
     const [keyword, setKeyword] = useState("");
     const [category, setCategory] = useState("All");
@@ -17,10 +20,7 @@ function IDP() {
 
                 const list = Array.isArray(res)
                     ? res
-                    : res?.projects ??
-                    res?.idp ??
-                    res?.data ??
-                    [];
+                    : res?.projects ?? res?.idp ?? res?.data ?? [];
 
                 if (!Array.isArray(list)) {
                     throw new Error("Unexpected project response format");
@@ -28,7 +28,7 @@ function IDP() {
 
                 setProjects(list);
             } catch (err) {
-                console.error(err);
+                console.error("Unable to load projects:", err);
                 setError("Unable to load projects. Please try again later.");
             } finally {
                 setLoading(false);
@@ -65,12 +65,46 @@ function IDP() {
         });
     }, [projects, keyword, category]);
 
-    if (loading) return <p>Loading projects...</p>;
-    if (error) return <p>{error}</p>;
+    if (loading) {
+        return (
+            <main className="idp-page">
+                <Button
+                    className="idp-back-button"
+                    onClick={() => navigate("/home")}
+                >
+                    ← Back to Home
+                </Button>
+                <p>Loading projects...</p>
+            </main>
+        );
+    }
+
+    if (error) {
+        return (
+            <main className="idp-page">
+                <Button
+                    className="idp-back-button"
+                    onClick={() => navigate("/home")}
+                >
+                    ← Back to Home
+                </Button>
+                <p className="idp-error">{error}</p>
+            </main>
+        );
+    }
 
     return (
         <main className="idp-page">
-            <h1>Interior Design Projects</h1>
+            <Button
+                className="idp-back-button"
+                onClick={() => navigate("/home")}
+            >
+                ← Back to Home
+            </Button>
+
+            <div className="idp-header">
+                <h1>Interior Design Projects</h1>
+            </div>
 
             <div className="idp-controls">
                 <input
@@ -94,22 +128,37 @@ function IDP() {
                 </select>
             </div>
 
-            <p>{filteredProjects.length} project(s) found</p>
+            <p className="idp-result-count">
+                {filteredProjects.length} project(s) found
+            </p>
 
             {filteredProjects.length === 0 ? (
-                <p>No matching projects found.</p>
+                <p className="idp-empty">
+                    No matching projects found.
+                </p>
             ) : (
                 <div className="directory-grid">
-                    {filteredProjects.map((project) => {
+                    {filteredProjects.map((project, index) => {
                         const id = project.id ?? project._id;
-                        const title = project.title || project.name || "Untitled Project";
+                        const title =
+                            project.title ||
+                            project.name ||
+                            "Untitled Project";
+
+                        const images = project.image;
+                        const imageUrl =
+                            project.imageUrl ||
+                            (Array.isArray(images) ? images[0] : images);
 
                         return (
-                            <article className="directory-card" key={id}>
-                                {project.imageUrl && (
+                            <article
+                                className="directory-card"
+                                key={id || index}
+                            >
+                                {imageUrl && (
                                     <img
                                         className="idp-image"
-                                        src={project.imageUrl}
+                                        src={imageUrl}
                                         alt={title}
                                     />
                                 )}
@@ -122,15 +171,18 @@ function IDP() {
                                 </p>
 
                                 {project.category && (
-                                    <p>
+                                    <p className="idp-category">
                                         <strong>Category:</strong>{" "}
                                         {project.category}
                                     </p>
                                 )}
 
                                 {id && (
-                                    <Link to={`/idp/${id}`}>
-                                        View Project
+                                    <Link
+                                        to={`/idp/${id}`}
+                                        className="idp-view-link"
+                                    >
+                                        View Project →
                                     </Link>
                                 )}
                             </article>

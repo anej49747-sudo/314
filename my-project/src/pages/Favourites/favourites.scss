@@ -3,6 +3,7 @@
     box-sizing: border-box;
     padding: 32px 24px;
     background: #f8faf8;
+    color: #243b2e;
 
     .back-home-button {
         margin-bottom: 24px;
@@ -32,15 +33,52 @@
         }
     }
 
-    >p {
+    .favourites-count {
+        margin: 16px 0;
         color: #647067;
         font-size: 14px;
-        line-height: 1.6;
     }
 
     .ant-alert {
         margin: 20px 0;
         border-radius: 10px;
+    }
+
+    .favourites-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin-top: 32px;
+        padding: 48px 24px;
+        border: 1px solid #e2e9e3;
+        border-radius: 14px;
+        background: #ffffff;
+        text-align: center;
+
+        h2 {
+            margin: 0;
+            color: #243b2e;
+            font-size: 22px;
+        }
+
+        p {
+            margin: 0 0 8px;
+            color: #68736b;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .ant-btn-primary {
+            border-color: #287a50;
+            border-radius: 8px;
+            background: #287a50;
+
+            &:hover {
+                border-color: #1f633f !important;
+                background: #1f633f !important;
+            }
+        }
     }
 
     .favourites-grid {
@@ -55,14 +93,13 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 14px;
+        min-width: 0;
         padding: 20px;
         border: 1px solid #e2e9e3;
         border-radius: 14px;
         background: #ffffff;
         box-shadow: 0 4px 14px rgba(35, 65, 45, 0.06);
-        transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
 
         &:hover {
             transform: translateY(-3px);
@@ -91,13 +128,25 @@
         }
     }
 
-    .favourite-image {
-        display: block;
+    .favourite-image,
+    .favourite-no-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 100%;
         height: 200px;
-        object-fit: cover;
         border-radius: 9px;
         background: #edf2ed;
+    }
+
+    .favourite-image {
+        display: block;
+        object-fit: cover;
+    }
+
+    .favourite-no-image {
+        color: #68736b;
+        font-size: 13px;
     }
 
     .favourite-view-link {
