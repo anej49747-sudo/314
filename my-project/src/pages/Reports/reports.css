@@ -1,7 +1,7 @@
 .reports-page {
   min-height: 100vh;
   box-sizing: border-box;
-  padding: 32px 36px 40px;
+  padding: 28px 36px 40px;
   background: #e7efeb;
   color: #253c31;
   font-family: inherit;
@@ -17,6 +17,40 @@
   width: 100%;
   max-width: 1500px;
   margin: 0 auto;
+}
+
+.reports-back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin: 0 0 28px;
+  padding: 10px 15px;
+  border: 1px solid #cbdad0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #315b48;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.reports-back-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.reports-back-button:hover {
+  background: #f0f6f1;
+  border-color: #9ab6a2;
+  transform: translateX(-2px);
 }
 
 .reports-header {
@@ -39,6 +73,7 @@
 
 .reports-title-accent {
   display: block;
+  flex: 0 0 5px;
   width: 5px;
   height: 35px;
   border-radius: 5px;
@@ -97,6 +132,7 @@
 
 .reports-period-button:disabled {
   cursor: default;
+  opacity: 0.8;
 }
 
 .reports-overview {
@@ -184,14 +220,8 @@
   font-weight: 600;
 }
 
-.reports-metric-info p {
-  margin: 8px 0 0;
-  color: #99a49c;
-  font-size: 11px;
-  line-height: 1.5;
-}
-
-.reports-metric-icon {
+.reports-metric-icon,
+.reports-empty-icon {
   display: flex;
   flex: 0 0 43px;
   align-items: center;
@@ -234,6 +264,7 @@
 }
 
 .reports-metric-dot {
+  flex: 0 0 6px;
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -255,6 +286,7 @@
 .reports-chart-legend {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 24px;
   margin-bottom: 23px;
 }
@@ -268,6 +300,7 @@
 }
 
 .reports-legend-color {
+  flex: 0 0 9px;
   width: 9px;
   height: 9px;
   border-radius: 3px;
@@ -345,9 +378,9 @@
   position: relative;
   display: flex;
   flex: 0 1 20px;
+  flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  flex-direction: column;
   min-width: 0;
   max-width: 24px;
   height: 100%;
@@ -445,9 +478,7 @@
 }
 
 .reports-empty-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex: 0 0 52px;
   width: 52px;
   height: 52px;
   border-radius: 14px;
@@ -466,22 +497,6 @@
   margin: 8px 0 0;
   color: #89968d;
   font-size: 12px;
-}
-
-.reports-footer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 20px;
-  color: #84948a;
-  font-size: 11px;
-}
-
-.reports-footer-indicator {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #789c83;
 }
 
 .reports-toast {

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./reports.scss";
 
 const API_BASE_URL = (
@@ -18,7 +19,6 @@ const METRICS = [
         key: "customers",
         totalKey: "totalCustomers",
         label: "New Customers",
-        description: "New customer registrations",
         color: "#315b48",
         icon: "users",
     },
@@ -26,7 +26,6 @@ const METRICS = [
         key: "idps",
         totalKey: "totalIdps",
         label: "New IDPs",
-        description: "New interior design projects",
         color: "#789c83",
         icon: "projects",
     },
@@ -34,7 +33,6 @@ const METRICS = [
         key: "favourites",
         totalKey: "totalFavourites",
         label: "New Favourites",
-        description: "New project favourites",
         color: "#b4cbb9",
         icon: "favourites",
     },
@@ -93,6 +91,21 @@ function MetricIcon({ type }) {
 }
 
 export default function Reports() {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const userdata = useMemo(() => {
+        if (location.state?.userdata) {
+            return location.state.userdata;
+        }
+
+        try {
+            return JSON.parse(localStorage.getItem("userdata") || "{}");
+        } catch {
+            return {};
+        }
+    }, [location.state]);
+
     const [period, setPeriod] = useState("daily");
     const [report, setReport] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -112,6 +125,18 @@ export default function Reports() {
         return Math.max(1, ...values);
     }, [trend]);
 
+    const goToManagerDashboard = () => {
+        navigate("/dashboard", {
+            state: {
+                userdata: {
+                    ...userdata,
+                    role: "manager",
+                },
+            },
+            replace: true,
+        });
+    };
+
     useEffect(() => {
         let active = true;
         let errorTimer;
@@ -121,10 +146,13 @@ export default function Reports() {
             setErrorMessage("");
 
             try {
-                const response = await axios.get(`${API_BASE_URL}/api/reports`, {
-                    params: { period },
-                    timeout: 15000,
-                });
+                const response = await axios.get(
+                    `${API_BASE_URL}/api/reports`,
+                    {
+                        params: { period },
+                        timeout: 15000,
+                    }
+                );
 
                 if (!active) return;
 
@@ -147,7 +175,7 @@ export default function Reports() {
                     if (active) {
                         setErrorMessage("");
                     }
-                }, 1000);
+                }, 2000);
             } finally {
                 if (active) {
                     setLoading(false);
@@ -169,7 +197,8 @@ export default function Reports() {
         }
 
         return trend.reduce(
-            (total, item) => total + (Number(item[metric.key]) || 0),
+            (total, item) =>
+                total + (Number(item[metric.key]) || 0),
             0
         );
     };
@@ -180,6 +209,18 @@ export default function Reports() {
     return (
         <main className="reports-page">
             <div className="reports-container">
+                <button
+                    type="button"
+                    className="reports-back-button"
+                    onClick={goToManagerDashboard}
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M19 12H5" />
+                        <path d="m12 19-7-7 7-7" />
+                    </svg>
+                    <span>Back to Manager Dashboard</span>
+                </button>
+
                 <header className="reports-header">
                     <div className="reports-title-section">
                         <div className="reports-title-line">
@@ -188,8 +229,8 @@ export default function Reports() {
                         </div>
 
                         <p>
-                            Review platform activity and monitor customer engagement over
-                            time.
+                            Review platform activity and monitor customer
+                            engagement over time.
                         </p>
                     </div>
 
@@ -223,9 +264,6 @@ export default function Reports() {
                             </p>
                         </div>
 
-                        <span className="reports-period-label">
-                            {selectedPeriodLabel} Report
-                        </span>
                     </div>
 
                     {loading ? (
@@ -236,13 +274,15 @@ export default function Reports() {
                     ) : (
                         <div className="reports-metric-grid">
                             {METRICS.map((metric) => (
-                                <article className="reports-metric-card" key={metric.key}>
+                                <article
+                                    className="reports-metric-card"
+                                    key={metric.key}
+                                >
                                     <div className="reports-metric-top">
                                         <div className="reports-metric-info">
                                             <span className="reports-metric-label">
                                                 {metric.label}
                                             </span>
-                                            <p>{metric.description}</p>
                                         </div>
 
                                         <div
@@ -275,13 +315,11 @@ export default function Reports() {
                         <div>
                             <h2>Activity Trends</h2>
                             <p>
-                                Compare new customers, IDPs and favourites across each period.
+                                Compare new customers, IDPs and favourites
+                                across each period.
                             </p>
                         </div>
 
-                        <span className="reports-chart-period">
-                            {selectedPeriodLabel}
-                        </span>
                     </div>
 
                     {loading ? (
@@ -295,16 +333,23 @@ export default function Reports() {
                                 <MetricIcon type="projects" />
                             </div>
                             <h3>No activity data</h3>
-                            <p>No report records were returned for this period.</p>
+                            <p>
+                                No report records were returned for this period.
+                            </p>
                         </div>
                     ) : (
                         <>
                             <div className="reports-chart-legend">
                                 {METRICS.map((metric) => (
-                                    <div className="reports-legend-item" key={metric.key}>
+                                    <div
+                                        className="reports-legend-item"
+                                        key={metric.key}
+                                    >
                                         <span
                                             className="reports-legend-color"
-                                            style={{ backgroundColor: metric.color }}
+                                            style={{
+                                                backgroundColor: metric.color,
+                                            }}
                                         />
                                         <span>{metric.label}</span>
                                     </div>
@@ -313,11 +358,13 @@ export default function Reports() {
 
                             <div className="reports-chart">
                                 <div className="reports-y-axis">
-                                    {[1, 0.75, 0.5, 0.25, 0].map((fraction) => (
-                                        <span key={fraction}>
-                                            {Math.round(maxValue * fraction)}
-                                        </span>
-                                    ))}
+                                    {[1, 0.75, 0.5, 0.25, 0].map(
+                                        (fraction) => (
+                                            <span key={fraction}>
+                                                {Math.round(maxValue * fraction)}
+                                            </span>
+                                        )
+                                    )}
                                 </div>
 
                                 <div className="reports-chart-content">
@@ -335,8 +382,13 @@ export default function Reports() {
                                             >
                                                 <div className="reports-bar-group">
                                                     {METRICS.map((metric) => {
-                                                        const value = Number(item[metric.key]) || 0;
-                                                        const height = (value / maxValue) * 100;
+                                                        const value =
+                                                            Number(item[metric.key]) ||
+                                                            0;
+
+                                                        const height =
+                                                            (value / maxValue) *
+                                                            100;
 
                                                         return (
                                                             <div
@@ -345,15 +397,20 @@ export default function Reports() {
                                                                 title={`${metric.label}: ${value}`}
                                                             >
                                                                 <span className="reports-bar-value">
-                                                                    {value > 0 ? value : ""}
+                                                                    {value > 0
+                                                                        ? value
+                                                                        : ""}
                                                                 </span>
 
                                                                 <div
-                                                                    className={`reports-bar ${value === 0 ? "zero" : ""
+                                                                    className={`reports-bar ${value === 0
+                                                                        ? "zero"
+                                                                        : ""
                                                                         }`}
                                                                     style={{
                                                                         height: `${height}%`,
-                                                                        backgroundColor: metric.color,
+                                                                        backgroundColor:
+                                                                            metric.color,
                                                                     }}
                                                                 />
                                                             </div>
@@ -381,11 +438,6 @@ export default function Reports() {
                         </>
                     )}
                 </section>
-
-                <footer className="reports-footer">
-                    <span className="reports-footer-indicator" />
-                    <span>Report data is retrieved from the platform database.</span>
-                </footer>
             </div>
 
             {errorMessage && (
