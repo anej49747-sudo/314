@@ -50,10 +50,19 @@ function IDP() {
     const [showForm, setShowForm] = useState(false);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [error, setError] = useState("");
     const [message, setMessage] = useState("");
     const [filter, setFilter] = useState("all");
     const [sortByPopularity, setSortByPopularity] = useState(false);
+
+    useEffect(() => {
+        if (!message) return;
+
+        const timer = setTimeout(() => {
+            setMessage("");
+        }, 2000);
+
+        return () => clearTimeout(timer);
+    }, [message]);
 
     const categoryMap = useMemo(() => {
         return new Map(
@@ -75,7 +84,8 @@ function IDP() {
             setCategories(categoryList);
         } catch (err) {
             console.error("Unable to load categories:", err);
-            setError(
+
+            window.alert(
                 err.response?.data?.message ||
                 "Unable to load categories. Please try again."
             );
@@ -84,13 +94,12 @@ function IDP() {
 
     const loadProjects = async () => {
         if (!designerId) {
-            setError("Designer ID was not found. Please log in again.");
+            window.alert("Designer ID was not found. Please log in again.");
             setLoading(false);
             return;
         }
 
         setLoading(true);
-        setError("");
 
         try {
             const response = await api.get(
@@ -133,7 +142,7 @@ function IDP() {
 
             setFavouriteCounts(Object.fromEntries(counts));
         } catch (err) {
-            setError(
+            window.alert(
                 err.response?.data?.message ||
                 "Unable to load projects. Please try again."
             );
@@ -154,7 +163,6 @@ function IDP() {
         setForm(emptyForm);
         setEditingId(null);
         setShowForm(true);
-        setError("");
         setMessage("");
     };
 
@@ -173,7 +181,6 @@ function IDP() {
 
         setEditingId(project.id || project._id);
         setShowForm(true);
-        setError("");
         setMessage("");
     };
 
@@ -196,12 +203,12 @@ function IDP() {
         event.preventDefault();
 
         if (!designerId) {
-            setError("Designer ID was not found. Please log in again.");
+            window.alert("Designer ID was not found. Please log in again.");
             return;
         }
 
         if (!form.categoryId) {
-            setError("Please select a category.");
+            window.alert("Please select a category.");
             return;
         }
 
@@ -220,7 +227,6 @@ function IDP() {
         };
 
         setSaving(true);
-        setError("");
         setMessage("");
 
         try {
@@ -236,13 +242,14 @@ function IDP() {
                 setMessage("Project updated successfully.");
             } else {
                 await api.post("/api/idp", payload);
+
                 setMessage("Project created successfully.");
             }
 
             closeForm();
             await loadProjects();
         } catch (err) {
-            setError(
+            window.alert(
                 err.response?.data?.message ||
                 "Unable to save the project. Please try again."
             );
@@ -262,7 +269,6 @@ function IDP() {
             return;
         }
 
-        setError("");
         setMessage("");
 
         try {
@@ -287,7 +293,7 @@ function IDP() {
 
             setMessage("Project deleted successfully.");
         } catch (err) {
-            setError(
+            window.alert(
                 err.response?.data?.message ||
                 "Unable to delete the project. Please try again."
             );
@@ -366,19 +372,24 @@ function IDP() {
                     <h1>My Portfolio &amp; Interest Tracking</h1>
                 </header>
 
-                {error && (
-                    <div
-                        className="idp-alert idp-alert-error"
-                        role="alert"
-                    >
-                        {error}
-                    </div>
-                )}
-
                 {message && (
                     <div
-                        className="idp-alert idp-alert-success"
                         role="status"
+                        style={{
+                            position: "fixed",
+                            top: "20px",
+                            right: "20px",
+                            zIndex: 9999,
+                            padding: "10px 16px",
+                            maxWidth: "300px",
+                            background: "#e8f5e9",
+                            color: "#256029",
+                            border: "1px solid #a5d6a7",
+                            borderRadius: "8px",
+                            boxShadow: "0 4px 14px rgba(0, 0, 0, 0.12)",
+                            fontSize: "14px",
+                            fontWeight: 500,
+                        }}
                     >
                         {message}
                     </div>
@@ -539,9 +550,7 @@ function IDP() {
                                 <button
                                     type="submit"
                                     className="idp-primary-btn"
-                                    disabled={
-                                        saving || categories.length === 0
-                                    }
+                                    disabled={saving || categories.length === 0}
                                 >
                                     {saving
                                         ? "Saving..."
@@ -638,8 +647,8 @@ function IDP() {
 
                                         <span
                                             className={`idp-status ${project.status === "completed"
-                                                    ? "completed"
-                                                    : "current"
+                                                ? "completed"
+                                                : "current"
                                                 }`}
                                         >
                                             {project.status === "completed"
