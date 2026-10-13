@@ -35,7 +35,8 @@ public class ReportController {
             return ResponseEntity.badRequest().body(
                     Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            logger.error("Failed to generate report for period: {}", period, e);
+            logger.error("Report generation failed. Period: " + period, e);
+            e.printStackTrace();
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of(
