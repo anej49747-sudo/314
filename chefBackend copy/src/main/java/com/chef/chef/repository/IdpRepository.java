@@ -20,8 +20,8 @@ public interface IdpRepository extends MongoRepository<IDP, String> {
 
     long countByCategoryId(String categoryId);
 
-    @Query("{ 'createTime': { '$gte': ?0, '$lt': ?1 } }")
-    long countIdpsCreatedBetween(
+    @Query(value = "{ 'createTime': { '$gte': ?0, '$lt': ?1 } }", count = true)
+    Long countIdpsCreatedBetween(
             LocalDateTime start,
             LocalDateTime end);
 }

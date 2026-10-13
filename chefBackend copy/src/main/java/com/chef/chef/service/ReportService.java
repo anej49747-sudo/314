@@ -32,6 +32,7 @@ public class ReportService {
     }
 
     public Map<String, Object> generateReport(String period) {
+
         if (period == null
                 || !List.of("daily", "weekly", "monthly")
                         .contains(period.toLowerCase())) {
@@ -66,11 +67,12 @@ public class ReportService {
 
         List<Map<String, Object>> trend = new ArrayList<>();
 
-        long totalCustomers = 0;
-        long totalIdps = 0;
-        long totalFavourites = 0;
+        long totalCustomers = 0L;
+        long totalIdps = 0L;
+        long totalFavourites = 0L;
 
         for (int i = 0; i < numberOfBuckets; i++) {
+
             LocalDate bucketStart;
             LocalDate bucketEnd;
 
@@ -94,14 +96,18 @@ public class ReportService {
             LocalDateTime start = bucketStart.atStartOfDay();
             LocalDateTime end = bucketEnd.atStartOfDay();
 
-            long customers = userRepository.countCustomersCreatedBetween(
+            Long customerCount = userRepository.countCustomersCreatedBetween(
                     "customer", start, end);
 
-            long idps = idpRepository.countIdpsCreatedBetween(
+            Long idpCount = idpRepository.countIdpsCreatedBetween(
                     start, end);
 
-            long favourites = favouriteRepository.countFavouritesCreatedBetween(
+            Long favouriteCount = favouriteRepository.countFavouritesCreatedBetween(
                     start, end);
+
+            long customers = customerCount == null ? 0L : customerCount;
+            long idps = idpCount == null ? 0L : idpCount;
+            long favourites = favouriteCount == null ? 0L : favouriteCount;
 
             Map<String, Object> point = new LinkedHashMap<>();
 

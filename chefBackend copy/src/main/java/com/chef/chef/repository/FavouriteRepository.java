@@ -27,8 +27,8 @@ public interface FavouriteRepository extends MongoRepository<Favourite, String> 
 
     long countByIdpId(String idpId);
 
-    @Query("{ 'createTime': { '$gte': ?0, '$lt': ?1 } }")
-    long countFavouritesCreatedBetween(
+    @Query(value = "{ 'createTime': { '$gte': ?0, '$lt': ?1 } }", count = true)
+    Long countFavouritesCreatedBetween(
             LocalDateTime start,
             LocalDateTime end);
 }

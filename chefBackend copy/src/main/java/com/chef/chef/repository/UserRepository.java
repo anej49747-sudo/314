@@ -21,8 +21,8 @@ public interface UserRepository extends MongoRepository<User, String> {
             String role,
             String username);
 
-    @Query("{ 'role': ?0, 'createTime': { '$gte': ?1, '$lt': ?2 } }")
-    long countCustomersCreatedBetween(
+    @Query(value = "{ 'role': ?0, 'createTime': { '$gte': ?1, '$lt': ?2 } }", count = true)
+    Long countCustomersCreatedBetween(
             String role,
             LocalDateTime start,
             LocalDateTime end);
