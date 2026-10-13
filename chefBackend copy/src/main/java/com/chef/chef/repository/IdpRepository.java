@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.chef.chef.model.posts;
+import com.chef.chef.model.IDP;
 
-public interface IdpRepository extends MongoRepository<posts, String> {
+public interface IdpRepository extends MongoRepository<IDP, String> {
 
-    List<posts> findByStyle(String style);
+    List<IDP> findByDesignerId(String designerId);
 }

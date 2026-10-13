@@ -1,37 +1,106 @@
 package com.chef.chef.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.chef.chef.model.posts;
+import com.chef.chef.model.IDP;
 import com.chef.chef.repository.IdpRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class IdpService {
 
     private final IdpRepository idpRepository;
 
-    // Get all projects or filter by style
-    public List<posts> getProjects(String style) {
-        if (style == null || style.isBlank()) {
-            return idpRepository.findAll();
-        }
-
-        return idpRepository.findByStyle(style);
+    public IdpService(IdpRepository idpRepository) {
+        this.idpRepository = idpRepository;
     }
 
-    // Get available styles from all projects
-    public List<String> getStyles() {
-        return idpRepository.findAll()
-                .stream()
-                .map(posts::getStyle)
-                .filter(style -> style != null && !style.isBlank())
-                .distinct()
-                .sorted()
-                .toList();
+    public IDP createIdp(IDP idp) {
+        validateIdp(idp);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        idp.setId(null);
+        idp.setCreateTime(now);
+        idp.setUpdateTime(now);
+
+        return idpRepository.save(idp);
+    }
+
+    public List<IDP> getIdpsByDesigner(String designerId) {
+        if (designerId == null || designerId.isBlank()) {
+            throw new IllegalArgumentException("Designer ID is required");
+        }
+
+        return idpRepository.findByDesignerId(designerId);
+    }
+
+    public IDP getIdpById(String id) {
+        return idpRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("IDP not found"));
+    }
+
+    public IDP updateIdp(String id, String designerId, IDP updatedIdp) {
+        IDP existingIdp = getIdpById(id);
+
+        checkOwnership(existingIdp, designerId);
+        validateIdp(updatedIdp);
+
+        existingIdp.setTitle(updatedIdp.getTitle().trim());
+        existingIdp.setDescription(updatedIdp.getDescription().trim());
+        existingIdp.setImage(updatedIdp.getImage());
+        existingIdp.setStatus(updatedIdp.getStatus().toLowerCase());
+
+        existingIdp.setUpdateTime(LocalDateTime.now());
+
+        return idpRepository.save(existingIdp);
+    }
+
+    public void deleteIdp(String id, String designerId) {
+        IDP existingIdp = getIdpById(id);
+
+        checkOwnership(existingIdp, designerId);
+
+        idpRepository.delete(existingIdp);
+    }
+
+    private void checkOwnership(IDP idp, String designerId) {
+        if (designerId == null || designerId.isBlank()
+                || !idp.getDesignerId().equals(designerId)) {
+            throw new IllegalArgumentException(
+                    "You are not allowed to manage this IDP");
+        }
+    }
+
+    private void validateIdp(IDP idp) {
+        if (idp.getDesignerId() == null
+                || idp.getDesignerId().isBlank()) {
+            throw new IllegalArgumentException(
+                    "Designer ID is required");
+        }
+
+        if (idp.getTitle() == null || idp.getTitle().isBlank()) {
+            throw new IllegalArgumentException(
+                    "Project title is required");
+        }
+
+        if (idp.getDescription() == null
+                || idp.getDescription().isBlank()) {
+            throw new IllegalArgumentException(
+                    "Project description is required");
+        }
+
+        if (idp.getStatus() == null
+                || (!idp.getStatus().equalsIgnoreCase("current")
+                        && !idp.getStatus().equalsIgnoreCase("completed"))) {
+            throw new IllegalArgumentException(
+                    "Status must be current or completed");
+        }
+
+        if (idp.getImage() == null) {
+            idp.setImage(List.of());
+        }
     }
 }
