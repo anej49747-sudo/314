@@ -32,6 +32,14 @@ const Favourites = lazy(
   () => import("../pages/Favourites/favourites")
 );
 
+const Categories = lazy(
+  () => import("../pages/Categories/categories")
+);
+
+const Reports = lazy(
+  () => import("../pages/Reports/reports")
+);
+
 const Router = [
   {
     path: "/",
@@ -88,6 +96,14 @@ const Router = [
   {
     path: "/favourites",
     element: <Favourites />,
+  },
+  {
+    path: "/management/categories",
+    element: <Categories />,
+  },
+  {
+    path: "/management/reports",
+    element: <Reports />,
   },
 ];
 
