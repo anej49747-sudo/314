@@ -1,7 +1,10 @@
 package com.chef.chef.service;
 
+import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -31,27 +34,38 @@ public class IdpService {
 
     public List<IDP> getIdpsByDesigner(String designerId) {
         if (designerId == null || designerId.isBlank()) {
-            throw new IllegalArgumentException("Designer ID is required");
+            throw new IllegalArgumentException(
+                    "Designer ID is required");
         }
 
         return idpRepository.findByDesignerId(designerId);
     }
 
     public IDP getIdpById(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException(
+                    "IDP ID is required");
+        }
+
         return idpRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("IDP not found"));
     }
 
-    public IDP updateIdp(String id, String designerId, IDP updatedIdp) {
+    public IDP updateIdp(
+            String id, String designerId, IDP updatedIdp) {
+
         IDP existingIdp = getIdpById(id);
 
         checkOwnership(existingIdp, designerId);
         validateIdp(updatedIdp);
 
         existingIdp.setTitle(updatedIdp.getTitle().trim());
-        existingIdp.setDescription(updatedIdp.getDescription().trim());
-        existingIdp.setImage(updatedIdp.getImage());
-        existingIdp.setStatus(updatedIdp.getStatus().toLowerCase());
+        existingIdp.setDescription(
+                updatedIdp.getDescription().trim());
+        existingIdp.setImage(
+                new ArrayList<>(updatedIdp.getImage()));
+        existingIdp.setStatus(
+                updatedIdp.getStatus().toLowerCase());
 
         existingIdp.setUpdateTime(LocalDateTime.now());
 
@@ -67,21 +81,29 @@ public class IdpService {
     }
 
     private void checkOwnership(IDP idp, String designerId) {
-        if (designerId == null || designerId.isBlank()
-                || !idp.getDesignerId().equals(designerId)) {
+        if (designerId == null
+                || designerId.isBlank()
+                || !Objects.equals(
+                        idp.getDesignerId(), designerId)) {
             throw new IllegalArgumentException(
                     "You are not allowed to manage this IDP");
         }
     }
 
     private void validateIdp(IDP idp) {
+        if (idp == null) {
+            throw new IllegalArgumentException(
+                    "IDP data is required");
+        }
+
         if (idp.getDesignerId() == null
                 || idp.getDesignerId().isBlank()) {
             throw new IllegalArgumentException(
                     "Designer ID is required");
         }
 
-        if (idp.getTitle() == null || idp.getTitle().isBlank()) {
+        if (idp.getTitle() == null
+                || idp.getTitle().isBlank()) {
             throw new IllegalArgumentException(
                     "Project title is required");
         }
@@ -100,7 +122,28 @@ public class IdpService {
         }
 
         if (idp.getImage() == null) {
-            idp.setImage(List.of());
+            idp.setImage(new ArrayList<>());
+        }
+
+        for (String imageUrl : idp.getImage()) {
+            if (imageUrl == null || imageUrl.isBlank()) {
+                throw new IllegalArgumentException(
+                        "Image URL cannot be empty");
+            }
+
+            try {
+                URI uri = URI.create(imageUrl.trim());
+
+                if (uri.getHost() == null
+                        || (!"http".equalsIgnoreCase(uri.getScheme())
+                                && !"https".equalsIgnoreCase(uri.getScheme()))) {
+                    throw new IllegalArgumentException(
+                            "Image URL must use HTTP or HTTPS");
+                }
+            } catch (IllegalArgumentException exception) {
+                throw new IllegalArgumentException(
+                        "Invalid image URL: " + imageUrl);
+            }
         }
     }
 }
