@@ -233,7 +233,7 @@ function IDP() {
                     type="button"
                     className="idp-back-btn"
                     onClick={() =>
-                        navigate("/designer", {
+                        navigate("/dashboard", {
                             state: { userdata },
                         })
                     }

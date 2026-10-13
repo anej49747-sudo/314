@@ -202,7 +202,6 @@ function CompanyInformation() {
                             <p>Enter your company's information below.</p>
                         </div>
 
-                        <div className="company-information-icon">⌂</div>
                     </div>
 
                     {loading ? (
