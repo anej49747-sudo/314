@@ -26,6 +26,8 @@ public class IDP {
 
     private String description;
 
+    private String categoryId;
+
     private List<String> image = new ArrayList<>();
 
     private String status = "current";

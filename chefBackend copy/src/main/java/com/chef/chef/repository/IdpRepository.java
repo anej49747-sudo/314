@@ -13,4 +13,8 @@ public interface IdpRepository extends MongoRepository<IDP, String> {
     List<IDP> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
             String title,
             String description);
+
+    List<IDP> findByCategoryId(String categoryId);
+
+    long countByCategoryId(String categoryId);
 }

@@ -1,7 +1,9 @@
 package com.chef.chef.controller;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,15 +31,43 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<?> getAllCategories() {
-        return ResponseEntity.ok(categoryService.getAllCategories());
+        List<Map<String, Object>> categories = categoryService.getAllCategories()
+                .stream()
+                .map(category -> {
+                    Map<String, Object> result = new LinkedHashMap<>();
+
+                    result.put("id", category.getId());
+                    result.put("name", category.getName());
+                    result.put(
+                            "description",
+                            category.getDescription());
+                    result.put(
+                            "idpCount",
+                            categoryService.getCategoryIdpCount(
+                                    category.getId()));
+
+                    return result;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategoryById(
             @PathVariable String id) {
         try {
-            return ResponseEntity.ok(
-                    categoryService.getCategoryById(id));
+            Category category = categoryService.getCategoryById(id);
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("id", category.getId());
+            result.put("name", category.getName());
+            result.put("description", category.getDescription());
+            result.put(
+                    "idpCount",
+                    categoryService.getCategoryIdpCount(category.getId()));
+
+            return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return errorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -81,7 +111,11 @@ public class CategoryController {
 
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
-            return errorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+            HttpStatus status = "Category not found".equals(e.getMessage())
+                    ? HttpStatus.NOT_FOUND
+                    : HttpStatus.BAD_REQUEST;
+
+            return errorResponse(e.getMessage(), status);
         }
     }
 

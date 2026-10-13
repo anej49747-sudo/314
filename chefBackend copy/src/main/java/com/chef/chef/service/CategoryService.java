@@ -7,14 +7,19 @@ import org.springframework.stereotype.Service;
 
 import com.chef.chef.model.Category;
 import com.chef.chef.repository.CategoryRepository;
+import com.chef.chef.repository.IdpRepository;
 
 @Service
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final IdpRepository idpRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(
+            CategoryRepository categoryRepository,
+            IdpRepository idpRepository) {
         this.categoryRepository = categoryRepository;
+        this.idpRepository = idpRepository;
     }
 
     public List<Category> getAllCategories() {
@@ -30,6 +35,14 @@ public class CategoryService {
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
     }
 
+    public long getCategoryIdpCount(String categoryId) {
+        if (categoryId == null || categoryId.isBlank()) {
+            throw new IllegalArgumentException("Category ID is required");
+        }
+
+        return idpRepository.countByCategoryId(categoryId);
+    }
+
     public Category createCategory(Category category) {
         validateCategory(category);
 
@@ -42,7 +55,8 @@ public class CategoryService {
 
         category.setId(null);
         category.setName(name);
-        category.setDescription(normalizeDescription(category.getDescription()));
+        category.setDescription(
+                normalizeDescription(category.getDescription()));
 
         return categoryRepository.save(category);
     }
@@ -78,6 +92,15 @@ public class CategoryService {
         }
 
         Category category = getCategoryById(id);
+
+        long idpCount = idpRepository.countByCategoryId(id);
+
+        if (idpCount > 0) {
+            throw new IllegalArgumentException(
+                    "Cannot delete this category because it is used by "
+                            + idpCount + " IDP(s)");
+        }
+
         categoryRepository.delete(category);
     }
 
