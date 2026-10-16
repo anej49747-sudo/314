@@ -112,4 +112,17 @@ npm.cmd run dev
 
 Review `flyway_schema_history` in pgAdmin to see which schema migration ran. Future schema changes require additional ordered migration files (`V2__...sql`, `V3__...sql`) rather than editing `V1` after teammates have applied it.
 
-**Security note:** This story establishes secure registration only. Story #18 must implement actual authentication and access control for customer-owned resources. Never trust URL/user IDs supplied by a browser as proof of ownership. The login placeholder does not authenticate anyone.
+**Security note (Story #2 baseline):** Registration alone did not issue sessions. Story #18 adds authenticated sessions and a protected customer profile endpoint. Never trust URL/user IDs supplied by a browser as proof of ownership.
+
+## Sprint 1 · Story #18 — Customer login
+
+- `/login` now accepts customer email/password; existing Argon2id password hashes from Story #2 are verified by Spring Security.
+- `GET /api/auth/csrf` returns a session-bound token; `POST /api/login` requires it and establishes an HttpOnly cookie session. The browser makes same-origin `/api` requests through Vite's development proxy.
+- `GET /api/auth/me` is accessible only to authenticated customers and derives the account from the server-side principal, **not** a user-supplied ID. The temporary `/customer` page checks this endpoint and remains protected on refresh.
+- Incorrect credentials and inactive accounts return `401`; forbidden customer-area access returns `403`. Login session fixation protection rotates the session identifier and the CSRF token. The browser does not store session identifiers in local storage.
+- No database migration is needed for #18. The existing Flyway migration creates the table automatically on fresh databases. No manual table creation is required.
+- Sessions currently expire after 30 minutes of inactivity. Local HTTP uses `SESSION_COOKIE_SECURE=false` by default; use `SESSION_COOKIE_SECURE=true` behind HTTPS for deployment. Do not expose the development backend cross-origin: configure a same-origin reverse proxy for `/api`.
+- **Story #19** will add functional logout. Until then, `/customer` clearly notes that sign-out is not yet available. Login tests needing PostgreSQL run in GitHub Actions against the separate ephemeral `csit314_test` database; do not run them against the local `csit314_db`.
+- Quick checks: in `frontend`, run `npm.cmd run check`; in `backend`, run `./mvnw.cmd -Dtest=AuthenticationServiceTest,AccountUserDetailsServiceTest test` for unit-only tests on Windows PowerShell. GitHub Actions runs the complete PostgreSQL integration suite after push.
+
+**Java package structure:** Backend code and tests now use `csit314.renovation` with feature-oriented BCE folders (for example, `registration/boundary`, `registration/control`, and `account/entity`). Maven `groupId` is `csit314`. This is a package-only refactor bundled with Story #18; Flyway migrations and REST routes are unchanged.
