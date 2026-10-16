@@ -36,6 +36,10 @@ export default function LoginPage() {
         <Alert className="form-feedback" type="success" showIcon role="status"
           message="Account created successfully. You can now log in." />
       )}
+      {location.state?.justLoggedOut && (
+        <Alert className="form-feedback" type="success" showIcon role="status"
+          message="You have logged out successfully." />
+      )}
       {error && <Alert className="form-feedback" type="error" showIcon role="alert" message={error} />}
       <Form layout="vertical" onFinish={onSubmit} autoComplete="on" disabled={submitting}>
         <Form.Item name="email" label="Email" rules={[

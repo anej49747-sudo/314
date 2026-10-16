@@ -99,7 +99,7 @@ class RegistrationIntegrationTest {
     @Test
     void rejectsMissingEmailInvalidPasswordAndSalutation() throws Exception {
         mvc.perform(post("/api/register").contentType(MediaType.APPLICATION_JSON)
-                .content(""" 
+                .content("""
                   {"name":"Jane","password":"SecurePass1!"}
                   """)).andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.fieldErrors.email").exists());
