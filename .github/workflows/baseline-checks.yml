@@ -1,0 +1,53 @@
+name: Repository baseline checks
+
+# Initially validates documentation/configuration only. Expand this workflow
+# when React, Spring Boot and PostgreSQL test scaffolding are committed.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-baseline:
+    name: Validate repository baseline
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify baseline files are present
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in \
+            README.md \
+            .editorconfig \
+            .gitignore \
+            .github/workflows/baseline-checks.yml; do
+            if [[ ! -s "$file" ]]; then
+              echo "::error file=$file::Missing or empty required baseline file"
+              exit 1
+            fi
+          done
+
+      - name: Check baseline whitespace and unresolved merge markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            README.md
+            .editorconfig
+            .gitignore
+            .github/workflows/baseline-checks.yml
+          )
+          if grep -nE '[[:blank:]]+$' "${files[@]}"; then
+            echo '::error::Found trailing whitespace in baseline files'
+            exit 1
+          fi
+          if grep -nE '^(<<<<<<< |=======|>>>>>>> )' "${files[@]}"; then
+            echo '::error::Found unresolved merge-conflict markers'
+            exit 1
+          fi
