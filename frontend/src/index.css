@@ -1,18 +1,50 @@
 :root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: #1d2939;
   background: #f8fafc;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 * { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+a { color: #365b82; }
+a:hover { color: #2a486b; }
+a:focus-visible { outline: 3px solid #365b82; outline-offset: 3px; border-radius: 3px; }
 
-body { margin: 0; }
+.site { min-height: 100vh; }
+.site-header { background: #fff; border-bottom: 1px solid #d0d8e2; }
+.site-header-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  min-height: 72px;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.brand { font-size: 16px; font-weight: 700; line-height: 1.4; }
+.header-link { font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.auth-main { display: flex; justify-content: center; padding: 56px 20px 72px; }
+.auth-card {
+  width: 100%; max-width: 480px; height: fit-content;
+  padding: 32px; background: #fff; border: 1px solid #d0d8e2; border-radius: 12px;
+}
+.auth-card h1 { margin: 0 0 8px; font-size: clamp(24px, 3vw, 30px); line-height: 1.25; }
+.auth-description, .placeholder-description { margin: 0 0 24px; color: #526581; line-height: 1.6; }
+.form-feedback { margin-bottom: 20px; }
+.auth-card .ant-form-item { margin-bottom: 18px; }
+.auth-card .ant-form-item-label > label { font-weight: 600; }
+.auth-card .ant-form-item-extra { color: #526581; font-size: 13px; padding-top: 4px; }
+.submit-button { margin-top: 8px; font-weight: 600; }
+.auth-footer { margin: 24px 0 0; text-align: center; line-height: 1.6; font-size: 14px; }
+.auth-footer a { font-weight: 600; }
 
-.shell { width: min(720px, calc(100% - 3rem)); margin: 10vh auto; }
-.eyebrow { font-weight: 700; color: #526581; text-transform: uppercase; letter-spacing: .12em; }
-h1 { font-size: clamp(2rem, 5vw, 3.25rem); margin: .4em 0; }
-p { line-height: 1.6; }
-.status { margin-top: 2rem; padding: 1.25rem; border: 1px solid #d0d8e2; border-radius: 12px; background: white; }
-.status h2 { margin: 0; font-size: 1rem; }
+@media (max-width: 520px) {
+  .site-header-inner { padding: 14px 16px; min-height: 64px; }
+  .brand { font-size: 14px; }
+  .auth-main { padding: 28px 16px 48px; }
+  .auth-card { padding: 20px 16px; }
+}
