@@ -1,16 +1,36 @@
+import { ConfigProvider } from 'antd'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import AuthLayout from './components/AuthLayout.jsx'
+import LoginPage from './pages/LoginPage.jsx'
+import RegisterPage from './pages/RegisterPage.jsx'
+
+const theme = {
+  token: {
+    colorPrimary: '#365B82',
+    colorText: '#1D2939',
+    colorTextSecondary: '#526581',
+    colorBorder: '#D0D8E2',
+    colorError: '#B42318',
+    colorSuccess: '#067647',
+    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    borderRadius: 8,
+    controlHeight: 44,
+  },
+}
+
 export default function App() {
   return (
-    <main className="shell">
-      <p className="eyebrow">CSIT314 · Local development</p>
-      <h1>Renovation matching platform</h1>
-      <p>
-        The React scaffold is ready. This is a setup placeholder, not an
-        implemented user story.
-      </p>
-      <section aria-label="Development status" className="status">
-        <h2>Development status</h2>
-        <p>Frontend scaffold only — Sprint 1 features have not been added.</p>
-      </section>
-    </main>
+    <ConfigProvider theme={theme}>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<AuthLayout />}>
+            <Route index element={<Navigate to="/register" replace />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="*" element={<Navigate to="/register" replace />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ConfigProvider>
   )
 }
