@@ -48,3 +48,5 @@ a:focus-visible { outline: 3px solid #365b82; outline-offset: 3px; border-radius
   .auth-main { padding: 28px 16px 48px; }
   .auth-card { padding: 20px 16px; }
 }
+.loading-state { display: flex; align-items: center; gap: 12px; color: #526581; }
+.customer-account { line-height: 1.6; overflow-wrap: anywhere; }

@@ -9,7 +9,7 @@
         <version>3.5.14</version>
         <relativePath/>
     </parent>
-    <groupId>edu.uow.csit314</groupId>
+    <groupId>csit314</groupId>
     <artifactId>renovation-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>renovation-backend</name>
