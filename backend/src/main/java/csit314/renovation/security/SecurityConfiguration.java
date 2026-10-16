@@ -1,5 +1,6 @@
 package csit314.renovation.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -67,13 +68,19 @@ public class SecurityConfiguration {
                 .requestCache(cache -> cache.disable())
                 .httpBasic(basic -> basic.disable())
                 .formLogin(form -> form.disable())
-                .logout(logout -> logout.disable()) // Implement actual logout in Story #19.
+                .logout(logout -> logout
+                        .logoutUrl("/api/logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                        .logoutSuccessHandler((request, response, authentication) ->
+                                response.setStatus(HttpServletResponse.SC_NO_CONTENT)))
                 .exceptionHandling(errors -> errors
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                         .accessDeniedHandler((request, response, exception) ->
                                 response.sendError(HttpStatus.FORBIDDEN.value())))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/register", "/api/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/register", "/api/login", "/api/logout").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/csrf", "/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/me").hasRole("CUSTOMER")
                         .anyRequest().denyAll());

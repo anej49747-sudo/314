@@ -133,6 +133,69 @@ class CustomerLoginIntegrationTest {
         mvc.perform(get("/api/auth/me").session(csrf.session())).andExpect(status().isUnauthorized());
     }
 
+    private CsrfSession csrfFor(MockHttpSession session) throws Exception {
+        MvcResult result = mvc.perform(get("/api/auth/csrf").session(session))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode body = json.readTree(result.getResponse().getContentAsString());
+        return new CsrfSession(session, body.get("headerName").asText(), body.get("token").asText());
+    }
+
+    private MockHttpSession loggedInSession() throws Exception {
+        MvcResult result = login(csrf(), "jane@example.com", "SecurePass1!");
+        assertEquals(200, result.getResponse().getStatus());
+        return (MockHttpSession) result.getRequest().getSession(false);
+    }
+
+    @Test
+    void logoutInvalidatesCurrentSessionAndExpiresBrowserSessionCookie() throws Exception {
+        MockHttpSession authenticated = loggedInSession();
+        CsrfSession fresh = csrfFor(authenticated);
+        mvc.perform(post("/api/logout").session(authenticated)
+                        .header(fresh.header(), fresh.token()))
+                .andExpect(status().isNoContent())
+                .andExpect(result -> assertTrue(result.getResponse().getHeader("Set-Cookie") != null
+                        && result.getResponse().getHeader("Set-Cookie").contains("JSESSIONID=")));
+        assertTrue(authenticated.isInvalid());
+        mvc.perform(get("/api/auth/me")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void logoutRequiresCsrfAndGetRequestCannotLogOut() throws Exception {
+        MockHttpSession authenticated = loggedInSession();
+        mvc.perform(post("/api/logout").session(authenticated))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/api/logout").session(authenticated))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/api/auth/me").session(authenticated))
+                .andExpect(status().isOk());
+        assertTrue(!authenticated.isInvalid());
+    }
+
+    @Test
+    void logoutDoesNotInvalidateOtherAuthenticatedSessions() throws Exception {
+        MockHttpSession first = loggedInSession();
+        MockHttpSession second = loggedInSession();
+        CsrfSession fresh = csrfFor(first);
+        mvc.perform(post("/api/logout").session(first).header(fresh.header(), fresh.token()))
+                .andExpect(status().isNoContent());
+        assertTrue(first.isInvalid());
+        mvc.perform(get("/api/auth/me").session(second))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void customerCanLogInAgainAfterLogout() throws Exception {
+        MockHttpSession first = loggedInSession();
+        CsrfSession fresh = csrfFor(first);
+        mvc.perform(post("/api/logout").session(first).header(fresh.header(), fresh.token()))
+                .andExpect(status().isNoContent());
+        assertTrue(first.isInvalid());
+        MockHttpSession next = loggedInSession();
+        mvc.perform(get("/api/auth/me").session(next))
+                .andExpect(status().isOk());
+    }
+
     @Test
     void oldCsrfTokenIsRejectedAfterLoginAndSessionRotation() throws Exception {
         CsrfSession csrf = csrf();

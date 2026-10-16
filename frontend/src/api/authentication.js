@@ -10,3 +10,8 @@ export async function currentCustomer() {
   const { data } = await client.get('/auth/me')
   return data
 }
+
+export async function logoutCustomer() {
+  const headers = await csrfHeaders()
+  await client.post('/logout', null, { headers })
+}
