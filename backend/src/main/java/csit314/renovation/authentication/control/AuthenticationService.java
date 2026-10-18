@@ -67,6 +67,14 @@ public class AuthenticationService {
         return AccountProfileResponse.fromAccount(account);
     }
 
+    public AccountProfileResponse currentDesigner(Authentication authentication) {
+        UserAccount account = authenticatedAccount(authentication);
+        if (account.getRole() != UserRole.INTERIOR_DESIGNER) {
+            throw new AccessDeniedException("Designer access required");
+        }
+        return AccountProfileResponse.fromAccount(account);
+    }
+
     public AccountProfileResponse currentAccount(Authentication authentication) {
         return AccountProfileResponse.fromAccount(authenticatedAccount(authentication));
     }

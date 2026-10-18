@@ -1,5 +1,7 @@
 package csit314.renovation.authentication.boundary;
 
+import csit314.renovation.authentication.control.PasswordChangeException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -24,10 +26,15 @@ public class AuthenticationExceptionHandler {
         return ResponseEntity.badRequest().body(new ErrorResponse("Please enter a valid email and password."));
     }
 
+    @ExceptionHandler(PasswordChangeException.class)
+    public ResponseEntity<ErrorResponse> invalidNewPassword(PasswordChangeException exception) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(exception.getMessage()));
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> denied(AccessDeniedException ignored) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ErrorResponse("Administrator access required"));
+                .body(new ErrorResponse("You do not have permission to perform this action."));
     }
 
     @ExceptionHandler(Exception.class)

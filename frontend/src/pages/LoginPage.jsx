@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { loginCustomer } from '../api/authentication.js'
 import { buildLoginPayload, loginFailureMessage } from '../auth/loginRules.js'
 import AuthCard from '../components/AuthCard.jsx'
+import { designerLoginDestination } from '../designer/designerLoginRules.js'
 
 export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false)
@@ -21,8 +22,10 @@ export default function LoginPage() {
         navigate('/customer', { replace: true })
       } else if (account.role === 'USER_ADMIN') {
         navigate('/admin/designers/new', { replace: true })
+      } else if (account.role === 'INTERIOR_DESIGNER') {
+        navigate(designerLoginDestination(account), { replace: true })
       } else {
-        // Shared authentication will support designer/manager pages in later stories.
+        // Platform Manager login will be handled in a later story.
         setError('This account does not have access to the customer area.')
       }
     } catch (failure) {
