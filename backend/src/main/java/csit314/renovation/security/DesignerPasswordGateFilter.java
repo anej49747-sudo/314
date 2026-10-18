@@ -26,7 +26,8 @@ public class DesignerPasswordGateFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
             FilterChain chain) throws IOException, ServletException {
-        String path = request.getServletPath();
+        String path = request.getRequestURI()
+            .substring(request.getContextPath().length());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (path.startsWith("/api/") && !ALLOWED_WHILE_PENDING.contains(path)
                 && authentication != null && authentication.isAuthenticated()
