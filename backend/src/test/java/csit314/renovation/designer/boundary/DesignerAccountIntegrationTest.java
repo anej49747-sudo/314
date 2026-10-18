@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import csit314.renovation.TestDatabaseGuard;
 import csit314.renovation.account.entity.UserAccount;
 import csit314.renovation.account.entity.UserRole;
 import csit314.renovation.account.repository.UserAccountRepository;
@@ -55,8 +56,7 @@ class DesignerAccountIntegrationTest {
     }
 
     private void requireTestDatabase() {
-        String database = jdbc.queryForObject("SELECT current_database()", String.class);
-        assertTrue(database != null && database.endsWith("_test"), "Refusing non-test database: " + database);
+        TestDatabaseGuard.requireSafeForDestructiveTests(jdbc);
     }
 
     private record CsrfSession(MockHttpSession session, String headerName, String token) {}

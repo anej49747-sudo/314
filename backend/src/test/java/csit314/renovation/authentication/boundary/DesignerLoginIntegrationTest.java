@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import csit314.renovation.TestDatabaseGuard;
 import csit314.renovation.account.entity.UserAccount;
 import csit314.renovation.account.repository.UserAccountRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -36,8 +37,7 @@ class DesignerLoginIntegrationTest {
     @Autowired JdbcTemplate jdbc;
 
     private void requireTestDatabase() {
-        String name = jdbc.queryForObject("SELECT current_database()", String.class);
-        assertTrue(name != null && name.endsWith("_test"), "Refusing non-test database: " + name);
+        TestDatabaseGuard.requireSafeForDestructiveTests(jdbc);
     }
 
     @BeforeEach
@@ -150,6 +150,57 @@ class DesignerLoginIntegrationTest {
                         """))
                 .andExpect(status().isBadRequest());
         assertTrue(accounts.findByEmailIgnoreCase("designer@example.com").orElseThrow().isPasswordChangeRequired());
+    }
+
+    @Test
+    void designerCanLogOutWhileInitialPasswordChangeIsPending() throws Exception {
+        MockHttpSession session = login("designer@example.com", "TempPassword1!");
+        Csrf token = csrf(session);
+        mvc.perform(post("/api/logout").session(session)
+                .header(token.header(), token.token()))
+                .andExpect(status().isNoContent());
+        assertTrue(session.isInvalid());
+        mvc.perform(get("/api/auth/designer/me")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/designer/area")).andExpect(status().isUnauthorized());
+
+        // Logout must not clear the requirement or change the existing credentials.
+        assertTrue(accounts.findByEmailIgnoreCase("designer@example.com")
+                .orElseThrow().isPasswordChangeRequired());
+        MockHttpSession nextSession = login("designer@example.com", "TempPassword1!");
+        mvc.perform(get("/api/auth/designer/me").session(nextSession))
+                .andExpect(jsonPath("$.passwordChangeRequired").value(true));
+    }
+
+    @Test
+    void designerLogoutRejectsMissingCsrfAndGetRequests() throws Exception {
+        MockHttpSession session = login("designer@example.com", "TempPassword1!");
+        mvc.perform(post("/api/logout").session(session)).andExpect(status().isForbidden());
+        mvc.perform(get("/api/logout").session(session)).andExpect(status().isForbidden());
+        mvc.perform(get("/api/auth/designer/me").session(session)).andExpect(status().isOk());
+        assertFalse(session.isInvalid());
+    }
+
+    @Test
+    void designerCanLogOutAfterSettingPermanentPassword() throws Exception {
+        MockHttpSession session = login("designer@example.com", "TempPassword1!");
+        Csrf beforePasswordChange = csrf(session);
+        mvc.perform(post("/api/auth/change-password").session(session)
+                .header(beforePasswordChange.header(), beforePasswordChange.token())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"newPassword":"NewPassword1!"}
+                        """))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/designer/area").session(session)).andExpect(status().isOk());
+
+        Csrf beforeLogout = csrf(session);
+        mvc.perform(post("/api/logout").session(session)
+                .header(beforeLogout.header(), beforeLogout.token()))
+                .andExpect(status().isNoContent());
+        assertTrue(session.isInvalid());
+        mvc.perform(get("/api/designer/area")).andExpect(status().isUnauthorized());
+        MockHttpSession nextSession = login("designer@example.com", "NewPassword1!");
+        mvc.perform(get("/api/designer/area").session(nextSession)).andExpect(status().isOk());
     }
 
     @Test

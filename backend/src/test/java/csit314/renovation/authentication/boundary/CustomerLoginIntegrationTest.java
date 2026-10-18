@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import csit314.renovation.TestDatabaseGuard;
 import csit314.renovation.account.repository.UserAccountRepository;
 import csit314.renovation.authentication.dto.LoginRequest;
 import jakarta.servlet.http.HttpSession;
@@ -35,8 +36,7 @@ class CustomerLoginIntegrationTest {
     @Autowired JdbcTemplate jdbc;
 
     private void requireTestDatabase() {
-        String database = jdbc.queryForObject("SELECT current_database()", String.class);
-        assertTrue(database != null && database.endsWith("_test"), "Refusing non-test database: " + database);
+        TestDatabaseGuard.requireSafeForDestructiveTests(jdbc);
     }
 
     @BeforeEach
