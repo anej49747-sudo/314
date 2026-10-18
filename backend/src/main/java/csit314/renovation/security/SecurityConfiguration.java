@@ -83,6 +83,8 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/register", "/api/login", "/api/logout").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/csrf", "/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/me").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/auth/admin/me").hasRole("USER_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/admin/designers").hasRole("USER_ADMIN")
                         .anyRequest().denyAll());
         return http.build();
     }

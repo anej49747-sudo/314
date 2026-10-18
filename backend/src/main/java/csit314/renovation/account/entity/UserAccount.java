@@ -58,6 +58,27 @@ public class UserAccount {
         return account;
     }
 
+    public static UserAccount newInteriorDesigner(Salutation salutation, String name, String email, String passwordHash) {
+        UserAccount account = new UserAccount();
+        account.salutation = salutation;
+        account.name = name;
+        account.email = email;
+        account.passwordHash = passwordHash;
+        account.role = UserRole.INTERIOR_DESIGNER;
+        account.active = true;
+        return account;
+    }
+
+    public static UserAccount newUserAdmin(String name, String email, String passwordHash) {
+        UserAccount account = new UserAccount();
+        account.name = name;
+        account.email = email;
+        account.passwordHash = passwordHash;
+        account.role = UserRole.USER_ADMIN;
+        account.active = true;
+        return account;
+    }
+
     @PrePersist
     void setCreationTime() {
         if (createdAt == null) {

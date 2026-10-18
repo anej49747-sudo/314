@@ -1,12 +1,14 @@
 package csit314.renovation.authentication.control;
 
 import csit314.renovation.account.entity.UserAccount;
+import csit314.renovation.account.entity.UserRole;
 import csit314.renovation.account.repository.UserAccountRepository;
 import csit314.renovation.authentication.dto.AccountProfileResponse;
 import csit314.renovation.authentication.dto.LoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Locale;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -57,12 +59,24 @@ public class AuthenticationService {
         return AccountProfileResponse.fromAccount(account);
     }
 
-    public AccountProfileResponse currentCustomer(Authentication authentication) {
+    public AccountProfileResponse currentAdmin(Authentication authentication) {
+        UserAccount account = authenticatedAccount(authentication);
+        if (account.getRole() != UserRole.USER_ADMIN) {
+            throw new AccessDeniedException("Administrator access required");
+        }
+        return AccountProfileResponse.fromAccount(account);
+    }
+
+    public AccountProfileResponse currentAccount(Authentication authentication) {
+        return AccountProfileResponse.fromAccount(authenticatedAccount(authentication));
+    }
+
+    private UserAccount authenticatedAccount(Authentication authentication) {
         UserAccount account = accounts.findByEmailIgnoreCase(authentication.getName())
                 .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
         if (!account.isActive()) {
             throw new BadCredentialsException("Invalid credentials");
         }
-        return AccountProfileResponse.fromAccount(account);
+        return account;
     }
 }

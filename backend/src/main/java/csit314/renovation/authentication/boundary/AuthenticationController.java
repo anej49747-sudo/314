@@ -38,6 +38,11 @@ public class AuthenticationController {
 
     @GetMapping("/auth/me")
     public AccountProfileResponse me(Authentication authentication) {
-        return authenticationService.currentCustomer(authentication);
+        return authenticationService.currentAccount(authentication);
+    }
+
+    @GetMapping("/auth/admin/me")
+    public AccountProfileResponse adminMe(Authentication authentication) {
+        return authenticationService.currentAdmin(authentication);
     }
 }
