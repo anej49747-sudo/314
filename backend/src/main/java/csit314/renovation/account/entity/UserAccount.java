@@ -40,6 +40,9 @@ public class UserAccount {
     @Column(nullable = false)
     private boolean active;
 
+    @Column(name = "password_change_required", nullable = false)
+    private boolean passwordChangeRequired;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -65,6 +68,7 @@ public class UserAccount {
         account.email = email;
         account.passwordHash = passwordHash;
         account.role = UserRole.INTERIOR_DESIGNER;
+        account.passwordChangeRequired = true;
         account.active = true;
         return account;
     }
@@ -93,6 +97,12 @@ public class UserAccount {
     public String getPasswordHash() { return passwordHash; }
     public UserRole getRole() { return role; }
     public boolean isActive() { return active; }
+    public boolean isPasswordChangeRequired() { return passwordChangeRequired; }
+
+    public void replacePasswordHash(String newPasswordHash) {
+        this.passwordHash = newPasswordHash;
+        this.passwordChangeRequired = false;
+    }
     public Instant getCreatedAt() { return createdAt; }
 
     public String getDisplayName() {

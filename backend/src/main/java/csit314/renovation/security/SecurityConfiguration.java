@@ -1,5 +1,6 @@
 package csit314.renovation.security;
 
+import csit314.renovation.account.repository.UserAccountRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfAuthenticationStrategy;
@@ -59,7 +61,8 @@ public class SecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http,
-            SecurityContextRepository contextRepository, CsrfTokenRepository csrfRepository) throws Exception {
+            SecurityContextRepository contextRepository, CsrfTokenRepository csrfRepository,
+            UserAccountRepository accounts) throws Exception {
         http.csrf(csrf -> csrf.csrfTokenRepository(csrfRepository)
                         // Public signup does not authenticate a session; keep its original API contract.
                         .ignoringRequestMatchers("/api/register"))
@@ -84,8 +87,12 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/auth/csrf", "/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/me").hasRole("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/admin/me").hasRole("USER_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/auth/designer/me", "/api/designer/area")
+                        .hasRole("INTERIOR_DESIGNER")
+                        .requestMatchers(HttpMethod.POST, "/api/auth/change-password").hasRole("INTERIOR_DESIGNER")
                         .requestMatchers(HttpMethod.POST, "/api/admin/designers").hasRole("USER_ADMIN")
                         .anyRequest().denyAll());
+        http.addFilterBefore(new DesignerPasswordGateFilter(accounts), AuthorizationFilter.class);
         return http.build();
     }
 }

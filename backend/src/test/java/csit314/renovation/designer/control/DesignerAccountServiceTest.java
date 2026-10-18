@@ -56,6 +56,7 @@ class DesignerAccountServiceTest {
         assertEquals("Designer Co", saved.getValue().getName());
         assertEquals("$argon2id$hashed", saved.getValue().getPasswordHash());
         assertTrue(saved.getValue().isActive());
+        assertTrue(saved.getValue().isPasswordChangeRequired());
         assertEquals("Dr Designer Co", response.displayName());
         assertEquals("GeneratedSecurePass123!", response.initialPassword());
     }
