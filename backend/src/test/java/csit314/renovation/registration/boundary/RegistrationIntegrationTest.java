@@ -2,7 +2,6 @@ package csit314.renovation.registration.boundary;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import csit314.renovation.TestDatabaseGuard;
 import csit314.renovation.account.entity.UserAccount;
 import csit314.renovation.account.entity.UserRole;
 import csit314.renovation.account.repository.UserAccountRepository;
@@ -41,8 +41,7 @@ class RegistrationIntegrationTest {
     @Autowired JdbcTemplate jdbc;
 
     private void requireTestDatabase() {
-        String database = jdbc.queryForObject("SELECT current_database()", String.class);
-        assertTrue(database != null && database.endsWith("_test"), "Refusing to touch non-test database: " + database);
+        TestDatabaseGuard.requireSafeForDestructiveTests(jdbc);
     }
 
     @BeforeEach

@@ -2,6 +2,8 @@ import { Alert, Button, Form, Input, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { changeDesignerPassword, currentDesigner } from '../api/designerAuthentication.js'
+import { logoutSession } from '../api/authentication.js'
+import { logoutFailureMessage } from '../auth/logoutRules.js'
 import AuthCard from '../components/AuthCard.jsx'
 import { buildPasswordChangePayload, passwordChangeFailureMessage, validatePasswordChange } from '../designer/designerLoginRules.js'
 
@@ -10,6 +12,7 @@ export default function DesignerChangePasswordPage() {
   const [checking, setChecking] = useState(true)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [loggingOut, setLoggingOut] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -39,12 +42,26 @@ export default function DesignerChangePasswordPage() {
     }
   }
 
+  async function onLogout() {
+    if (submitting || loggingOut) return
+    setLoggingOut(true)
+    setError('')
+    try {
+      await logoutSession()
+      navigate('/login', { replace: true, state: { justLoggedOut: true } })
+    } catch (failure) {
+      setError(logoutFailureMessage(failure))
+      setLoggingOut(false)
+    }
+  }
+
   return (
     <AuthCard title="Set your new password"
       description="For your security, choose a new password before accessing designer features.">
       {checking && !error && <div className="loading-state"><Spin /> <span>Checking your account…</span></div>}
       {error && <Alert className="form-feedback" type="error" showIcon role="alert" message={error} />}
-      {!checking && <Form layout="vertical" onFinish={onSubmit} disabled={submitting} autoComplete="off">
+      {!checking && <>
+      <Form layout="vertical" onFinish={onSubmit} disabled={submitting || loggingOut} autoComplete="off">
         <Form.Item name="newPassword" label="New password" rules={[{ required: true, message: 'Enter a new password' },
           { validator: (_, value) => {
             const message = value ? validatePasswordChange({ newPassword: value, confirmPassword: value }) : null
@@ -61,7 +78,10 @@ export default function DesignerChangePasswordPage() {
           <Input.Password autoComplete="new-password" />
         </Form.Item>
         <Button type="primary" htmlType="submit" block loading={submitting} className="submit-button">Set password</Button>
-      </Form>}
+      </Form>
+      <Button block type="default" className="submit-button" loading={loggingOut}
+        disabled={submitting} onClick={onLogout}>Log out</Button>
+      </>}
     </AuthCard>
   )
 }

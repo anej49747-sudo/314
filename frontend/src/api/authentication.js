@@ -11,7 +11,10 @@ export async function currentCustomer() {
   return data
 }
 
-export async function logoutCustomer() {
+export async function logoutSession() {
   const headers = await csrfHeaders()
   await client.post('/logout', null, { headers })
 }
+
+// Retain the existing customer API name while other screens migrate to the shared helper.
+export const logoutCustomer = logoutSession

@@ -2,7 +2,8 @@ import { Alert, Button, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { currentDesigner, currentDesignerArea } from '../api/designerAuthentication.js'
-import { logoutCustomer } from '../api/authentication.js'
+import { logoutSession } from '../api/authentication.js'
+import { logoutFailureMessage } from '../auth/logoutRules.js'
 import AuthCard from '../components/AuthCard.jsx'
 
 export default function DesignerPage() {
@@ -35,10 +36,10 @@ export default function DesignerPage() {
     setLoggingOut(true)
     setError('')
     try {
-      await logoutCustomer()
+      await logoutSession()
       navigate('/login', { replace: true, state: { justLoggedOut: true } })
-    } catch {
-      setError('Unable to log out. Please try again.')
+    } catch (failure) {
+      setError(logoutFailureMessage(failure))
       setLoggingOut(false)
     }
   }
