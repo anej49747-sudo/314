@@ -3,7 +3,7 @@ import { SALUTATIONS, validatePassword } from '../registration/registrationRules
 
 // Reusable inputs for public customer signup and later authorised account provisioning.
 // The server, not these form fields, controls the account role.
-export default function AccountIdentityFields() {
+export default function AccountIdentityFields({ includePassword = true }) {
   return (
     <>
       <Form.Item name="salutation" label="Salutation (optional)">
@@ -27,27 +27,33 @@ export default function AccountIdentityFields() {
       ]}>
         <Input type="email" autoComplete="email" maxLength={254} placeholder="name@example.com" />
       </Form.Item>
-      <Form.Item name="password" label="Password" required extra="10–128 characters, including uppercase, lowercase, number and special character." rules={[
-        { required: true, message: 'Create a password.' },
-        { validator: (_, value) => {
-          const feedback = validatePassword(value)
-          return feedback ? Promise.reject(new Error(feedback)) : Promise.resolve()
-        } },
-      ]}>
-        <Input.Password autoComplete="new-password" placeholder="Create password" />
-      </Form.Item>
-      <Form.Item name="confirmPassword" label="Confirm password" required dependencies={['password']} rules={[
-        { required: true, message: 'Confirm your password.' },
-        ({ getFieldValue }) => ({
-          validator(_, value) {
-            return value === getFieldValue('password')
-              ? Promise.resolve()
-              : Promise.reject(new Error('Passwords do not match.'))
-          },
-        }),
-      ]}>
-        <Input.Password autoComplete="new-password" placeholder="Confirm password" />
-      </Form.Item>
+      {includePassword && (
+        <>
+          <Form.Item name="password" label="Password" required
+            extra="10–128 characters, including uppercase, lowercase, number and special character." rules={[
+              { required: true, message: 'Create a password.' },
+              { validator: (_, value) => {
+                const feedback = validatePassword(value)
+                return feedback ? Promise.reject(new Error(feedback)) : Promise.resolve()
+              } },
+            ]}>
+            <Input.Password autoComplete="new-password" placeholder="Create password" />
+          </Form.Item>
+          <Form.Item name="confirmPassword" label="Confirm password" required
+            dependencies={['password']} rules={[
+              { required: true, message: 'Confirm your password.' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  return value === getFieldValue('password')
+                    ? Promise.resolve()
+                    : Promise.reject(new Error('Passwords do not match.'))
+                },
+              }),
+            ]}>
+            <Input.Password autoComplete="new-password" placeholder="Confirm password" />
+          </Form.Item>
+        </>
+      )}
     </>
   )
 }

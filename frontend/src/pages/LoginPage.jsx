@@ -19,6 +19,8 @@ export default function LoginPage() {
       const account = await loginCustomer(buildLoginPayload(values))
       if (account.role === 'CUSTOMER') {
         navigate('/customer', { replace: true })
+      } else if (account.role === 'USER_ADMIN') {
+        navigate('/admin/designers/new', { replace: true })
       } else {
         // Shared authentication will support designer/manager pages in later stories.
         setError('This account does not have access to the customer area.')
@@ -31,7 +33,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthCard title="Log in" description="Sign in to your Renovation Customer account.">
+    <AuthCard title="Log in" description="Sign in with your account email and password.">
       {location.state?.justRegistered && (
         <Alert className="form-feedback" type="success" showIcon role="status"
           message="Account created successfully. You can now log in." />
