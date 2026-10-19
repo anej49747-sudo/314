@@ -6,6 +6,7 @@ import CompanyInformationPage from './pages/CompanyInformationPage.jsx'
 import CreateDesignerPage from './pages/CreateDesignerPage.jsx'
 import DesignerChangePasswordPage from './pages/DesignerChangePasswordPage.jsx'
 import DesignerPage from './pages/DesignerPage.jsx'
+import DesignerPortfolioPage from './pages/DesignerPortfolioPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
 import ProjectCategoriesPage from './pages/ProjectCategoriesPage.jsx'
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="designer" element={<DesignerPage />} />
             <Route path="designer/change-password" element={<DesignerChangePasswordPage />} />
             <Route path="designer/company-information" element={<CompanyInformationPage />} />
+            <Route path="designer/portfolio" element={<DesignerPortfolioPage />} />
             <Route path="admin/designers/new" element={<CreateDesignerPage />} />
             <Route path="manager/categories" element={<ProjectCategoriesPage />} />
             <Route path="*" element={<Navigate to="/register" replace />} />
