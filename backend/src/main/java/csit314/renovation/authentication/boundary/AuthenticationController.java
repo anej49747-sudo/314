@@ -60,6 +60,11 @@ public class AuthenticationController {
         designerPasswordService.changePassword(request, authentication);
     }
 
+    @GetMapping("/auth/manager/me")
+    public AccountProfileResponse managerMe(Authentication authentication) {
+        return authenticationService.currentManager(authentication);
+    }
+
     @GetMapping("/auth/admin/me")
     public AccountProfileResponse adminMe(Authentication authentication) {
         return authenticationService.currentAdmin(authentication);
