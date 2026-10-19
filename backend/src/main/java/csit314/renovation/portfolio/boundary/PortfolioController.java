@@ -11,6 +11,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,6 +50,12 @@ public class PortfolioController {
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
             Authentication authentication) {
         return portfolios.update(authentication, projectId, request, images);
+    }
+
+    @DeleteMapping("/{projectId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long projectId, Authentication authentication) {
+        portfolios.delete(authentication, projectId);
     }
 
     @GetMapping("/{projectId}/images/{imageId}")

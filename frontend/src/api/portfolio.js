@@ -14,6 +14,11 @@ export async function updatePortfolioProject(projectId, details, images) {
   return data
 }
 
+export async function deletePortfolioProject(projectId) {
+  const headers = await csrfHeaders()
+  await client.delete(`/designer/projects/${projectId}`, { headers })
+}
+
 export async function addPortfolioProject(details, images) {
   const payload = new FormData()
   payload.append('project', new Blob([JSON.stringify(details)], { type: 'application/json' }))

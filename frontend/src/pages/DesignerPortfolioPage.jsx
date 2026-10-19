@@ -1,9 +1,10 @@
-import { Alert, Button, Card, Empty, Segmented, Spin, Tag } from 'antd'
+import { Alert, Button, Card, Empty, Modal, Segmented, Spin, Tag } from 'antd'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { getMyPortfolio } from '../api/portfolio.js'
+import { deletePortfolioProject, getMyPortfolio } from '../api/portfolio.js'
 import { currentDesigner, currentDesignerArea } from '../api/designerAuthentication.js'
 import { filteredPortfolio, portfolioStatusLabel, portfolioSummary } from '../designer/portfolioRules.js'
+import { projectDeletionFailureMessage, withoutDeletedProject } from '../designer/projectDeletionRules.js'
 
 const filters = [
   { label: 'All', value: 'ALL' },
@@ -19,6 +20,9 @@ export default function DesignerPortfolioPage() {
   const [projects, setProjects] = useState([])
   const [filter, setFilter] = useState('ALL')
   const [error, setError] = useState('')
+  const [deletedProjectName, setDeletedProjectName] = useState('')
+  const [deletionTarget, setDeletionTarget] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -47,6 +51,26 @@ export default function DesignerPortfolioPage() {
     return () => { active = false }
   }, [navigate])
 
+  async function confirmDeletion() {
+    if (!deletionTarget || deleting) return
+    setDeleting(true)
+    setError('')
+    try {
+      await deletePortfolioProject(deletionTarget.id)
+      setProjects((current) => withoutDeletedProject(current, deletionTarget.id))
+      setDeletedProjectName(deletionTarget.title)
+      setDeletionTarget(null)
+    } catch (failure) {
+      setError(projectDeletionFailureMessage(failure))
+      if ([401, 403].includes(failure.response?.status)) {
+        setDeletionTarget(null)
+        navigate('/login', { replace: true })
+      }
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   const counts = portfolioSummary(projects)
   const visible = filteredPortfolio(projects, filter)
 
@@ -59,6 +83,8 @@ export default function DesignerPortfolioPage() {
         message={`Project “${location.state.createdProjectName}” added to your portfolio.`} className="form-feedback" />}
       {location.state?.editedProjectName && <Alert type="success" showIcon role="status"
         message={`Project “${location.state.editedProjectName}” updated.`} className="form-feedback" />}
+      {deletedProjectName && <Alert type="success" showIcon role="status"
+        message={`Project “${deletedProjectName}” deleted from your portfolio.`} className="form-feedback" />}
       {loading && <div className="loading-state"><Spin /> <span>Loading portfolio…</span></div>}
       {error && <Alert type="error" showIcon role="alert" message={error} className="form-feedback" />}
       {authorized && !loading && <>
@@ -89,15 +115,25 @@ export default function DesignerPortfolioPage() {
                   </div>
                   <p className="portfolio-project-category">{project.categoryName}</p>
                   <p className="portfolio-project-description">{project.description}</p>
-                  <Button className="portfolio-project-edit" size="small"
-                    onClick={() => navigate(`/designer/portfolio/${project.id}/edit`)}>
-                    Edit project
-                  </Button>
+                  <div className="portfolio-project-actions">
+                    <Button size="small" onClick={() => navigate(`/designer/portfolio/${project.id}/edit`)}>
+                      Edit project
+                    </Button>
+                    <Button size="small" danger onClick={() => { setError(''); setDeletionTarget(project) }}>
+                      Delete project
+                    </Button>
+                  </div>
                 </Card>
               ))}
             </div>
           )}
         </Card>
+        <Modal title="Delete project?" open={deletionTarget !== null} okText="Delete project"
+          okButtonProps={{ danger: true }} confirmLoading={deleting}
+          okType="primary" onOk={confirmDeletion} onCancel={() => { if (!deleting) setDeletionTarget(null) }}
+          cancelButtonProps={{ disabled: deleting }} closable={!deleting} maskClosable={!deleting}>
+          <p>Delete “{deletionTarget?.title}” and all its photos? This cannot be undone.</p>
+        </Modal>
         <Button onClick={() => navigate('/designer')}>Back to designer workspace</Button>
       </>}
     </div>

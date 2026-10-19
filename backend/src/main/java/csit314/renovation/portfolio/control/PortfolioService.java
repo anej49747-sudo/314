@@ -148,6 +148,30 @@ public class PortfolioService {
                 current.stream().map(ProjectImageResponse::from).toList());
     }
 
+    @Transactional
+    public void delete(Authentication authentication, Long projectId) {
+        UserAccount designer = requireEligibleDesigner(authentication);
+        InteriorDesignProject project = projects.findByIdAndDesigner_Id(projectId, designer.getId())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.NOT_FOUND));
+
+        List<ProjectImage> existing = images.findByProject_IdInOrderByDisplayOrderAscIdAsc(
+                List.of(projectId));
+        List<String> imageKeys = existing.stream().map(ProjectImage::getStorageKey).toList();
+        // Delete metadata before the project because project_images has a foreign key.
+        // Keep image files until PostgreSQL confirms the transaction committed.
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                imageKeys.forEach(storage::deleteQuietly);
+            }
+        });
+        images.deleteAll(existing);
+        images.flush();
+        projects.delete(project);
+        projects.flush();
+    }
+
     @Transactional(readOnly = true)
     public ImageContent getOwnImage(Authentication authentication, Long projectId, Long imageId) {
         UserAccount designer = requireEligibleDesigner(authentication);
