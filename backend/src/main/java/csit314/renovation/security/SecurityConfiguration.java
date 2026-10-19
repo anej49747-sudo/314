@@ -92,6 +92,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/auth/admin/me").hasRole("USER_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/auth/designer/me", "/api/designer/area")
                         .hasRole("INTERIOR_DESIGNER")
+                        .requestMatchers(HttpMethod.GET, "/api/designer/company-information")
+                        .hasRole("INTERIOR_DESIGNER")
+                        .requestMatchers(HttpMethod.PUT, "/api/designer/company-information")
+                        .hasRole("INTERIOR_DESIGNER")
                         .requestMatchers(HttpMethod.POST, "/api/auth/change-password").hasRole("INTERIOR_DESIGNER")
                         .requestMatchers(HttpMethod.POST, "/api/admin/designers").hasRole("USER_ADMIN")
                         .anyRequest().denyAll());
