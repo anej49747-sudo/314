@@ -69,3 +69,18 @@ a:focus-visible { outline: 3px solid #365b82; outline-offset: 3px; border-radius
   .categories-page .ant-card-body { padding: 20px 16px; }
   .categories-page .ant-form .ant-btn-primary { width: 100%; }
 }
+
+/* Story #15: company information follows the shared light designer workspace. */
+.company-page { width: min(100%, 820px); }
+.company-eyebrow { margin: 0 0 10px; color: #365b82; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .075em; }
+.company-page > h1 { font-size: clamp(28px, 4vw, 36px); margin: 0 0 8px; }
+.company-intro { margin: 0 0 28px; color: #526581; line-height: 1.6; }
+.company-panel { border-color: #d0d8e2; }
+.company-panel .ant-form-item-label > label { font-weight: 600; }
+.company-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; }
+.company-unsaved { color: #526581; margin-right: auto; font-size: 13px; }
+@media (max-width: 520px) {
+  .company-page .ant-card-body { padding: 20px 16px; }
+  .company-actions { flex-direction: column; align-items: stretch; }
+  .company-unsaved { margin: 0; }
+}
