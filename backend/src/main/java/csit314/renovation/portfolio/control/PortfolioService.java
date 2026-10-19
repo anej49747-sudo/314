@@ -5,6 +5,7 @@ import csit314.renovation.account.entity.UserRole;
 import csit314.renovation.account.repository.UserAccountRepository;
 import csit314.renovation.category.repository.ProjectCategoryRepository;
 import csit314.renovation.portfolio.dto.CreateProjectRequest;
+import csit314.renovation.portfolio.dto.UpdateProjectRequest;
 import csit314.renovation.portfolio.dto.ProjectImageResponse;
 import csit314.renovation.portfolio.entity.InteriorDesignProject;
 import csit314.renovation.portfolio.entity.ProjectImage;
@@ -13,6 +14,8 @@ import csit314.renovation.portfolio.dto.PortfolioProjectResponse;
 import csit314.renovation.portfolio.repository.InteriorDesignProjectRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -87,6 +90,62 @@ public class PortfolioService {
         images.flush();
         return PortfolioProjectResponse.from(project,
                 saved.stream().map(ProjectImageResponse::from).toList());
+    }
+
+    @Transactional
+    public PortfolioProjectResponse update(Authentication authentication, Long projectId,
+            UpdateProjectRequest request, List<MultipartFile> uploads) {
+        UserAccount designer = requireEligibleDesigner(authentication);
+        InteriorDesignProject project = projects.findByIdAndDesigner_Id(projectId, designer.getId())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.NOT_FOUND));
+
+        List<ProjectImage> existing = images.findByProject_IdInOrderByDisplayOrderAscIdAsc(
+                List.of(projectId));
+        List<Long> keepIds = request.keepImageIds();
+        Set<Long> requestedIds = new HashSet<>(keepIds);
+        if (requestedIds.size() != keepIds.size()
+                || existing.stream().filter(image -> requestedIds.contains(image.getId())).count()
+                        != requestedIds.size()) {
+            throw new IllegalArgumentException("Choose photos belonging to this project");
+        }
+        List<MultipartFile> supplied = uploads == null ? List.of() : uploads;
+        if (keepIds.size() + supplied.size() > ProjectImageStorage.MAX_IMAGES) {
+            throw new IllegalArgumentException("Keep and upload no more than 6 photos in total");
+        }
+        List<ProjectImageStorage.ValidatedImage> validated = supplied.stream()
+                .map(storage::validate).toList();
+        var category = categories.findById(request.categoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Select an existing project category"));
+        // Check all inputs and ownership before changing the database or touching stored files.
+        List<ProjectImage> removed = existing.stream()
+                .filter(image -> !requestedIds.contains(image.getId())).toList();
+        List<String> removedKeys = removed.stream().map(ProjectImage::getStorageKey).toList();
+        List<String> createdKeys = new ArrayList<>();
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCompletion(int status) {
+                if (status == STATUS_COMMITTED) removedKeys.forEach(storage::deleteQuietly);
+                else createdKeys.forEach(storage::deleteQuietly);
+            }
+        });
+        project.updateDetails(category, request.title().trim(), request.description().trim(), request.status());
+        images.deleteAll(removed);
+        images.flush();
+        int nextOrder = existing.stream().mapToInt(ProjectImage::getDisplayOrder).max().orElse(-1) + 1;
+        List<ProjectImage> current = new ArrayList<>(existing.stream()
+                .filter(image -> requestedIds.contains(image.getId())).toList());
+        for (ProjectImageStorage.ValidatedImage validatedImage : validated) {
+            ProjectImageStorage.StoredImage stored = storage.store(validatedImage);
+            createdKeys.add(stored.key());
+            current.add(images.save(new ProjectImage(project, stored.key(), stored.contentType(),
+                    stored.sizeBytes(), nextOrder++)));
+        }
+        images.flush();
+        current.sort(java.util.Comparator.comparingInt(ProjectImage::getDisplayOrder)
+                .thenComparing(ProjectImage::getId));
+        return PortfolioProjectResponse.from(project,
+                current.stream().map(ProjectImageResponse::from).toList());
     }
 
     @Transactional(readOnly = true)

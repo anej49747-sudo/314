@@ -2,6 +2,7 @@ package csit314.renovation.portfolio.boundary;
 
 import csit314.renovation.portfolio.control.PortfolioService;
 import csit314.renovation.portfolio.dto.CreateProjectRequest;
+import csit314.renovation.portfolio.dto.UpdateProjectRequest;
 import jakarta.validation.Valid;
 import csit314.renovation.portfolio.dto.PortfolioProjectResponse;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +41,14 @@ public class PortfolioController {
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
             Authentication authentication) {
         return portfolios.create(authentication, request, images);
+    }
+
+    @PutMapping(value = "/{projectId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public PortfolioProjectResponse update(@PathVariable Long projectId,
+            @Valid @RequestPart("project") UpdateProjectRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            Authentication authentication) {
+        return portfolios.update(authentication, projectId, request, images);
     }
 
     @GetMapping("/{projectId}/images/{imageId}")

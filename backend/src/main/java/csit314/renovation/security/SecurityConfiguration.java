@@ -98,6 +98,8 @@ public class SecurityConfiguration {
                         .hasRole("INTERIOR_DESIGNER")
                         .requestMatchers(HttpMethod.POST, "/api/designer/projects")
                         .hasRole("INTERIOR_DESIGNER")
+                        .requestMatchers(HttpMethod.PUT, "/api/designer/projects/*")
+                        .hasRole("INTERIOR_DESIGNER")
                         .requestMatchers(HttpMethod.PUT, "/api/designer/company-information")
                         .hasRole("INTERIOR_DESIGNER")
                         .requestMatchers(HttpMethod.POST, "/api/auth/change-password").hasRole("INTERIOR_DESIGNER")

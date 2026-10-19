@@ -57,6 +57,8 @@ export default function DesignerPortfolioPage() {
       <p className="portfolio-intro">View your current and completed interior design projects.</p>
       {location.state?.createdProjectName && <Alert type="success" showIcon role="status"
         message={`Project “${location.state.createdProjectName}” added to your portfolio.`} className="form-feedback" />}
+      {location.state?.editedProjectName && <Alert type="success" showIcon role="status"
+        message={`Project “${location.state.editedProjectName}” updated.`} className="form-feedback" />}
       {loading && <div className="loading-state"><Spin /> <span>Loading portfolio…</span></div>}
       {error && <Alert type="error" showIcon role="alert" message={error} className="form-feedback" />}
       {authorized && !loading && <>
@@ -87,6 +89,10 @@ export default function DesignerPortfolioPage() {
                   </div>
                   <p className="portfolio-project-category">{project.categoryName}</p>
                   <p className="portfolio-project-description">{project.description}</p>
+                  <Button className="portfolio-project-edit" size="small"
+                    onClick={() => navigate(`/designer/portfolio/${project.id}/edit`)}>
+                    Edit project
+                  </Button>
                 </Card>
               ))}
             </div>

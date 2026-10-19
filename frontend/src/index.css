@@ -1,3 +1,10 @@
+/* Story #114: edit controls and retained project photos. */
+.portfolio-project-edit { margin-top: 16px; }
+.portfolio-existing-photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); gap: 12px; margin-top: 12px; }
+.portfolio-existing-photo { min-width: 0; }
+.portfolio-existing-photo img { width: 100%; height: 104px; object-fit: cover; border: 1px solid #d0d8e2; border-radius: 8px; }
+.portfolio-existing-photo .ant-btn { width: 100%; margin-top: 6px; }
+
 :root {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: #1d2939;
