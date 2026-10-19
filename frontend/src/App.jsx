@@ -7,6 +7,8 @@ import CreateDesignerPage from './pages/CreateDesignerPage.jsx'
 import DesignerChangePasswordPage from './pages/DesignerChangePasswordPage.jsx'
 import DesignerPage from './pages/DesignerPage.jsx'
 import DesignerPortfolioPage from './pages/DesignerPortfolioPage.jsx'
+import DesignerDirectoryPage from './pages/DesignerDirectoryPage.jsx'
+import DesignerProfilePlaceholderPage from './pages/DesignerProfilePlaceholderPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
 import ProjectCategoriesPage from './pages/ProjectCategoriesPage.jsx'
@@ -34,6 +36,8 @@ export default function App() {
             <Route index element={<Navigate to="/register" replace />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="login" element={<LoginPage />} />
+            <Route path="designers" element={<DesignerDirectoryPage />} />
+            <Route path="designers/:designerId" element={<DesignerProfilePlaceholderPage />} />
             <Route path="customer" element={<CustomerPage />} />
             <Route path="designer" element={<DesignerPage />} />
             <Route path="designer/change-password" element={<DesignerChangePasswordPage />} />
