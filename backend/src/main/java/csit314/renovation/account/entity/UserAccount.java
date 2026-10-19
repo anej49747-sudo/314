@@ -83,6 +83,16 @@ public class UserAccount {
         return account;
     }
 
+    public static UserAccount newPlatformManager(String name, String email, String passwordHash) {
+        UserAccount account = new UserAccount();
+        account.name = name;
+        account.email = email;
+        account.passwordHash = passwordHash;
+        account.role = UserRole.PLATFORM_MANAGER;
+        account.active = true;
+        return account;
+    }
+
     @PrePersist
     void setCreationTime() {
         if (createdAt == null) {

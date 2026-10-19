@@ -67,6 +67,14 @@ public class AuthenticationService {
         return AccountProfileResponse.fromAccount(account);
     }
 
+    public AccountProfileResponse currentManager(Authentication authentication) {
+        UserAccount account = authenticatedAccount(authentication);
+        if (account.getRole() != UserRole.PLATFORM_MANAGER) {
+            throw new AccessDeniedException("Platform Manager access required");
+        }
+        return AccountProfileResponse.fromAccount(account);
+    }
+
     public AccountProfileResponse currentDesigner(Authentication authentication) {
         UserAccount account = authenticatedAccount(authentication);
         if (account.getRole() != UserRole.INTERIOR_DESIGNER) {

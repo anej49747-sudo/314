@@ -24,9 +24,10 @@ export default function LoginPage() {
         navigate('/admin/designers/new', { replace: true })
       } else if (account.role === 'INTERIOR_DESIGNER') {
         navigate(designerLoginDestination(account), { replace: true })
+      } else if (account.role === 'PLATFORM_MANAGER') {
+        navigate('/manager/categories', { replace: true })
       } else {
-        // Platform Manager login will be handled in a later story.
-        setError('This account does not have access to the customer area.')
+        setError('This account does not have access to this area.')
       }
     } catch (failure) {
       setError(loginFailureMessage(failure))

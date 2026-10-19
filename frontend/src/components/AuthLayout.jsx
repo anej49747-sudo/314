@@ -8,7 +8,7 @@ export default function AuthLayout() {
         <div className="site-header-inner">
           <span className="brand">Renovation Matching Platform</span>
           <nav aria-label="Account navigation">
-            {pathname === '/customer' || pathname.startsWith('/admin/') || pathname.startsWith('/designer')
+            {pathname === '/customer' || pathname.startsWith('/admin/') || pathname.startsWith('/designer') || pathname.startsWith('/manager/')
               ? <span className="header-link">Account area</span>
               : <Link to="/login" className="header-link">Log in</Link>}
           </nav>
