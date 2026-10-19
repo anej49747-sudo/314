@@ -111,3 +111,16 @@ a:focus-visible { outline: 3px solid #365b82; outline-offset: 3px; border-radius
   .portfolio-grid { grid-template-columns: 1fr; }
   .portfolio-page .ant-card-body { padding: 20px 16px; }
 }
+
+/* Story #16: project creation and local image previews. */
+.portfolio-upload { border: 1px dashed #d0d8e2; border-radius: 8px; padding: 16px; margin: 12px 0 24px; }
+.portfolio-upload label { font-weight: 600; display: block; margin-bottom: 6px; }
+.portfolio-upload p { color: #526581; font-size: 13px; margin: 0 0 12px; }
+.portfolio-upload input { max-width: 100%; }
+.portfolio-previews { display: grid; grid-template-columns: repeat(auto-fit,minmax(100px,1fr)); gap: 12px; margin-top: 16px; }
+.portfolio-previews > div { min-width: 0; }
+.portfolio-previews img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #d0d8e2; }
+.portfolio-previews span { display: block; font-size: 12px; color: #526581; overflow-wrap: anywhere; }
+.portfolio-form-actions { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+.portfolio-project-cover { width: 100%; max-height: 210px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
+@media (max-width: 520px) { .portfolio-form-actions { flex-direction: column-reverse; } .portfolio-form-actions .ant-btn { width: 100%; } }

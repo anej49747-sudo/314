@@ -1,6 +1,6 @@
 import { Alert, Button, Card, Empty, Segmented, Spin, Tag } from 'antd'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { getMyPortfolio } from '../api/portfolio.js'
 import { currentDesigner, currentDesignerArea } from '../api/designerAuthentication.js'
 import { filteredPortfolio, portfolioStatusLabel, portfolioSummary } from '../designer/portfolioRules.js'
@@ -13,6 +13,7 @@ const filters = [
 
 export default function DesignerPortfolioPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [authorized, setAuthorized] = useState(false)
   const [loading, setLoading] = useState(true)
   const [projects, setProjects] = useState([])
@@ -54,6 +55,8 @@ export default function DesignerPortfolioPage() {
       <p className="portfolio-eyebrow">Designer workspace</p>
       <h1>My portfolio</h1>
       <p className="portfolio-intro">View your current and completed interior design projects.</p>
+      {location.state?.createdProjectName && <Alert type="success" showIcon role="status"
+        message={`Project “${location.state.createdProjectName}” added to your portfolio.`} className="form-feedback" />}
       {loading && <div className="loading-state"><Spin /> <span>Loading portfolio…</span></div>}
       {error && <Alert type="error" showIcon role="alert" message={error} className="form-feedback" />}
       {authorized && !loading && <>
@@ -62,19 +65,22 @@ export default function DesignerPortfolioPage() {
           <Card size="small"><strong>{counts.current}</strong><span>Current</span></Card>
           <Card size="small"><strong>{counts.completed}</strong><span>Completed</span></Card>
         </div>
-        <Card className="portfolio-panel" title="Portfolio projects">
+        <Card className="portfolio-panel" title="Portfolio projects"
+          extra={<Button type="primary" onClick={() => navigate('/designer/portfolio/new')}>Add project</Button>}>
           <div className="portfolio-filter-row">
             <span>Filter projects</span>
             <Segmented options={filters} value={filter} onChange={setFilter} aria-label="Filter projects by status" />
           </div>
           {visible.length === 0 ? (
             <Empty description={projects.length === 0
-              ? 'No projects in your portfolio yet. You can add projects when project creation is available.'
+              ? 'No projects in your portfolio yet. Add a project to get started.'
               : `No ${portfolioStatusLabel(filter).toLowerCase()} projects found.`} />
           ) : (
             <div className="portfolio-grid">
               {visible.map((project) => (
                 <Card key={project.id} className="portfolio-project-card" size="small">
+                  {project.images?.length > 0 && <img className="portfolio-project-cover"
+                    src={project.images[0].url} alt={`Cover photo for ${project.title}`} />}
                   <div className="portfolio-project-heading">
                     <h2>{project.title}</h2>
                     <Tag color={project.status === 'CURRENT' ? 'blue' : 'green'}>{portfolioStatusLabel(project.status)}</Tag>

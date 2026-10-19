@@ -3,9 +3,21 @@ package csit314.renovation.portfolio.control;
 import csit314.renovation.account.entity.UserAccount;
 import csit314.renovation.account.entity.UserRole;
 import csit314.renovation.account.repository.UserAccountRepository;
+import csit314.renovation.category.repository.ProjectCategoryRepository;
+import csit314.renovation.portfolio.dto.CreateProjectRequest;
+import csit314.renovation.portfolio.dto.ProjectImageResponse;
+import csit314.renovation.portfolio.entity.InteriorDesignProject;
+import csit314.renovation.portfolio.entity.ProjectImage;
+import csit314.renovation.portfolio.repository.ProjectImageRepository;
 import csit314.renovation.portfolio.dto.PortfolioProjectResponse;
 import csit314.renovation.portfolio.repository.InteriorDesignProjectRepository;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -15,18 +27,79 @@ import org.springframework.transaction.annotation.Transactional;
 public class PortfolioService {
     private final InteriorDesignProjectRepository projects;
     private final UserAccountRepository accounts;
+    private final ProjectCategoryRepository categories;
+    private final ProjectImageRepository images;
+    private final ProjectImageStorage storage;
 
-    public PortfolioService(InteriorDesignProjectRepository projects, UserAccountRepository accounts) {
+    public PortfolioService(InteriorDesignProjectRepository projects, UserAccountRepository accounts,
+            ProjectCategoryRepository categories, ProjectImageRepository images, ProjectImageStorage storage) {
         this.projects = projects;
         this.accounts = accounts;
+        this.categories = categories;
+        this.images = images;
+        this.storage = storage;
     }
 
     @Transactional(readOnly = true)
     public List<PortfolioProjectResponse> listOwnProjects(Authentication authentication) {
         UserAccount designer = requireEligibleDesigner(authentication);
-        return projects.findByDesigner_IdOrderByCreatedAtDescIdDesc(designer.getId())
-                .stream().map(PortfolioProjectResponse::from).toList();
+        List<InteriorDesignProject> ownedProjects =
+                projects.findByDesigner_IdOrderByCreatedAtDescIdDesc(designer.getId());
+        if (ownedProjects.isEmpty()) return List.of();
+        List<Long> ids = ownedProjects.stream().map(InteriorDesignProject::getId).toList();
+        Map<Long, List<ProjectImageResponse>> byProject = images
+                .findByProject_IdInOrderByDisplayOrderAscIdAsc(ids).stream()
+                .collect(Collectors.groupingBy(ProjectImage::getProjectId,
+                        Collectors.mapping(ProjectImageResponse::from, Collectors.toList())));
+        return ownedProjects.stream().map(project -> PortfolioProjectResponse.from(
+                project, byProject.getOrDefault(project.getId(), List.of()))).toList();
     }
+
+    @Transactional
+    public PortfolioProjectResponse create(Authentication authentication, CreateProjectRequest request,
+            List<MultipartFile> uploads) {
+        UserAccount designer = requireEligibleDesigner(authentication);
+        List<MultipartFile> supplied = uploads == null ? List.of() : uploads;
+        if (supplied.size() > ProjectImageStorage.MAX_IMAGES) {
+            throw new IllegalArgumentException("Upload no more than 6 images per project");
+        }
+        // Validate every image before creating a project or writing any files.
+        List<ProjectImageStorage.ValidatedImage> validated = supplied.stream()
+                .map(storage::validate).toList();
+        var category = categories.findById(request.categoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Select an existing project category"));
+        InteriorDesignProject project = projects.saveAndFlush(new InteriorDesignProject(designer,
+                category, request.title().trim(), request.description().trim(), request.status()));
+        List<String> createdKeys = new ArrayList<>();
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCompletion(int status) {
+                if (status != STATUS_COMMITTED) createdKeys.forEach(storage::deleteQuietly);
+            }
+        });
+        List<ProjectImage> saved = new ArrayList<>();
+        for (int index = 0; index < validated.size(); index++) {
+            ProjectImageStorage.StoredImage stored = storage.store(validated.get(index));
+            createdKeys.add(stored.key());
+            saved.add(images.save(new ProjectImage(project, stored.key(), stored.contentType(),
+                    stored.sizeBytes(), index)));
+        }
+        images.flush();
+        return PortfolioProjectResponse.from(project,
+                saved.stream().map(ProjectImageResponse::from).toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ImageContent getOwnImage(Authentication authentication, Long projectId, Long imageId) {
+        UserAccount designer = requireEligibleDesigner(authentication);
+        ProjectImage image = images.findByIdAndProject_IdAndProject_Designer_Id(
+                imageId, projectId, designer.getId())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.NOT_FOUND));
+        return new ImageContent(storage.read(image.getStorageKey()), image.getContentType());
+    }
+
+    public record ImageContent(byte[] data, String contentType) { }
 
     private UserAccount requireEligibleDesigner(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
