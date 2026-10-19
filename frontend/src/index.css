@@ -84,3 +84,30 @@ a:focus-visible { outline: 3px solid #365b82; outline-offset: 3px; border-radius
   .company-actions { flex-direction: column; align-items: stretch; }
   .company-unsaved { margin: 0; }
 }
+
+/* Story #113: read-only designer portfolio using the shared light design. */
+.portfolio-page { width: min(100%, 980px); }
+.portfolio-eyebrow { margin: 0 0 10px; color: #365b82; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .075em; }
+.portfolio-page > h1 { font-size: clamp(28px, 4vw, 36px); margin: 0 0 8px; }
+.portfolio-intro { margin: 0 0 28px; color: #526581; line-height: 1.6; }
+.portfolio-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+.portfolio-summary .ant-card { border-color: #d0d8e2; }
+.portfolio-summary .ant-card-body { display: flex; flex-direction: column; gap: 4px; }
+.portfolio-summary strong { font-size: 26px; line-height: 1.25; }
+.portfolio-summary span { color: #526581; font-size: 13px; }
+.portfolio-panel { border-color: #d0d8e2; margin-bottom: 20px; }
+.portfolio-filter-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+.portfolio-filter-row > span { font-weight: 600; }
+.portfolio-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.portfolio-project-card { border-color: #d0d8e2; min-width: 0; }
+.portfolio-project-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.portfolio-project-heading h2 { font-size: 18px; margin: 0 0 10px; overflow-wrap: anywhere; }
+.portfolio-project-category { font-size: 14px; font-weight: 600; color: #365b82; margin: 0 0 12px; }
+.portfolio-project-description { color: #526581; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; margin: 0; }
+@media (max-width: 600px) {
+  .portfolio-summary { gap: 8px; }
+  .portfolio-summary .ant-card-body { padding: 12px; }
+  .portfolio-summary strong { font-size: 22px; }
+  .portfolio-grid { grid-template-columns: 1fr; }
+  .portfolio-page .ant-card-body { padding: 20px 16px; }
+}

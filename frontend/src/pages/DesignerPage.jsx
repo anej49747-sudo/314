@@ -55,6 +55,9 @@ export default function DesignerPage() {
         <Button type="primary" block className="submit-button" onClick={() => navigate('/designer/company-information')}>
           Manage company information
         </Button>
+        <Button block className="submit-button" onClick={() => navigate('/designer/portfolio')}>
+          View my portfolio
+        </Button>
         <Button block className="submit-button" loading={loggingOut} onClick={onLogout}>Log out</Button>
       </>}
     </AuthCard>
