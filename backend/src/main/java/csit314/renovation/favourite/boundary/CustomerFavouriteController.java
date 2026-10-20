@@ -2,6 +2,8 @@ package csit314.renovation.favourite.boundary;
 
 import csit314.renovation.favourite.control.CustomerFavouriteService;
 import csit314.renovation.favourite.dto.CustomerFavouriteStatusResponse;
+import csit314.renovation.project.dto.PublicProjectSearchResponse;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +21,11 @@ public class CustomerFavouriteController {
 
     public CustomerFavouriteController(CustomerFavouriteService service) {
         this.service = service;
+    }
+
+    @GetMapping
+    public List<PublicProjectSearchResponse> list(Authentication authentication) {
+        return service.list(authentication);
     }
 
     @GetMapping("/{projectId}")

@@ -47,6 +47,7 @@ export default function CustomerPage() {
       {account && (
         <>
           <p className="customer-account">Signed in as <strong>{account.email}</strong>.</p>
+          <p><Link to="/customer/favourites">View My Favourites →</Link></p>
           <Button type="primary" block loading={loggingOut} disabled={loggingOut}
             onClick={onLogout} className="submit-button">
             Log out

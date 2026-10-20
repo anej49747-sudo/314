@@ -1,5 +1,10 @@
 import { client, csrfHeaders } from './client.js'
 
+export async function getSavedProjects() {
+  const { data } = await client.get('/customer/favourites')
+  return data
+}
+
 export async function getFavouriteStatus(projectId) {
   const { data } = await client.get(`/customer/favourites/${encodeURIComponent(projectId)}`)
   return data

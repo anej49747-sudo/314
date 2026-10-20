@@ -2,6 +2,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 
 export default function AuthLayout() {
   const { pathname } = useLocation()
+  const isCustomerArea = pathname === '/customer' || pathname.startsWith('/customer/')
   return (
     <div className="site">
       <header className="site-header">
@@ -16,7 +17,13 @@ export default function AuthLayout() {
               aria-current={pathname === '/projects' ? 'page' : undefined}>
               Explore projects
             </Link>
-            {pathname === '/customer' || pathname.startsWith('/admin/') || pathname === '/designer' || pathname.startsWith('/designer/') || pathname.startsWith('/manager/')
+            {isCustomerArea && (
+              <Link to="/customer/favourites" className="header-link"
+                aria-current={pathname === '/customer/favourites' ? 'page' : undefined}>
+                My Favourites
+              </Link>
+            )}
+            {isCustomerArea || pathname.startsWith('/admin/') || pathname === '/designer' || pathname.startsWith('/designer/') || pathname.startsWith('/manager/')
               ? <span className="header-link">Account area</span>
               : <>
                   <Link to="/login" className="header-link">Log in</Link>
