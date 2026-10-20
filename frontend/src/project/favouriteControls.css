@@ -1,0 +1,12 @@
+/* Story #22: customer save action on the existing public project details view. */
+.public-project-favourite-area { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 24px; }
+.public-project-favourite-button { min-height: 44px; font-weight: 650; }
+.public-project-favourite-button.saved { background: #fff; color: #365b82; border-color: #365b82; }
+.public-project-favourite-button.saved:hover { border-color: #2a486b !important; color: #2a486b !important; }
+.public-project-favourite-button .favourite-heart { display: inline-block; margin-right: 6px; font-size: 17px; line-height: 1; }
+.public-project-favourite-hint { color: #526581; font-size: 13px; }
+.public-project-favourite-feedback { margin-top: 12px; max-width: 580px; }
+@media (max-width: 560px) {
+  .public-project-favourite-area { flex-direction: column; align-items: stretch; gap: 8px; }
+  .public-project-favourite-button { width: 100%; }
+}

@@ -90,6 +90,13 @@ public class SecurityConfiguration {
                                 "/api/designers/{designerId}", "/api/projects", "/api/projects/{projectId}",
                                 "/api/projects/*/images/*")
                         .permitAll()
+                        // Story #22: only a signed-in customer can inspect or change their saves.
+                        .requestMatchers(HttpMethod.GET, "/api/customer/favourites/*")
+                        .hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.PUT, "/api/customer/favourites/*")
+                        .hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/customer/favourites/*")
+                        .hasRole("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/manager/me").hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/admin/me").hasRole("USER_ADMIN")

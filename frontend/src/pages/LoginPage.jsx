@@ -5,6 +5,7 @@ import { loginCustomer } from '../api/authentication.js'
 import { buildLoginPayload, loginFailureMessage } from '../auth/loginRules.js'
 import AuthCard from '../components/AuthCard.jsx'
 import { designerLoginDestination } from '../designer/designerLoginRules.js'
+import { customerLoginDestination } from '../project/favouriteRules.js'
 
 export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false)
@@ -19,7 +20,7 @@ export default function LoginPage() {
     try {
       const account = await loginCustomer(buildLoginPayload(values))
       if (account.role === 'CUSTOMER') {
-        navigate('/customer', { replace: true })
+        navigate(customerLoginDestination(location.state), { replace: true })
       } else if (account.role === 'USER_ADMIN') {
         navigate('/admin/designers/new', { replace: true })
       } else if (account.role === 'INTERIOR_DESIGNER') {

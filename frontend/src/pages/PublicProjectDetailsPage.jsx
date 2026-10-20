@@ -1,7 +1,8 @@
 import { Alert, Button, Modal, Spin } from 'antd'
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { getPublicProject } from '../api/publicProjects.js'
+import { getFavouriteStatus, removeFavourite, saveFavourite } from '../api/favourites.js'
 import { designerProfilePath } from '../designer/designerDirectoryRules.js'
 import {
   isValidProjectId,
@@ -10,17 +11,26 @@ import {
   projectStatusLabel,
 } from '../project/projectDetailsRules.js'
 import { photoAlt, projectPhotos, shiftedPhotoIndex } from '../project/photoGalleryRules.js'
+import { favouriteAccessState, favouriteButtonLabel, favouriteResultMessage } from '../project/favouriteRules.js'
 import '../project/projectDetails.css'
+import '../project/favouriteControls.css'
 
 export default function PublicProjectDetailsPage() {
   const { projectId } = useParams()
   const { state } = useLocation()
+  const navigate = useNavigate()
   const back = projectBackLink(state)
   const [project, setProject] = useState(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [error, setError] = useState('')
   const [openPhotoIndex, setOpenPhotoIndex] = useState(null)
+  const [favouriteAccess, setFavouriteAccess] = useState('loading')
+  const [isFavourite, setIsFavourite] = useState(false)
+  const [favouriteBusy, setFavouriteBusy] = useState(false)
+  const [favouriteFeedback, setFavouriteFeedback] = useState(null)
+  const [favouriteRefreshKey, setFavouriteRefreshKey] = useState(0)
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -49,6 +59,48 @@ export default function PublicProjectDetailsPage() {
     load()
     return () => { active = false }
   }, [projectId])
+
+  useEffect(() => {
+    if (!project || String(project.id) !== projectId) return undefined
+    let active = true
+    setFavouriteAccess('loading')
+    setIsFavourite(false)
+    setFavouriteFeedback(null)
+    getFavouriteStatus(projectId).then((result) => {
+      if (!active) return
+      setIsFavourite(result.saved === true)
+      setFavouriteAccess('customer')
+    }).catch((failure) => {
+      if (active) setFavouriteAccess(favouriteAccessState(failure.response?.status))
+    })
+    return () => { active = false }
+  }, [project, projectId, favouriteRefreshKey])
+
+  async function onToggleFavourite() {
+    if (favouriteAccess === 'visitor') {
+      setLoginPromptOpen(true)
+      return
+    }
+    if (favouriteAccess !== 'customer' || favouriteBusy) return
+    setFavouriteBusy(true)
+    setFavouriteFeedback(null)
+    try {
+      if (isFavourite) await removeFavourite(projectId)
+      else await saveFavourite(projectId)
+      const nextSaved = !isFavourite
+      setIsFavourite(nextSaved)
+      setFavouriteFeedback({ type: 'success', message: favouriteResultMessage(nextSaved) })
+    } catch (failure) {
+      if (failure.response?.status === 401 || failure.response?.status === 403) {
+        setFavouriteAccess('visitor')
+        setFavouriteFeedback({ type: 'error', message: 'Please log in with a customer account to save projects.' })
+      } else {
+        setFavouriteFeedback({ type: 'error', message: 'Unable to update favourites. Please try again.' })
+      }
+    } finally {
+      setFavouriteBusy(false)
+    }
+  }
 
   const photos = projectPhotos(project)
   const selectedPhoto = openPhotoIndex === null ? null : (photos[openPhotoIndex] ?? null)
@@ -99,6 +151,20 @@ export default function PublicProjectDetailsPage() {
             </span>
             <span className="public-project-category">{project.categoryName}</span>
           </div>
+          <div className="public-project-favourite-area">
+            <Button type={isFavourite ? 'default' : 'primary'}
+              className={`public-project-favourite-button${isFavourite ? ' saved' : ''}`}
+              loading={favouriteBusy} disabled={favouriteBusy || favouriteAccess === 'loading' || favouriteAccess === 'unavailable'}
+              onClick={onToggleFavourite} aria-pressed={favouriteAccess === 'customer' ? isFavourite : undefined}>
+              <span className="favourite-heart" aria-hidden="true">{isFavourite ? '♥' : '♡'}</span>
+              {favouriteButtonLabel(isFavourite)}
+            </Button>
+            {favouriteAccess === 'loading' && <span className="public-project-favourite-hint">Checking saved status…</span>}
+            {favouriteAccess === 'visitor' && <span className="public-project-favourite-hint">Log in to save this project.</span>}
+            {favouriteAccess === 'unavailable' && <Button type="link" onClick={() => setFavouriteRefreshKey((key) => key + 1)}>Retry saved status</Button>}
+          </div>
+          {favouriteFeedback && <Alert className="public-project-favourite-feedback"
+            showIcon role="status" type={favouriteFeedback.type} message={favouriteFeedback.message} />}
           <div className="public-project-grid">
             <section className="public-project-panel" aria-labelledby="public-project-about-title">
               <h2 id="public-project-about-title">About this project</h2>
@@ -138,6 +204,16 @@ export default function PublicProjectDetailsPage() {
           </section>
         </>
       )}
+      <Modal open={loginPromptOpen} onCancel={() => setLoginPromptOpen(false)}
+        title="Log in to save this project" destroyOnHidden
+        footer={<>
+          <Button onClick={() => setLoginPromptOpen(false)}>Cancel</Button>
+          <Button type="primary" onClick={() => navigate('/login', {
+            state: { returnTo: `/projects/${projectId}` },
+          })}>Log in</Button>
+        </>}>
+        <p>Log in with a renovation customer account to save this project to your favourites.</p>
+      </Modal>
       <Modal open={selectedPhoto !== null} onCancel={() => setOpenPhotoIndex(null)}
         footer={null} width={900} className="public-project-lightbox" destroyOnHidden
         title={project ? `${project.title} — Photo ${openPhotoIndex + 1} of ${photos.length}` : 'Project photo'}>
