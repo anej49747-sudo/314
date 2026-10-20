@@ -1,7 +1,9 @@
 package csit314.renovation.project.dto;
 
 import csit314.renovation.portfolio.entity.ProjectStatus;
+import java.util.List;
 
 /** Deliberately limited to public-facing project and designer fields. */
 public record PublicProjectDetailsResponse(Long id, String title, String description,
-        String categoryName, ProjectStatus status, PublicProjectDesignerResponse designer) {}
+        String categoryName, ProjectStatus status, PublicProjectDesignerResponse designer,
+        List<PublicProjectImageResponse> images) {}

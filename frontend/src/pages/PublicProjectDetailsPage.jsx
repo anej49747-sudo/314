@@ -1,4 +1,4 @@
-import { Alert, Spin } from 'antd'
+import { Alert, Button, Modal, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { getPublicProject } from '../api/publicProjects.js'
@@ -9,6 +9,7 @@ import {
   projectDescription,
   projectStatusLabel,
 } from '../project/projectDetailsRules.js'
+import { photoAlt, projectPhotos, shiftedPhotoIndex } from '../project/photoGalleryRules.js'
 import '../project/projectDetails.css'
 
 export default function PublicProjectDetailsPage() {
@@ -19,11 +20,13 @@ export default function PublicProjectDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [error, setError] = useState('')
+  const [openPhotoIndex, setOpenPhotoIndex] = useState(null)
 
   useEffect(() => {
     let active = true
     async function load() {
       setProject(null)
+      setOpenPhotoIndex(null)
       setLoading(true)
       setNotFound(false)
       setError('')
@@ -46,6 +49,22 @@ export default function PublicProjectDetailsPage() {
     load()
     return () => { active = false }
   }, [projectId])
+
+  const photos = projectPhotos(project)
+  const selectedPhoto = openPhotoIndex === null ? null : (photos[openPhotoIndex] ?? null)
+
+  useEffect(() => {
+    if (openPhotoIndex === null) return undefined
+    function onKeyDown(event) {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault()
+        const delta = event.key === 'ArrowLeft' ? -1 : 1
+        setOpenPhotoIndex((index) => shiftedPhotoIndex(index, delta, photos.length))
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [openPhotoIndex, photos.length])
 
   return (
     <section className="public-project-details" aria-labelledby="public-project-title">
@@ -97,8 +116,49 @@ export default function PublicProjectDetailsPage() {
               </Link>
             </aside>
           </div>
+          <section className="public-project-photos-panel" aria-labelledby="public-project-photos-title">
+            <div className="public-project-photos-heading">
+              <h2 id="public-project-photos-title">Project photos</h2>
+              {photos.length > 0 && <span>{photos.length} {photos.length === 1 ? 'photo' : 'photos'}</span>}
+            </div>
+            {photos.length === 0 ? (
+              <p className="public-project-no-photos">No project photos have been uploaded yet.</p>
+            ) : (
+              <div className="public-project-photo-grid">
+                {photos.map((photo, index) => (
+                  <button className={`public-project-photo-tile${index === 0 ? ' featured' : ''}`}
+                    key={photo.id} type="button" onClick={() => setOpenPhotoIndex(index)}
+                    aria-label={`Enlarge photo ${index + 1} of ${photos.length}`}>
+                    <img src={photo.url} alt={photoAlt(project.title, index)} loading="lazy" />
+                    <span className="public-project-photo-caption">Photo {index + 1}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
         </>
       )}
+      <Modal open={selectedPhoto !== null} onCancel={() => setOpenPhotoIndex(null)}
+        footer={null} width={900} className="public-project-lightbox" destroyOnHidden
+        title={project ? `${project.title} — Photo ${openPhotoIndex + 1} of ${photos.length}` : 'Project photo'}>
+        {selectedPhoto && project && <>
+          <div className="public-project-lightbox-image">
+            <img src={selectedPhoto.url} alt={photoAlt(project.title, openPhotoIndex)} />
+          </div>
+          <div className="public-project-lightbox-actions">
+            <Button onClick={() => setOpenPhotoIndex((index) =>
+              shiftedPhotoIndex(index, -1, photos.length))} aria-label="Previous photo">
+              ← Previous
+            </Button>
+            <span aria-live="polite">Photo {openPhotoIndex + 1} of {photos.length}</span>
+            <Button onClick={() => setOpenPhotoIndex((index) =>
+              shiftedPhotoIndex(index, 1, photos.length))} aria-label="Next photo">
+              Next →
+            </Button>
+          </div>
+          <p className="public-project-lightbox-hint">Use the left and right arrow keys to browse photos.</p>
+        </>}
+      </Modal>
     </section>
   )
 }
