@@ -13,7 +13,7 @@ import DesignerProfilePage from './pages/DesignerProfilePage.jsx'
 import './designer/designerProfile.css'
 import EditPortfolioProjectPage from './pages/EditPortfolioProjectPage.jsx'
 import PublicProjectDetailsPage from './pages/PublicProjectDetailsPage.jsx'
-import ProjectsListingPlaceholderPage from './pages/ProjectsListingPlaceholderPage.jsx'
+import ProjectSearchPage from './pages/ProjectSearchPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
 import ProjectCategoriesPage from './pages/ProjectCategoriesPage.jsx'
@@ -43,7 +43,7 @@ export default function App() {
             <Route path="login" element={<LoginPage />} />
             <Route path="designers" element={<DesignerDirectoryPage />} />
             <Route path="designers/:designerId" element={<DesignerProfilePage />} />
-            <Route path="projects" element={<ProjectsListingPlaceholderPage />} />
+            <Route path="projects" element={<ProjectSearchPage />} />
             <Route path="projects/:projectId" element={<PublicProjectDetailsPage />} />
             <Route path="customer" element={<CustomerPage />} />
             <Route path="designer" element={<DesignerPage />} />

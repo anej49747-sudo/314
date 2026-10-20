@@ -12,9 +12,16 @@ export default function AuthLayout() {
               aria-current={pathname.startsWith('/designers') ? 'page' : undefined}>
               Interior designers
             </Link>
+            <Link to="/projects" className="header-link"
+              aria-current={pathname === '/projects' ? 'page' : undefined}>
+              Explore projects
+            </Link>
             {pathname === '/customer' || pathname.startsWith('/admin/') || pathname === '/designer' || pathname.startsWith('/designer/') || pathname.startsWith('/manager/')
               ? <span className="header-link">Account area</span>
-              : <Link to="/login" className="header-link">Log in</Link>}
+              : <>
+                  <Link to="/login" className="header-link">Log in</Link>
+                  <Link to="/register" className="header-link site-register-link">Create account</Link>
+                </>}
           </nav>
         </div>
       </header>
