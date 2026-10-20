@@ -1,0 +1,18 @@
+/* Story #6: independent project detail page, aligned with Story #3 public design. */
+.public-project-details { width: min(100%, 1120px); }
+.public-project-details h1 { font-size: clamp(29px, 4vw, 38px); line-height: 1.2; letter-spacing: -.035em; margin: 0; overflow-wrap: anywhere; }
+.public-project-lede { margin: 14px 0 0; color: #526581; font-size: 15px; line-height: 1.6; }
+.public-project-tags { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 22px; }
+.public-project-category { display: inline-flex; border: 1px solid #dce4ec; border-radius: 20px; padding: 4px 12px; font-size: 12px; color: #36516c; background: #fff; font-weight: 600; }
+.public-project-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr); gap: 20px; margin-top: 27px; align-items: start; }
+.public-project-panel { border: 1px solid #d0d8e2; border-radius: 12px; padding: 28px; background: #fff; min-width: 0; }
+.public-project-panel h2 { font-size: 21px; letter-spacing: -.025em; line-height: 1.3; margin: 0 0 17px; }
+.public-project-description { font-size: 15px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.8; margin: 0; }
+.public-project-designer-name { font-size: 17px; font-weight: 700; letter-spacing: -.02em; margin: 0 0 10px; overflow-wrap: anywhere; }
+.public-project-address { color: #526581; font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0 0 16px; }
+.public-project-designer-link { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 650; text-decoration: none; min-height: 44px; }
+.public-project-designer-link:hover { text-decoration: underline; }
+.public-project-listing-pending { max-width: 760px; margin-top: 26px; }
+.public-project-listing-pending p { color: #526581; font-size: 15px; line-height: 1.65; }
+@media (max-width: 840px) { .public-project-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) { .public-project-grid { margin-top: 20px; gap: 16px; } .public-project-panel { padding: 20px; } }

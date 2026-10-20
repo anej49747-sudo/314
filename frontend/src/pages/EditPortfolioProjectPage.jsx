@@ -1,0 +1,150 @@
+import { Alert, Button, Card, Form, Input, Radio, Select, Spin } from 'antd'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { listCategories } from '../api/categories.js'
+import { currentDesigner, currentDesignerArea } from '../api/designerAuthentication.js'
+import { getMyPortfolio, updatePortfolioProject } from '../api/portfolio.js'
+import { buildUpdatedProjectDetails, projectEditingFailureMessage,
+  validateEditedImages } from '../designer/projectEditingRules.js'
+
+export default function EditPortfolioProjectPage() {
+  const { projectId } = useParams()
+  const navigate = useNavigate()
+  const [form] = Form.useForm()
+  const [project, setProject] = useState(null)
+  const [categories, setCategories] = useState([])
+  const [keptImages, setKeptImages] = useState([])
+  const [newImages, setNewImages] = useState([])
+  const [previews, setPreviews] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let active = true
+    async function initialize() {
+      try {
+        const designer = await currentDesigner()
+        if (!active) return
+        if (designer.passwordChangeRequired) {
+          navigate('/designer/change-password', { replace: true })
+          return
+        }
+        await currentDesignerArea()
+        const [entries, availableCategories] = await Promise.all([getMyPortfolio(), listCategories()])
+        if (!active) return
+        const chosen = entries.find((item) => String(item.id) === projectId)
+        if (!chosen) { setError('This project is not available in your portfolio.'); return }
+        setProject(chosen)
+        setKeptImages(chosen.images ?? [])
+        setCategories(availableCategories)
+        form.setFieldsValue({ title: chosen.title, description: chosen.description,
+          categoryId: chosen.categoryId, status: chosen.status })
+      } catch (failure) {
+        if (!active) return
+        if ([401, 403].includes(failure.response?.status)) navigate('/login', { replace: true })
+        else setError('Unable to load this project. Please try again.')
+      } finally {
+        if (active) setLoading(false)
+      }
+    }
+    initialize()
+    return () => { active = false }
+  }, [projectId, navigate, form])
+
+  useEffect(() => {
+    const next = newImages.map((file) => ({ name: file.name, url: URL.createObjectURL(file) }))
+    setPreviews(next)
+    return () => next.forEach((item) => URL.revokeObjectURL(item.url))
+  }, [newImages])
+
+  function onNewImagesSelected(event) {
+    const added = Array.from(event.target.files ?? [])
+    const next = [...newImages, ...added]
+    const problem = validateEditedImages(keptImages.map((image) => image.id), next)
+    if (problem) { setError(problem); event.target.value = ''; return }
+    setNewImages(next)
+    setError('')
+    event.target.value = ''
+  }
+
+  function removeExisting(imageId) {
+    setKeptImages((current) => current.filter((image) => image.id !== imageId))
+    setError('')
+  }
+
+  async function onSubmit(values) {
+    if (submitting || !project) return
+    const ids = keptImages.map((image) => image.id)
+    const problem = validateEditedImages(ids, newImages)
+    if (problem) { setError(problem); return }
+    setSubmitting(true)
+    setError('')
+    try {
+      const saved = await updatePortfolioProject(project.id,
+        buildUpdatedProjectDetails(values, ids), newImages)
+      navigate('/designer/portfolio', { replace: true, state: { editedProjectName: saved.title } })
+    } catch (failure) {
+      const fields = failure.response?.data?.fieldErrors
+      if (fields) form.setFields(Object.entries(fields).map(([name, message]) => ({ name, errors: [message] })))
+      setError(projectEditingFailureMessage(failure))
+    } finally { setSubmitting(false) }
+  }
+
+  return <div className="portfolio-page">
+    <p className="portfolio-eyebrow">Designer workspace</p>
+    <h1>Edit project</h1>
+    <p className="portfolio-intro">Update this project in your portfolio.</p>
+    {loading && <div className="loading-state"><Spin /> <span>Loading project…</span></div>}
+    {error && <Alert role="alert" type="error" showIcon message={error} className="form-feedback" />}
+    {project && !loading && <Card className="portfolio-panel" title="Project details">
+      <Form form={form} layout="vertical" disabled={submitting} onFinish={onSubmit}>
+        <Form.Item name="title" label="Project title" rules={[
+          { required: true, whitespace: true, message: 'Enter a project title.' },
+          { max: 160, message: 'Use 160 characters or fewer.' },
+        ]}><Input maxLength={160} /></Form.Item>
+        <Form.Item name="description" label="Description" rules={[
+          { required: true, whitespace: true, message: 'Enter a project description.' },
+          { max: 3000, message: 'Use 3000 characters or fewer.' },
+        ]}><Input.TextArea rows={5} maxLength={3000} showCount /></Form.Item>
+        <Form.Item name="categoryId" label="Category" rules={[{ required: true, message: 'Choose a project category.' }]}>
+          <Select options={categories.map((item) => ({ value: item.id, label: item.name }))} />
+        </Form.Item>
+        <Form.Item name="status" label="Project status" rules={[{ required: true }]}>
+          <Radio.Group options={[{ label: 'Current', value: 'CURRENT' },
+            { label: 'Completed', value: 'COMPLETED' }]} />
+        </Form.Item>
+        <div className="portfolio-upload">
+          <label>Existing photos</label>
+          <p>Remove individual photos if they should no longer appear on the project.</p>
+          {keptImages.length === 0 && <p>No existing photos retained.</p>}
+          <div className="portfolio-existing-photos">
+            {keptImages.map((image) => <div key={image.id} className="portfolio-existing-photo">
+              <img src={image.url} alt={`Existing photo for ${project.title}`} />
+              <Button danger size="small" onClick={() => removeExisting(image.id)}>Remove photo</Button>
+            </div>)}
+          </div>
+        </div>
+        <div className="portfolio-upload">
+          <label htmlFor="edit-portfolio-photos">Add photos (optional)</label>
+          <p>Up to 6 total JPG, PNG or WebP photos, maximum 5 MB per file.</p>
+          <input id="edit-portfolio-photos" type="file" multiple accept="image/jpeg,image/png,image/webp"
+            disabled={submitting} onChange={onNewImagesSelected} />
+          {previews.length > 0 && <div className="portfolio-previews">
+            {previews.map((preview, index) => <div key={preview.url}>
+              <img src={preview.url} alt={`New photo preview: ${preview.name}`} />
+              <span>{preview.name}</span>
+              <Button size="small" onClick={() => setNewImages((files) => files.filter((_, i) => i !== index))}>
+                Remove
+              </Button>
+            </div>)}
+          </div>}
+        </div>
+        <div className="portfolio-form-actions">
+          <Button onClick={() => navigate('/designer/portfolio')} disabled={submitting}>Cancel</Button>
+          <Button type="primary" htmlType="submit" loading={submitting}>Save changes</Button>
+        </div>
+      </Form>
+    </Card>}
+  </div>
+}

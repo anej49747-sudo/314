@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.Instant;
 
@@ -67,7 +68,18 @@ public class InteriorDesignProject {
         if (updatedAt == null) updatedAt = now;
     }
 
+    public void updateDetails(ProjectCategory category, String title, String description, ProjectStatus status) {
+        this.category = category;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+    }
+
+    @PreUpdate
+    void setUpdateTime() { updatedAt = Instant.now(); }
+
     public Long getId() { return id; }
+    public UserAccount getDesigner() { return designer; }
     public ProjectCategory getCategory() { return category; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }

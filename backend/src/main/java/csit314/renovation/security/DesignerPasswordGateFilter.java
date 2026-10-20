@@ -29,7 +29,10 @@ public class DesignerPasswordGateFilter extends OncePerRequestFilter {
         String path = request.getRequestURI()
             .substring(request.getContextPath().length());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (path.startsWith("/api/") && !ALLOWED_WHILE_PENDING.contains(path)
+        if (path.startsWith("/api/") && !("GET".equals(request.getMethod())
+                && ("/api/designers".equals(path) || path.matches("/api/designers/[0-9]+")
+                        || path.matches("/api/projects/[0-9]+")))
+                && !ALLOWED_WHILE_PENDING.contains(path)
                 && authentication != null && authentication.isAuthenticated()
                 && authentication.getAuthorities().stream()
                         .anyMatch(authority -> "ROLE_INTERIOR_DESIGNER".equals(authority.getAuthority()))) {
