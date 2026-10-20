@@ -18,6 +18,14 @@ public interface InteriorDesignProjectRepository extends JpaRepository<InteriorD
     List<InteriorDesignProject> findByDesigner_RoleAndDesigner_ActiveTrueAndTitleContainingIgnoreCaseOrderByCreatedAtDescIdDesc(
             UserRole role, String title);
     @EntityGraph(attributePaths = {"designer", "category"})
+    List<InteriorDesignProject> findByDesigner_RoleAndDesigner_ActiveTrueAndCategory_IdOrderByCreatedAtDescIdDesc(
+            UserRole role, Long categoryId);
+
+    @EntityGraph(attributePaths = {"designer", "category"})
+    List<InteriorDesignProject> findByDesigner_RoleAndDesigner_ActiveTrueAndCategory_IdAndTitleContainingIgnoreCaseOrderByCreatedAtDescIdDesc(
+            UserRole role, Long categoryId, String title);
+
+    @EntityGraph(attributePaths = {"designer", "category"})
     Optional<InteriorDesignProject> findById(Long id);
 
     @EntityGraph(attributePaths = "category")

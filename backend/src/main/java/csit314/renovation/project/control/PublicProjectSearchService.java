@@ -27,13 +27,22 @@ public class PublicProjectSearchService {
     }
 
     @Transactional(readOnly = true)
-    public List<PublicProjectSearchResponse> findProjects(String titleQuery) {
+    public List<PublicProjectSearchResponse> findProjects(String titleQuery, Long categoryId) {
         String keyword = titleQuery == null ? "" : titleQuery.trim();
-        List<InteriorDesignProject> results = keyword.isEmpty()
-                ? projects.findByDesigner_RoleAndDesigner_ActiveTrueOrderByCreatedAtDescIdDesc(
-                        UserRole.INTERIOR_DESIGNER)
-                : projects.findByDesigner_RoleAndDesigner_ActiveTrueAndTitleContainingIgnoreCaseOrderByCreatedAtDescIdDesc(
-                        UserRole.INTERIOR_DESIGNER, keyword);
+        List<InteriorDesignProject> results;
+        if (categoryId == null) {
+            results = keyword.isEmpty()
+                    ? projects.findByDesigner_RoleAndDesigner_ActiveTrueOrderByCreatedAtDescIdDesc(
+                            UserRole.INTERIOR_DESIGNER)
+                    : projects.findByDesigner_RoleAndDesigner_ActiveTrueAndTitleContainingIgnoreCaseOrderByCreatedAtDescIdDesc(
+                            UserRole.INTERIOR_DESIGNER, keyword);
+        } else {
+            results = keyword.isEmpty()
+                    ? projects.findByDesigner_RoleAndDesigner_ActiveTrueAndCategory_IdOrderByCreatedAtDescIdDesc(
+                            UserRole.INTERIOR_DESIGNER, categoryId)
+                    : projects.findByDesigner_RoleAndDesigner_ActiveTrueAndCategory_IdAndTitleContainingIgnoreCaseOrderByCreatedAtDescIdDesc(
+                            UserRole.INTERIOR_DESIGNER, categoryId, keyword);
+        }
         if (results.isEmpty()) return List.of();
 
         // One batch query instead of a company lookup for each project card.

@@ -17,7 +17,8 @@ public class PublicProjectSearchController {
 
     @GetMapping("/api/projects")
     public List<PublicProjectSearchResponse> searchProjects(
-            @RequestParam(name = "q", required = false) String query) {
-        return service.findProjects(query);
+            @RequestParam(name = "q", required = false) String query,
+            @RequestParam(name = "categoryId", required = false) Long categoryId) {
+        return service.findProjects(query, categoryId);
     }
 }

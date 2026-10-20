@@ -1,8 +1,10 @@
 import { client } from './client.js'
+import { projectSearchParams } from '../project/projectSearchRules.js'
 
-export async function getPublicProjects(titleQuery = '') {
-  const query = titleQuery.trim()
-  const { data } = await client.get('/projects', { params: query ? { q: query } : {} })
+export async function getPublicProjects(titleQuery = '', categoryId = null) {
+  const { data } = await client.get('/projects', {
+    params: projectSearchParams(titleQuery, categoryId),
+  })
   return data
 }
 

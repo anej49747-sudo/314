@@ -80,6 +80,12 @@ class PublicProjectSearchIntegrationTest {
                 description, ProjectStatus.COMPLETED));
     }
 
+    private InteriorDesignProject project(UserAccount designer, ProjectCategory projectCategory,
+            String title, String description) {
+        return projects.saveAndFlush(new InteriorDesignProject(designer, projectCategory, title,
+                description, ProjectStatus.COMPLETED));
+    }
+
     private JsonNode search(String query) throws Exception {
         String endpoint = "/api/projects";
         String response = query == null
@@ -144,6 +150,52 @@ class PublicProjectSearchIntegrationTest {
     }
 
     @Test
+    void categoryFilterWorksAloneAndAlongsideSubmittedTitle() throws Exception {
+        ProjectCategory kitchen = categories.saveAndFlush(new ProjectCategory("Kitchen"));
+        UserAccount active = designer("Active", "active@example.com");
+        project(active, category, "Modern Residential", "Residential description");
+        project(active, kitchen, "Modern Kitchen", "Kitchen design");
+        project(active, kitchen, "Classic Kitchen", "Modern layout described here");
+        UserAccount suspended = designer("Suspended", "suspended-filter@example.com");
+        project(suspended, kitchen, "Modern Hidden Kitchen", "Not public");
+        jdbc.update("UPDATE user_accounts SET active = false WHERE id = ?", suspended.getId());
+
+        String kitchenId = kitchen.getId().toString();
+        JsonNode byCategory = json.readTree(mvc.perform(get("/api/projects")
+                .param("categoryId", kitchenId)).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString());
+        assertEquals(2, byCategory.size());
+        assertEquals("Classic Kitchen", byCategory.get(0).get("title").asText());
+        assertEquals("Modern Kitchen", byCategory.get(1).get("title").asText());
+
+        JsonNode combined = json.readTree(mvc.perform(get("/api/projects")
+                .param("q", "  mOdErN  ").param("categoryId", kitchenId))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+        assertEquals(1, combined.size());
+        assertEquals("Modern Kitchen", combined.get(0).get("title").asText());
+        assertEquals("Kitchen", combined.get(0).get("categoryName").asText());
+        assertFalse(combined.get(0).get("designer").has("email"));
+
+        // A blank title filter still applies the selected category.
+        JsonNode blankTitle = json.readTree(mvc.perform(get("/api/projects")
+                .param("q", "  ").param("categoryId", kitchenId))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+        assertEquals(2, blankTitle.size());
+        assertEquals(3, search(null).size());
+    }
+
+    @Test
+    void nonexistentCategoryHasNoMatchesAndMalformedIdIsBadRequest() throws Exception {
+        UserAccount active = designer("Active", "active-other@example.com");
+        project(active, "Project", "Description");
+        String noResults = mvc.perform(get("/api/projects").param("categoryId", "999999999"))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        assertTrue(json.readTree(noResults).isEmpty());
+        mvc.perform(get("/api/projects").param("categoryId", "not-a-number"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void designerWithPendingInitialPasswordCanBrowsePublicProjects() throws Exception {
         UserAccount designer = designer("Pending", "pending@example.com");
         project(designer, "Public Interior", "Public project description");
@@ -162,6 +214,9 @@ class PublicProjectSearchIntegrationTest {
                         .session((MockHttpSession) login.getRequest().getSession(false)))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         assertEquals("Public Interior", json.readTree(result).get(0).get("title").asText());
+        mvc.perform(get("/api/projects").param("categoryId", category.getId().toString())
+                .session((MockHttpSession) login.getRequest().getSession(false)))
+                .andExpect(status().isOk());
     }
 
     @Test
