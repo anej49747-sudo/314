@@ -11,5 +11,8 @@ public interface InteriorDesignProjectRepository extends JpaRepository<InteriorD
     Optional<InteriorDesignProject> findById(Long id);
 
     @EntityGraph(attributePaths = "category")
+    Optional<InteriorDesignProject> findByIdAndDesigner_Id(Long id, Long designerId);
+
+    @EntityGraph(attributePaths = "category")
     List<InteriorDesignProject> findByDesigner_IdOrderByCreatedAtDescIdDesc(Long designerId);
 }
