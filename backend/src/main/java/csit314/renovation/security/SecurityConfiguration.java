@@ -86,7 +86,8 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/register", "/api/login", "/api/logout").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/csrf", "/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/me").hasRole("CUSTOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/categories", "/api/designers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categories", "/api/designers",
+                                "/api/designers/{designerId}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/manager/me").hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/admin/me").hasRole("USER_ADMIN")
