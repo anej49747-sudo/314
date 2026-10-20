@@ -68,6 +68,7 @@ public class InteriorDesignProject {
     }
 
     public Long getId() { return id; }
+    public UserAccount getDesigner() { return designer; }
     public ProjectCategory getCategory() { return category; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }

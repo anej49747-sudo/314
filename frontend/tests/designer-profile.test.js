@@ -29,6 +29,6 @@ test('portfolio count labels handle empty, one and multiple entries', () => {
   assert.equal(profileProjectCountLabel(3), '3 projects')
 })
 
-test('project link keeps id and routes to the future Story #6 placeholder', () => {
+test('project link keeps id and routes to the public Story #6 detail page', () => {
   assert.equal(publicProjectPath(27), '/projects/27')
 })
