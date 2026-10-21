@@ -9,6 +9,7 @@ import CompanyInformationPage from './pages/CompanyInformationPage.jsx'
 import CreateDesignerPage from './pages/CreateDesignerPage.jsx'
 import DesignerChangePasswordPage from './pages/DesignerChangePasswordPage.jsx'
 import DesignerPage from './pages/DesignerPage.jsx'
+import DesignerAccountSettingsPage from './pages/DesignerAccountSettingsPage.jsx'
 import DesignerPortfolioPage from './pages/DesignerPortfolioPage.jsx'
 import DesignerDirectoryPage from './pages/DesignerDirectoryPage.jsx'
 import DesignerProfilePage from './pages/DesignerProfilePage.jsx'
@@ -51,6 +52,7 @@ export default function App() {
             <Route path="customer/favourites" element={<CustomerFavouritesPage />} />
             <Route path="customer/compare" element={<CompareDesignersPage />} />
             <Route path="designer" element={<DesignerPage />} />
+            <Route path="designer/account" element={<DesignerAccountSettingsPage />} />
             <Route path="designer/change-password" element={<DesignerChangePasswordPage />} />
             <Route path="designer/company-information" element={<CompanyInformationPage />} />
             <Route path="designer/portfolio" element={<DesignerPortfolioPage />} />
