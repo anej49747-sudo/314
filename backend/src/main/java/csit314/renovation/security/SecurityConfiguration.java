@@ -101,6 +101,9 @@ public class SecurityConfiguration {
                         .hasRole("CUSTOMER")
                         .requestMatchers(HttpMethod.DELETE, "/api/customer/favourites/*")
                         .hasRole("CUSTOMER")
+                        // Story #46: submitting reviews requires an authenticated customer + CSRF.
+                        .requestMatchers(HttpMethod.POST, "/api/designers/*/reviews")
+                        .hasRole("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/manager/me").hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/admin/me").hasRole("USER_ADMIN")
