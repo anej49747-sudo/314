@@ -92,6 +92,10 @@ public class SecurityConfiguration {
                                 "/api/projects/*/images/*")
                         .permitAll()
                         // Story #52: the saved-project list is private to the signed-in customer.
+                        .requestMatchers(HttpMethod.GET, "/api/customer/account")
+                        .hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.PUT, "/api/customer/account")
+                        .hasRole("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/customer/favourites")
                         .hasRole("CUSTOMER")
                         // Story #22: only a signed-in customer can inspect or change their saves.

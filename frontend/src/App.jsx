@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import AuthLayout from './components/AuthLayout.jsx'
 import AddPortfolioProjectPage from './pages/AddPortfolioProjectPage.jsx'
 import CustomerPage from './pages/CustomerPage.jsx'
+import CustomerAccountSettingsPage from './pages/CustomerAccountSettingsPage.jsx'
 import CustomerFavouritesPage from './pages/CustomerFavouritesPage.jsx'
 import CompareDesignersPage from './pages/CompareDesignersPage.jsx'
 import CompanyInformationPage from './pages/CompanyInformationPage.jsx'
@@ -49,6 +50,7 @@ export default function App() {
             <Route path="projects" element={<ProjectSearchPage />} />
             <Route path="projects/:projectId" element={<PublicProjectDetailsPage />} />
             <Route path="customer" element={<CustomerPage />} />
+            <Route path="customer/account" element={<CustomerAccountSettingsPage />} />
             <Route path="customer/favourites" element={<CustomerFavouritesPage />} />
             <Route path="customer/compare" element={<CompareDesignersPage />} />
             <Route path="designer" element={<DesignerPage />} />
