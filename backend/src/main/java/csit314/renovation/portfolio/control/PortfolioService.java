@@ -4,6 +4,7 @@ import csit314.renovation.account.entity.UserAccount;
 import csit314.renovation.account.entity.UserRole;
 import csit314.renovation.account.repository.UserAccountRepository;
 import csit314.renovation.category.repository.ProjectCategoryRepository;
+import csit314.renovation.metrics.repository.ProjectInterestMetricsRepository;
 import csit314.renovation.portfolio.dto.CreateProjectRequest;
 import csit314.renovation.portfolio.dto.UpdateProjectRequest;
 import csit314.renovation.portfolio.dto.ProjectImageResponse;
@@ -33,14 +34,17 @@ public class PortfolioService {
     private final ProjectCategoryRepository categories;
     private final ProjectImageRepository images;
     private final ProjectImageStorage storage;
+    private final ProjectInterestMetricsRepository interestMetrics;
 
     public PortfolioService(InteriorDesignProjectRepository projects, UserAccountRepository accounts,
-            ProjectCategoryRepository categories, ProjectImageRepository images, ProjectImageStorage storage) {
+            ProjectCategoryRepository categories, ProjectImageRepository images,
+            ProjectImageStorage storage, ProjectInterestMetricsRepository interestMetrics) {
         this.projects = projects;
         this.accounts = accounts;
         this.categories = categories;
         this.images = images;
         this.storage = storage;
+        this.interestMetrics = interestMetrics;
     }
 
     @Transactional(readOnly = true)
@@ -54,8 +58,13 @@ public class PortfolioService {
                 .findByProject_IdInOrderByDisplayOrderAscIdAsc(ids).stream()
                 .collect(Collectors.groupingBy(ProjectImage::getProjectId,
                         Collectors.mapping(ProjectImageResponse::from, Collectors.toList())));
-        return ownedProjects.stream().map(project -> PortfolioProjectResponse.from(
-                project, byProject.getOrDefault(project.getId(), List.of()))).toList();
+        var countsByProject = interestMetrics.countsForProjects(ids);
+        return ownedProjects.stream().map(project -> {
+            var counts = countsByProject.get(project.getId());
+            return PortfolioProjectResponse.from(project,
+                    byProject.getOrDefault(project.getId(), List.of()),
+                    counts.viewCount(), counts.favouriteCount());
+        }).toList();
     }
 
     @Transactional
