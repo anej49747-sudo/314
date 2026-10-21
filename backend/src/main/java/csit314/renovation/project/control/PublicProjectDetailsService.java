@@ -6,6 +6,8 @@ import csit314.renovation.company.entity.DesignerCompany;
 import csit314.renovation.company.repository.DesignerCompanyRepository;
 import csit314.renovation.portfolio.entity.InteriorDesignProject;
 import csit314.renovation.portfolio.repository.InteriorDesignProjectRepository;
+import csit314.renovation.portfolio.repository.ProjectImageRepository;
+import csit314.renovation.project.dto.PublicProjectImageResponse;
 import csit314.renovation.project.dto.PublicProjectDesignerResponse;
 import csit314.renovation.project.dto.PublicProjectDetailsResponse;
 import org.springframework.http.HttpStatus;
@@ -17,23 +19,19 @@ import org.springframework.web.server.ResponseStatusException;
 public class PublicProjectDetailsService {
     private final InteriorDesignProjectRepository projects;
     private final DesignerCompanyRepository companies;
+    private final ProjectImageRepository images;
 
     public PublicProjectDetailsService(InteriorDesignProjectRepository projects,
-            DesignerCompanyRepository companies) {
+            DesignerCompanyRepository companies, ProjectImageRepository images) {
         this.projects = projects;
         this.companies = companies;
+        this.images = images;
     }
 
     @Transactional(readOnly = true)
     public PublicProjectDetailsResponse findPublicProject(Long projectId) {
-        InteriorDesignProject project = projects.findById(projectId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Project not found"));
+        InteriorDesignProject project = requirePublicProject(projectId);
         UserAccount designer = project.getDesigner();
-        // Suspended designer profiles must not be exposed through their projects either.
-        if (!designer.isActive() || designer.getRole() != UserRole.INTERIOR_DESIGNER) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
-        }
         DesignerCompany company = companies.findById(designer.getId()).orElse(null);
         String name = company == null || company.getCompanyName() == null
                 || company.getCompanyName().isBlank()
@@ -42,6 +40,22 @@ public class PublicProjectDetailsService {
         return new PublicProjectDetailsResponse(project.getId(), project.getTitle(),
                 project.getDescription(), project.getCategory().getName(), project.getStatus(),
                 new PublicProjectDesignerResponse(designer.getId(), name,
-                        company == null ? null : company.getAddress()));
+                        company == null ? null : company.getAddress()),
+                images.findByProject_IdInOrderByDisplayOrderAscIdAsc(java.util.List.of(projectId)).stream()
+                        .map(PublicProjectImageResponse::from).toList());
     }
+
+    /** Shared public-visibility rule for details and photo bytes. */
+    @Transactional(readOnly = true)
+    public InteriorDesignProject requirePublicProject(Long projectId) {
+        InteriorDesignProject project = projects.findById(projectId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Project not found"));
+        UserAccount designer = project.getDesigner();
+        if (!designer.isActive() || designer.getRole() != UserRole.INTERIOR_DESIGNER) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
+        }
+        return project;
+    }
+
 }

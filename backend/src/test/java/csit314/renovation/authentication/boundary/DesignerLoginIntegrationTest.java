@@ -85,6 +85,10 @@ class DesignerLoginIntegrationTest {
                 .andExpect(jsonPath("$.passwordChangeRequired").value(true));
         mvc.perform(get("/api/designer/area").session(session)).andExpect(status().isForbidden());
         mvc.perform(get("/api/auth/me").session(session)).andExpect(status().isForbidden());
+        mvc.perform(get("/api/auth/session").session(session))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.role").value("INTERIOR_DESIGNER"))
+                .andExpect(jsonPath("$.passwordChangeRequired").value(true));
     }
 
     @Test

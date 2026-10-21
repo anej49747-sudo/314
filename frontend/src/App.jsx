@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import AuthLayout from './components/AuthLayout.jsx'
 import AddPortfolioProjectPage from './pages/AddPortfolioProjectPage.jsx'
 import CustomerPage from './pages/CustomerPage.jsx'
+import CustomerFavouritesPage from './pages/CustomerFavouritesPage.jsx'
 import CompanyInformationPage from './pages/CompanyInformationPage.jsx'
 import CreateDesignerPage from './pages/CreateDesignerPage.jsx'
 import DesignerChangePasswordPage from './pages/DesignerChangePasswordPage.jsx'
@@ -13,7 +14,7 @@ import DesignerProfilePage from './pages/DesignerProfilePage.jsx'
 import './designer/designerProfile.css'
 import EditPortfolioProjectPage from './pages/EditPortfolioProjectPage.jsx'
 import PublicProjectDetailsPage from './pages/PublicProjectDetailsPage.jsx'
-import ProjectsListingPlaceholderPage from './pages/ProjectsListingPlaceholderPage.jsx'
+import ProjectSearchPage from './pages/ProjectSearchPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
 import ProjectCategoriesPage from './pages/ProjectCategoriesPage.jsx'
@@ -43,9 +44,10 @@ export default function App() {
             <Route path="login" element={<LoginPage />} />
             <Route path="designers" element={<DesignerDirectoryPage />} />
             <Route path="designers/:designerId" element={<DesignerProfilePage />} />
-            <Route path="projects" element={<ProjectsListingPlaceholderPage />} />
+            <Route path="projects" element={<ProjectSearchPage />} />
             <Route path="projects/:projectId" element={<PublicProjectDetailsPage />} />
             <Route path="customer" element={<CustomerPage />} />
+            <Route path="customer/favourites" element={<CustomerFavouritesPage />} />
             <Route path="designer" element={<DesignerPage />} />
             <Route path="designer/change-password" element={<DesignerChangePasswordPage />} />
             <Route path="designer/company-information" element={<CompanyInformationPage />} />

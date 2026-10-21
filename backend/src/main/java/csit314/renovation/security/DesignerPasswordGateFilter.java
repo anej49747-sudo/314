@@ -15,7 +15,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /** Server-side gate for all designer API features while the initial password remains temporary. */
 public class DesignerPasswordGateFilter extends OncePerRequestFilter {
     private static final Set<String> ALLOWED_WHILE_PENDING = Set.of(
-            "/api/login", "/api/logout", "/api/auth/csrf", "/api/auth/designer/me",
+            "/api/login", "/api/logout", "/api/auth/csrf", "/api/auth/session",
+            "/api/auth/designer/me",
             "/api/auth/change-password");
     private final UserAccountRepository accounts;
 
@@ -30,8 +31,10 @@ public class DesignerPasswordGateFilter extends OncePerRequestFilter {
             .substring(request.getContextPath().length());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (path.startsWith("/api/") && !("GET".equals(request.getMethod())
-                && ("/api/designers".equals(path) || path.matches("/api/designers/[0-9]+")
-                        || path.matches("/api/projects/[0-9]+")))
+                && ("/api/designers".equals(path) || "/api/projects".equals(path)
+                        || path.matches("/api/designers/[0-9]+")
+                        || path.matches("/api/projects/[0-9]+")
+                        || path.matches("/api/projects/[0-9]+/images/[0-9]+")))
                 && !ALLOWED_WHILE_PENDING.contains(path)
                 && authentication != null && authentication.isAuthenticated()
                 && authentication.getAuthorities().stream()

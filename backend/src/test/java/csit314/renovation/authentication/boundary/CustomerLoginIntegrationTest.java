@@ -148,6 +148,22 @@ class CustomerLoginIntegrationTest {
     }
 
     @Test
+    void headerSessionEndpointRequiresLoginAndReturnsOnlyOwnProfile() throws Exception {
+        mvc.perform(get("/api/auth/session")).andExpect(status().isUnauthorized());
+        MockHttpSession session = loggedInSession();
+        mvc.perform(get("/api/auth/session").session(session))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.role").value("CUSTOMER"))
+                .andExpect(jsonPath("$.email").value("jane@example.com"))
+                .andExpect(jsonPath("$.passwordHash").doesNotExist())
+                .andExpect(jsonPath("$.password").doesNotExist());
+        CsrfSession fresh = csrfFor(session);
+        mvc.perform(post("/api/logout").session(session)
+                .header(fresh.header(), fresh.token())).andExpect(status().isNoContent());
+        mvc.perform(get("/api/auth/session")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void logoutInvalidatesCurrentSessionAndExpiresBrowserSessionCookie() throws Exception {
         MockHttpSession authenticated = loggedInSession();
         CsrfSession fresh = csrfFor(authenticated);

@@ -122,6 +122,9 @@ a:focus-visible { outline: 3px solid #365b82; outline-offset: 3px; border-radius
 /* Story #4: public designer directory. No avatar or approval-label elements. */
 .site-nav { display: flex; align-items: center; flex-wrap: wrap; gap: 20px; }
 .site-nav [aria-current="page"] { text-decoration: underline; text-underline-offset: 5px; }
+.site-nav .site-logout-link { font-weight: 600; color: #365b82; padding: 8px 0; height: auto; }
+.site-nav .site-logout-link:hover { color: #2a486b !important; }
+.site-logout-error { max-width: 1120px; margin: 0 auto; }
 .designer-directory-page { width: min(100%, 1120px); }
 .designer-directory-eyebrow { margin: 0 0 8px; color: #365b82; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .11em; }
 .designer-directory-heading { margin-bottom: 30px; }

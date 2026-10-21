@@ -11,6 +11,12 @@ export async function currentCustomer() {
   return data
 }
 
+// Role-neutral session identity for the public header. Never read HttpOnly cookies in JavaScript.
+export async function currentSession() {
+  const { data } = await client.get('/auth/session')
+  return data
+}
+
 export async function logoutSession() {
   const headers = await csrfHeaders()
   await client.post('/logout', null, { headers })

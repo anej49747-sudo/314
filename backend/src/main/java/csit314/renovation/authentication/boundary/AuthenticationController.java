@@ -48,6 +48,12 @@ public class AuthenticationController {
         return authenticationService.currentAccount(authentication);
     }
 
+    // Safe role-neutral identity for shared navigation; still requires an authenticated session.
+    @GetMapping("/auth/session")
+    public AccountProfileResponse session(Authentication authentication) {
+        return authenticationService.currentAccount(authentication);
+    }
+
     @GetMapping("/auth/designer/me")
     public AccountProfileResponse designerMe(Authentication authentication) {
         return authenticationService.currentDesigner(authentication);
