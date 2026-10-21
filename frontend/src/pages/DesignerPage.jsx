@@ -52,7 +52,10 @@ export default function DesignerPage() {
       {!account && !error && <div className="loading-state"><Spin /> <span>Checking your account…</span></div>}
       {account && <>
         <p className="customer-account">Signed in as <strong>{account.email}</strong>.</p>
-        <Button type="primary" block className="submit-button" onClick={() => navigate('/designer/company-information')}>
+        <Button type="primary" block className="submit-button" onClick={() => navigate('/designer/account')}>
+          My account
+        </Button>
+        <Button block className="submit-button" onClick={() => navigate('/designer/company-information')}>
           Manage company information
         </Button>
         <Button block className="submit-button" onClick={() => navigate('/designer/portfolio')}>

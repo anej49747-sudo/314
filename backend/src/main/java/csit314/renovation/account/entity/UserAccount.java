@@ -113,6 +113,11 @@ public class UserAccount {
         this.passwordHash = newPasswordHash;
         this.passwordChangeRequired = false;
     }
+    public void updateAccountIdentity(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
     public Instant getCreatedAt() { return createdAt; }
 
     public String getDisplayName() {
