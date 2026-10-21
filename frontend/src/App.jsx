@@ -3,11 +3,14 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import AuthLayout from './components/AuthLayout.jsx'
 import AddPortfolioProjectPage from './pages/AddPortfolioProjectPage.jsx'
 import CustomerPage from './pages/CustomerPage.jsx'
+import CustomerAccountSettingsPage from './pages/CustomerAccountSettingsPage.jsx'
 import CustomerFavouritesPage from './pages/CustomerFavouritesPage.jsx'
+import CompareDesignersPage from './pages/CompareDesignersPage.jsx'
 import CompanyInformationPage from './pages/CompanyInformationPage.jsx'
 import CreateDesignerPage from './pages/CreateDesignerPage.jsx'
 import DesignerChangePasswordPage from './pages/DesignerChangePasswordPage.jsx'
 import DesignerPage from './pages/DesignerPage.jsx'
+import DesignerAccountSettingsPage from './pages/DesignerAccountSettingsPage.jsx'
 import DesignerPortfolioPage from './pages/DesignerPortfolioPage.jsx'
 import DesignerDirectoryPage from './pages/DesignerDirectoryPage.jsx'
 import DesignerProfilePage from './pages/DesignerProfilePage.jsx'
@@ -47,8 +50,11 @@ export default function App() {
             <Route path="projects" element={<ProjectSearchPage />} />
             <Route path="projects/:projectId" element={<PublicProjectDetailsPage />} />
             <Route path="customer" element={<CustomerPage />} />
+            <Route path="customer/account" element={<CustomerAccountSettingsPage />} />
             <Route path="customer/favourites" element={<CustomerFavouritesPage />} />
+            <Route path="customer/compare" element={<CompareDesignersPage />} />
             <Route path="designer" element={<DesignerPage />} />
+            <Route path="designer/account" element={<DesignerAccountSettingsPage />} />
             <Route path="designer/change-password" element={<DesignerChangePasswordPage />} />
             <Route path="designer/company-information" element={<CompanyInformationPage />} />
             <Route path="designer/portfolio" element={<DesignerPortfolioPage />} />

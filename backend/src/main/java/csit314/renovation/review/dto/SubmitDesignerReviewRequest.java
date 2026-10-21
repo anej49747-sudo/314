@@ -1,0 +1,14 @@
+package csit314.renovation.review.dto;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public record SubmitDesignerReviewRequest(
+        @NotNull(message = "Select a rating")
+        @Min(value = 1, message = "Rating must be between 1 and 5")
+        @Max(value = 5, message = "Rating must be between 1 and 5")
+        Integer rating,
+        @Size(max = 2000, message = "Comment must be 2000 characters or fewer")
+        String comment) {}

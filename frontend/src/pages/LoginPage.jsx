@@ -43,6 +43,10 @@ export default function LoginPage() {
         <Alert className="form-feedback" type="success" showIcon role="status"
           message="Account created successfully. You can now log in." />
       )}
+      {location.state?.accountEmailChanged && (
+        <Alert className="form-feedback" type="success" showIcon role="status"
+          message="Email address updated. Please sign in again using your new email address." />
+      )}
       {location.state?.justLoggedOut && (
         <Alert className="form-feedback" type="success" showIcon role="status"
           message="You have logged out successfully." />

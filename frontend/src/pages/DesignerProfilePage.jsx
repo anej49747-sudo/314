@@ -2,6 +2,8 @@ import { Alert, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getDesignerProfile } from '../api/designerProfile.js'
+import DesignerReviewAction from '../components/DesignerReviewAction.jsx'
+import DesignerReviewsSection from '../components/DesignerReviewsSection.jsx'
 import { directoryAddress } from '../designer/designerDirectoryRules.js'
 import {
   isValidDesignerId,
@@ -17,6 +19,8 @@ export default function DesignerProfilePage() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [error, setError] = useState('')
+  const [reviewSuccess, setReviewSuccess] = useState('')
+  const [reviewRefresh, setReviewRefresh] = useState(0)
 
   useEffect(() => {
     let active = true
@@ -25,6 +29,7 @@ export default function DesignerProfilePage() {
       setProfile(null)
       setNotFound(false)
       setError('')
+      setReviewSuccess('')
       if (!isValidDesignerId(designerId)) {
         setNotFound(true)
         setLoading(false)
@@ -45,6 +50,11 @@ export default function DesignerProfilePage() {
     return () => { active = false }
   }, [designerId])
 
+  function reviewSubmitted(message) {
+    setReviewSuccess(message)
+    setReviewRefresh((value) => value + 1)
+  }
+
   return (
     <section className="public-designer-profile" aria-labelledby="public-profile-title">
       <Link className="designer-profile-back" to="/designers">← Back to all interior designers</Link>
@@ -64,8 +74,16 @@ export default function DesignerProfilePage() {
       {!loading && profile && (
         <>
           <p className="public-profile-eyebrow">Interior designer profile</p>
-          <h1 id="public-profile-title">{profile.name}</h1>
-          <p className="public-profile-lede">Learn about this designer and explore the projects in their portfolio.</p>
+          <div className="public-profile-review-head">
+            <div>
+              <h1 id="public-profile-title">{profile.name}</h1>
+              <p className="public-profile-lede">Learn about this designer and explore the projects in their portfolio.</p>
+            </div>
+            <DesignerReviewAction designerId={profile.id} designerName={profile.name}
+              onSubmitted={reviewSubmitted} />
+          </div>
+          {reviewSuccess && <Alert className="designer-review-success" role="status" type="success"
+            showIcon message="Review submitted" description={reviewSuccess} />}
           <div className="public-profile-stack">
             <section className="public-profile-panel" aria-labelledby="profile-company-title">
               <h2 id="profile-company-title">Company info</h2>
@@ -110,6 +128,7 @@ export default function DesignerProfilePage() {
                 </div>
               )}
             </section>
+            <DesignerReviewsSection designerId={profile.id} refreshKey={reviewRefresh} />
           </div>
         </>
       )}

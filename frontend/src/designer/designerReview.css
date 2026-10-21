@@ -1,0 +1,28 @@
+/* Story #46 — review creation on the existing public designer profile. */
+.public-profile-review-head { display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:20px; }
+.public-profile-review-head > div:first-child { min-width:0; flex:1; }
+.public-profile-review-head h1 { font-size:clamp(29px,4vw,38px); line-height:1.2; letter-spacing:-.035em; margin:0; overflow-wrap:anywhere; }
+.public-profile-review-head .public-profile-lede { margin-top:14px; }
+.designer-review-action { display:flex; flex-direction:column; align-items:flex-end; gap:7px; }
+.designer-review-action .ant-btn { min-height:44px; }
+.designer-review-action-note { font-size:12px; color:#526581; }
+.designer-review-success { margin-top:20px; width:min(100%,900px); }
+.designer-review-modal .ant-modal-content { border-radius:14px; }
+.designer-review-modal-header { margin:0 0 18px; }
+.designer-review-modal-eyebrow { color:#365b82; text-transform:uppercase; letter-spacing:.1em; font-size:11px; font-weight:700; margin:0 0 7px; }
+.designer-review-modal-header h2 { font-size:24px; line-height:1.25; margin:0 0 8px; }
+.designer-review-modal-subtitle { color:#526581; font-size:14px; line-height:1.6; margin:0; }
+.designer-review-divider { border:0; border-top:1px solid #e7edf3; margin:20px 0; }
+.designer-review-field-label { font-size:14px; font-weight:650; margin:0 0 9px; }
+.designer-review-required { color:#b42318; }
+.designer-review-optional { color:#526581; font-weight:400; }
+.designer-review-stars { display:block; font-size:34px; color:#c18718; margin:2px 0 4px; }
+.designer-review-rating-feedback { color:#526581; font-size:13px; margin:6px 0 20px; min-height:20px; }
+.designer-review-error-text { color:#b42318; font-size:13px; margin:-12px 0 16px; }
+.designer-review-comment { min-height:120px; resize:vertical; }
+.designer-review-help { color:#526581; font-size:12px; margin:8px 0 0; }
+.designer-review-modal .ant-modal-footer { border-top:1px solid #e7edf3; margin-top:22px; padding-top:18px; }
+@media (max-width:560px) {
+  .designer-review-action { align-items:flex-start; }
+  .designer-review-modal-header h2 { font-size:22px; }
+}

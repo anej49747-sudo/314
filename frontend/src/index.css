@@ -1,4 +1,9 @@
 /* Story #114: edit controls and retained project photos. */
+.portfolio-project-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+.portfolio-project-metric { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 12px; background: #f8fafc; border: 1px solid #e6ebf1; border-radius: 8px; color: #526581; font-size: 13px; }
+.portfolio-project-metric svg { flex-shrink: 0; color: #365b82; }
+.portfolio-project-metric:last-child svg { color: #b42318; }
+.portfolio-project-metric strong { display: block; color: #1d2939; font-size: 20px; line-height: 1.25; }
 .portfolio-project-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; }
 .portfolio-existing-photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); gap: 12px; margin-top: 12px; }
 .portfolio-existing-photo { min-width: 0; }

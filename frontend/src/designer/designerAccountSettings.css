@@ -1,0 +1,16 @@
+/* Story #14: private designer identity settings; separate from company details. */
+.designer-settings-page { width: min(100%, 830px); }
+.designer-settings-back { display: inline-block; margin: 0 0 28px; font-size: 14px; font-weight: 600; text-decoration: none; }
+.designer-settings-heading { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.designer-settings-heading h1 { margin: 0; font-size: clamp(28px, 4vw, 36px); }
+.designer-settings-role { border: 1px solid #d0d8e2; border-radius: 999px; padding: 7px 12px; background: #fff; color: #365b82; font-weight: 600; font-size: 13px; }
+.designer-settings-panel { border-color: #d0d8e2; }
+.designer-settings-card-description { color: #526581; font-size: 13px; margin: 0 0 24px; line-height: 1.6; }
+.designer-settings-panel .ant-form-item-label > label { font-weight: 600; }
+.designer-settings-advisory { background: #f8fafc; border: 1px solid #d0d8e2; border-radius: 8px; padding: 14px 16px; font-size: 13px; line-height: 1.6; color: #526581; margin: 8px 0 22px; }
+.designer-settings-advisory strong { color: #1d2939; }
+.designer-settings-actions { display: flex; justify-content: flex-end; align-items: center; gap: 12px; flex-wrap: wrap; }
+.designer-settings-hint { color: #526581; margin-right: auto; font-size: 13px; }
+.designer-settings-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; color: #526581; margin: 22px 0 0; font-size: 13px; }
+.designer-settings-footer a { font-weight: 600; }
+@media (max-width: 520px) { .designer-settings-panel .ant-card-body { padding: 20px 16px; } .designer-settings-actions { flex-direction: column; align-items: stretch; } .designer-settings-hint { margin: 0; } }

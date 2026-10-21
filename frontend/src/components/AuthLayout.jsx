@@ -57,6 +57,12 @@ export default function AuthLayout() {
               Explore projects
             </Link>
             {isCustomer && (
+              <Link to="/customer/compare" className="header-link"
+                aria-current={pathname === '/customer/compare' ? 'page' : undefined}>
+                Compare designers
+              </Link>
+            )}
+            {isCustomer && (
               <Link to="/customer/favourites" className="header-link"
                 aria-current={pathname === '/customer/favourites' ? 'page' : undefined}>
                 My Favourites
