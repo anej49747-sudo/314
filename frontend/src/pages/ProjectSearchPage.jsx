@@ -1,8 +1,10 @@
 import { Alert, Button, Input, Select, Spin } from 'antd'
-import { Info, Search } from 'lucide-react'
+import { Heart, Info, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listCategories } from '../api/categories.js'
+import { currentSession } from '../api/authentication.js'
+import { getSavedProjects } from '../api/favourites.js'
 import { getPublicProjects } from '../api/publicProjects.js'
 import { projectStatusLabel } from '../project/projectDetailsRules.js'
 import {
@@ -11,6 +13,7 @@ import {
   projectSearchDescription,
   projectSearchHeading,
   projectSearchPath,
+  savedProjectIdSet,
 } from '../project/projectSearchRules.js'
 import '../project/projectSearch.css'
 
@@ -26,6 +29,29 @@ export default function ProjectSearchPage() {
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [savedIds, setSavedIds] = useState(new Set())
+  const [savedIndicatorError, setSavedIndicatorError] = useState(false)
+
+  // The public search remains available to guests and non-customer roles.
+  useEffect(() => {
+    let active = true
+    async function loadSavedIndicators() {
+      try {
+        const account = await currentSession()
+        if (!active || account?.role !== 'CUSTOMER') return
+        try {
+          const savedProjects = await getSavedProjects()
+          if (active) setSavedIds(savedProjectIdSet(savedProjects))
+        } catch {
+          if (active) setSavedIndicatorError(true)
+        }
+      } catch {
+        // Anonymous visitors have no favourites to display.
+      }
+    }
+    loadSavedIndicators()
+    return () => { active = false }
+  }, [])
 
   useEffect(() => {
     let active = true
@@ -158,6 +184,11 @@ export default function ProjectSearchPage() {
           {!loading && !error && <span className="project-search-count" role="status">{projectSearchCount(projects.length)}</span>}
         </div>
 
+        {savedIndicatorError && (
+          <Alert type="warning" showIcon role="status" className="project-search-saved-warning"
+            message="Saved-project indicators are unavailable. You can still browse projects." />
+        )}
+
         {activeFilters && (
           <div className="project-search-active" aria-label="Active search filters">
             {query && <button type="button" className="project-search-chip" onClick={clearTitle}
@@ -196,6 +227,12 @@ export default function ProjectSearchPage() {
                     : 'project-search-status project-search-status-current'}>
                     {projectStatusLabel(project.status)}
                   </span>
+                  {savedIds.has(String(project.id)) && (
+                    <span className="project-search-saved-indicator" role="img"
+                      aria-label="Saved to favourites" title="Saved to favourites">
+                      <Heart size={18} fill="currentColor" aria-hidden="true" />
+                    </span>
+                  )}
                 </div>
                 <h3>{project.title}</h3>
                 <p className="project-search-description">{projectSearchDescription(project.description)}</p>

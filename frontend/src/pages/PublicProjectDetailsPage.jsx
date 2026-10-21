@@ -152,7 +152,7 @@ export default function PublicProjectDetailsPage() {
             <span className="public-project-category">{project.categoryName}</span>
           </div>
           <div className="public-project-favourite-area">
-            <Button type={isFavourite ? 'default' : 'primary'}
+            <Button type="default"
               className={`public-project-favourite-button${isFavourite ? ' saved' : ''}`}
               loading={favouriteBusy} disabled={favouriteBusy || favouriteAccess === 'loading' || favouriteAccess === 'unavailable'}
               onClick={onToggleFavourite} aria-pressed={favouriteAccess === 'customer' ? isFavourite : undefined}>

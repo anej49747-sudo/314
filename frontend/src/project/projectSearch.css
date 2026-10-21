@@ -35,6 +35,8 @@
 .project-search-card { display: flex; flex-direction: column; min-height: 263px; min-width: 0; border: 1px solid #d0d8e2; border-radius: 12px; padding: 23px 23px 0; background: #fff; box-shadow: 0 3px 14px rgba(26,44,66,.035); transition: border-color .16s ease, transform .16s ease, box-shadow .16s ease; }
 .project-search-card:hover { border-color: #9eafc1; box-shadow: 0 9px 25px rgba(39,62,89,.075); transform: translateY(-2px); }
 .project-search-tags { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 15px; }
+.project-search-saved-indicator { display: inline-flex; align-items: center; margin-left: auto; color: #b42318; flex-shrink: 0; }
+.project-search-saved-warning { margin-bottom: 20px; }
 .project-search-category, .project-search-status { border-radius: 5px; padding: 5px 9px; font-size: 11px; font-weight: 700; }
 .project-search-category { background: #f1f4f7; color: #53657b; }
 .project-search-status-completed { color: #067647; background: #e9f7ef; }

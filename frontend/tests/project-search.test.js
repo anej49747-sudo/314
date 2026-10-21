@@ -7,6 +7,7 @@ import {
   projectSearchHeading,
   projectSearchParams,
   projectSearchPath,
+  savedProjectIdSet,
 } from '../src/project/projectSearchRules.js'
 
 test('title query is trimmed but preserves the visitor-entered case', () => {
@@ -40,4 +41,13 @@ test('results heading reflects title-only, category-only, and combined filters',
   assert.equal(projectSearchHeading('Modern', ''), 'Search results')
   assert.equal(projectSearchHeading('', 'Kitchen'), 'Kitchen projects')
   assert.equal(projectSearchHeading('Modern', 'Kitchen'), 'Filtered projects')
+})
+
+test('saved project markers match IDs from only the current customer saved list', () => {
+  const savedIds = savedProjectIdSet([{ id: 7 }, { id: '9' }, { id: 7 }, { name: 'missing id' }, null])
+  assert.deepEqual([...savedIds], ['7', '9'])
+  assert.equal(savedIds.has(String(7)), true)
+  assert.equal(savedIds.has(String(9)), true)
+  assert.equal(savedIds.has(String(2)), false)
+  assert.equal(savedProjectIdSet([]).size, 0)
 })

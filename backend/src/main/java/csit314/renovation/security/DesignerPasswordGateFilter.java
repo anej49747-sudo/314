@@ -15,7 +15,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /** Server-side gate for all designer API features while the initial password remains temporary. */
 public class DesignerPasswordGateFilter extends OncePerRequestFilter {
     private static final Set<String> ALLOWED_WHILE_PENDING = Set.of(
-            "/api/login", "/api/logout", "/api/auth/csrf", "/api/auth/designer/me",
+            "/api/login", "/api/logout", "/api/auth/csrf", "/api/auth/session",
+            "/api/auth/designer/me",
             "/api/auth/change-password");
     private final UserAccountRepository accounts;
 

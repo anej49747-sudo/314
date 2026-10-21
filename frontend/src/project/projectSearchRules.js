@@ -6,6 +6,11 @@ export function projectSearchCount(count) {
   return `${count} ${count === 1 ? 'project' : 'projects'}`
 }
 
+// Compare IDs as strings so the public results and favourite DTOs can use number or string IDs.
+export function savedProjectIdSet(savedProjects) {
+  return new Set(savedProjects.filter((project) => project?.id != null).map((project) => String(project.id)))
+}
+
 export function projectSearchPath(id) {
   return `/projects/${encodeURIComponent(id)}`
 }
