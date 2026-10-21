@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getDesignerProfile } from '../api/designerProfile.js'
 import DesignerReviewAction from '../components/DesignerReviewAction.jsx'
+import DesignerReviewsSection from '../components/DesignerReviewsSection.jsx'
 import { directoryAddress } from '../designer/designerDirectoryRules.js'
 import {
   isValidDesignerId,
@@ -19,6 +20,7 @@ export default function DesignerProfilePage() {
   const [notFound, setNotFound] = useState(false)
   const [error, setError] = useState('')
   const [reviewSuccess, setReviewSuccess] = useState('')
+  const [reviewRefresh, setReviewRefresh] = useState(0)
 
   useEffect(() => {
     let active = true
@@ -48,6 +50,11 @@ export default function DesignerProfilePage() {
     return () => { active = false }
   }, [designerId])
 
+  function reviewSubmitted(message) {
+    setReviewSuccess(message)
+    setReviewRefresh((value) => value + 1)
+  }
+
   return (
     <section className="public-designer-profile" aria-labelledby="public-profile-title">
       <Link className="designer-profile-back" to="/designers">← Back to all interior designers</Link>
@@ -73,7 +80,7 @@ export default function DesignerProfilePage() {
               <p className="public-profile-lede">Learn about this designer and explore the projects in their portfolio.</p>
             </div>
             <DesignerReviewAction designerId={profile.id} designerName={profile.name}
-              onSubmitted={setReviewSuccess} />
+              onSubmitted={reviewSubmitted} />
           </div>
           {reviewSuccess && <Alert className="designer-review-success" role="status" type="success"
             showIcon message="Review submitted" description={reviewSuccess} />}
@@ -121,6 +128,7 @@ export default function DesignerProfilePage() {
                 </div>
               )}
             </section>
+            <DesignerReviewsSection designerId={profile.id} refreshKey={reviewRefresh} />
           </div>
         </>
       )}

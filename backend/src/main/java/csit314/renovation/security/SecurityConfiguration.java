@@ -101,6 +101,8 @@ public class SecurityConfiguration {
                         .hasRole("CUSTOMER")
                         .requestMatchers(HttpMethod.DELETE, "/api/customer/favourites/*")
                         .hasRole("CUSTOMER")
+                        // Story #10: customer reviews are public, but never reveal customer identities.
+                        .requestMatchers(HttpMethod.GET, "/api/designers/*/reviews").permitAll()
                         // Story #46: submitting reviews requires an authenticated customer + CSRF.
                         .requestMatchers(HttpMethod.POST, "/api/designers/*/reviews")
                         .hasRole("CUSTOMER")
