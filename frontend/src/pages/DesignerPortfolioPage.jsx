@@ -1,10 +1,12 @@
 import { Alert, Button, Card, Empty, Modal, Segmented, Spin, Tag } from 'antd'
 import { useEffect, useState } from 'react'
+import { Eye, Heart } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { deletePortfolioProject, getMyPortfolio } from '../api/portfolio.js'
 import { currentDesigner, currentDesignerArea } from '../api/designerAuthentication.js'
 import { filteredPortfolio, portfolioStatusLabel, portfolioSummary } from '../designer/portfolioRules.js'
 import { projectDeletionFailureMessage, withoutDeletedProject } from '../designer/projectDeletionRules.js'
+import { interestMetricCount } from '../designer/projectInterestRules.js'
 
 const filters = [
   { label: 'All', value: 'ALL' },
@@ -115,6 +117,16 @@ export default function DesignerPortfolioPage() {
                   </div>
                   <p className="portfolio-project-category">{project.categoryName}</p>
                   <p className="portfolio-project-description">{project.description}</p>
+                  <div className="portfolio-project-metrics" aria-label={`Interest metrics for ${project.title}`}>
+                    <div className="portfolio-project-metric">
+                      <Eye size={18} aria-hidden="true" />
+                      <span><strong>{interestMetricCount(project.viewCount)}</strong> Project views</span>
+                    </div>
+                    <div className="portfolio-project-metric">
+                      <Heart size={18} aria-hidden="true" />
+                      <span><strong>{interestMetricCount(project.favouriteCount)}</strong> Favourites</span>
+                    </div>
+                  </div>
                   <div className="portfolio-project-actions">
                     <Button size="small" onClick={() => navigate(`/designer/portfolio/${project.id}/edit`)}>
                       Edit project

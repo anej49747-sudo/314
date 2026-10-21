@@ -1,7 +1,9 @@
 package csit314.renovation.project.boundary;
 
+import csit314.renovation.metrics.control.ProjectViewTrackingService;
 import csit314.renovation.project.control.PublicProjectDetailsService;
 import csit314.renovation.project.control.PublicProjectPhotoService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +16,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class PublicProjectDetailsController {
     private final PublicProjectDetailsService service;
     private final PublicProjectPhotoService photos;
+    private final ProjectViewTrackingService viewTracking;
 
     public PublicProjectDetailsController(PublicProjectDetailsService service,
-            PublicProjectPhotoService photos) {
+            PublicProjectPhotoService photos, ProjectViewTrackingService viewTracking) {
         this.service = service;
         this.photos = photos;
+        this.viewTracking = viewTracking;
     }
 
     @GetMapping("/api/projects/{projectId}")
-    public PublicProjectDetailsResponse getProject(@PathVariable("projectId") Long projectId) {
-        return service.findPublicProject(projectId);
+    public PublicProjectDetailsResponse getProject(@PathVariable("projectId") Long projectId,
+            HttpServletRequest request) {
+        PublicProjectDetailsResponse details = service.findPublicProject(projectId);
+        viewTracking.recordPublicView(projectId, request);
+        return details;
     }
 
     @GetMapping("/api/projects/{projectId}/images/{imageId}")
