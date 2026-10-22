@@ -1,6 +1,7 @@
 import { currentCustomer } from '../api/authentication.js'
 import { getCustomerAccountSettings, updateCustomerAccountSettings } from '../api/customerAccountSettings.js'
 import AccountSettingsFormPage from '../components/AccountSettingsFormPage.jsx'
+import CustomerDeleteAccountSection from '../components/CustomerDeleteAccountSection.jsx'
 
 export default function CustomerAccountSettingsPage() {
   return <AccountSettingsFormPage
@@ -12,6 +13,7 @@ export default function CustomerAccountSettingsPage() {
     description="Update the information associated with your customer login."
     advisory="Your saved projects and password remain unchanged."
     footer={<span>Password changes aren't available on this page.</span>}
+    afterContent={<CustomerDeleteAccountSection />}
     currentAccount={currentCustomer}
     loadAccount={getCustomerAccountSettings}
     updateAccount={updateCustomerAccountSettings}

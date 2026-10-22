@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import { currentAdmin } from '../api/designerAccounts.js'
 import { searchAdminAccounts } from '../api/adminAccounts.js'
 import { fetchAccountLoginHistory, reactivateAdminAccount, suspendAdminAccount } from '../api/adminAccountManagement.js'
+import { deleteDesignerAccount } from '../api/accountDeletion.js'
+import { accountDeletionError, canPermanentlyDelete } from '../account/accountDeletionRules.js'
 import {
   INITIAL_ACCOUNT_SEARCH, accountRoleLabel, accountSearchFailureMessage, accountStatusLabel,
 } from '../account/accountSearchRules.js'
@@ -12,6 +14,7 @@ import {
   singaporeLoginTime,
 } from '../account/accountManagementRules.js'
 import '../account/accountSearch.css'
+import '../account/accountDeletion.css'
 
 const historyColumns = [
   { title: 'Date and time (SGT)', dataIndex: 'occurredAt', key: 'occurredAt',
@@ -36,6 +39,10 @@ export default function AdminAccountSearchPage() {
   const [reason, setReason] = useState('')
   const [moderationError, setModerationError] = useState('')
   const [saving, setSaving] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState(null)
+  const [deleteConfirmation, setDeleteConfirmation] = useState('')
+  const [deleteError, setDeleteError] = useState('')
+  const [deleting, setDeleting] = useState(false)
   const [historyAccount, setHistoryAccount] = useState(null)
   const [historyOutcome, setHistoryOutcome] = useState('all')
   const [historyPage, setHistoryPage] = useState(0)
@@ -128,6 +135,31 @@ export default function AdminAccountSearchPage() {
     }
   }
 
+  function openDelete(account) {
+    if (account.role !== 'INTERIOR_DESIGNER') return
+    setDeleteTarget(account)
+    setDeleteConfirmation('')
+    setDeleteError('')
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget || deleting || !canPermanentlyDelete(deleteConfirmation)) return
+    setDeleting(true)
+    setDeleteError('')
+    try {
+      await deleteDesignerAccount(deleteTarget.id)
+      message.success('Designer account permanently deleted.')
+      setDeleteTarget(null)
+      setPage(0)
+      setRefresh((value) => value + 1)
+    } catch (failure) {
+      if ([401, 403].includes(failure.response?.status)) navigate('/login', { replace: true })
+      else setDeleteError(accountDeletionError(failure))
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   function openHistory(account) {
     setHistoryAccount(account)
     setHistoryOutcome('all')
@@ -144,12 +176,14 @@ export default function AdminAccountSearchPage() {
     { title: 'Status', dataIndex: 'active', key: 'active', render: (active) => (
       <Tag color={active ? 'success' : 'default'}>{accountStatusLabel(active)}</Tag>
     ) },
-    { title: 'Actions', key: 'actions', width: 255, render: (_, account) => (
+    { title: 'Actions', key: 'actions', width: 365, render: (_, account) => (
       <div className="admin-account-row-actions">
         <Button size="small" onClick={() => openHistory(account)}>Login history</Button>
         <Button size="small" danger={account.active} onClick={() => openModeration(account)}>
           {moderationActionLabel(account.active)}
         </Button>
+        {account.role === 'INTERIOR_DESIGNER' && <Button size="small" danger
+          onClick={() => openDelete(account)}>Delete account</Button>}
       </div>
     ) },
   ]
@@ -237,6 +271,23 @@ export default function AdminAccountSearchPage() {
         </> : <p>Reactivation permits this account to sign in again. Old sessions are not restored.</p>}
         {moderationError && <Alert className="admin-account-dialog-error" type="error" role="alert"
           showIcon message={moderationError} />}
+      </Modal>
+      <Modal title="Permanently delete designer account?" open={!!deleteTarget}
+        onCancel={() => { if (!deleting) setDeleteTarget(null) }}
+        onOk={confirmDelete} okText="Permanently delete account"
+        okButtonProps={{ danger: true, disabled: !canPermanentlyDelete(deleteConfirmation) }}
+        confirmLoading={deleting} closable={!deleting}>
+        <p>This will permanently delete the designer and their company, projects,
+          photos, reviews and related records. This cannot be undone.</p>
+        <p>Anonymous historical platform activity totals will remain.</p>
+        {deleteTarget && <p><strong>{deleteTarget.displayName}</strong> — {deleteTarget.email}</p>}
+        <label className="account-deletion-confirm-label" htmlFor="admin-delete-confirm">
+          Type <strong>DELETE</strong> to confirm
+        </label>
+        <Input id="admin-delete-confirm" value={deleteConfirmation} autoComplete="off"
+          onChange={(event) => setDeleteConfirmation(event.target.value)} disabled={deleting} />
+        {deleteError && <Alert type="error" showIcon role="alert" message={deleteError}
+          className="account-deletion-error" />}
       </Modal>
       <Drawer title="Login history" open={!!historyAccount} width={560}
         onClose={() => setHistoryAccount(null)} destroyOnHidden>

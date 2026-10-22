@@ -8,7 +8,7 @@ import '../designer/designerAccountSettings.css'
 /** Shared Story #14/#21 visual form; role checks are also enforced by the backend. */
 export default function AccountSettingsFormPage({
   backPath, backText, eyebrow, roleLabel, intro, description, advisory,
-  footer, currentAccount, loadAccount, updateAccount, requirePasswordChange = false,
+  footer, afterContent, currentAccount, loadAccount, updateAccount, requirePasswordChange = false,
 }) {
   const navigate = useNavigate()
   const [form] = Form.useForm()
@@ -118,6 +118,7 @@ export default function AccountSettingsFormPage({
           </div>
         </Form>}
       </Card>
+      {!loading && initial && afterContent}
       <div className="designer-settings-footer">{footer}</div>
     </div>
   )

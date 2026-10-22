@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice(assignableTypes = {
-        AdminAccountModerationController.class, AdminLoginHistoryController.class})
+        AdminAccountModerationController.class, AdminLoginHistoryController.class,
+        AdminDesignerDeletionController.class})
 public class AdminAccountManagementExceptionHandler {
     @ExceptionHandler(AccountNotFoundException.class)
     public ResponseEntity<Map<String, String>> notFound() {

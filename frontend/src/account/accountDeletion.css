@@ -1,0 +1,8 @@
+.account-deletion-panel {
+  margin-top: 20px;
+  border-color: #e7b7b2;
+}
+.account-deletion-panel .ant-card-head { color: #b42318; background: #fff7f5; }
+.account-deletion-panel p { color: #526581; max-width: 760px; }
+.account-deletion-confirm-label { display: block; margin: 18px 0 8px; }
+.account-deletion-error { margin-top: 16px; }

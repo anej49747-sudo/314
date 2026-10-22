@@ -96,6 +96,8 @@ public class SecurityConfiguration {
                         .hasRole("CUSTOMER")
                         .requestMatchers(HttpMethod.PUT, "/api/customer/account")
                         .hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/customer/account")
+                        .hasRole("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/customer/favourites")
                         .hasRole("CUSTOMER")
                         // Story #22: only a signed-in customer can inspect or change their saves.
@@ -124,6 +126,8 @@ public class SecurityConfiguration {
                         .hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/admin/me", "/api/admin/accounts",
                                 "/api/admin/accounts/*/login-history")
+                        .hasRole("USER_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/admin/accounts/*")
                         .hasRole("USER_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/admin/accounts/*/suspend",
                                 "/api/admin/accounts/*/reactivate")
