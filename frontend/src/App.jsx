@@ -9,6 +9,7 @@ import CompareDesignersPage from './pages/CompareDesignersPage.jsx'
 import CompanyInformationPage from './pages/CompanyInformationPage.jsx'
 import CreateDesignerPage from './pages/CreateDesignerPage.jsx'
 import AdminAccountSearchPage from './pages/AdminAccountSearchPage.jsx'
+import AdminDesignerReportsPage from './pages/AdminDesignerReportsPage.jsx'
 import DesignerChangePasswordPage from './pages/DesignerChangePasswordPage.jsx'
 import DesignerPage from './pages/DesignerPage.jsx'
 import DesignerAccountSettingsPage from './pages/DesignerAccountSettingsPage.jsx'
@@ -64,6 +65,7 @@ export default function App() {
             <Route path="designer/portfolio/:projectId/edit" element={<EditPortfolioProjectPage />} />
             <Route path="admin/designers/new" element={<CreateDesignerPage />} />
             <Route path="admin/accounts" element={<AdminAccountSearchPage />} />
+            <Route path="admin/reports" element={<AdminDesignerReportsPage />} />
             <Route path="manager/categories" element={<ProjectCategoriesPage />} />
             <Route path="manager/reports" element={<ActivityReportsPage />} />
             <Route path="*" element={<Navigate to="/register" replace />} />

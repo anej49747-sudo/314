@@ -110,6 +110,14 @@ public class SecurityConfiguration {
                         // Story #46: submitting reviews requires an authenticated customer + CSRF.
                         .requestMatchers(HttpMethod.POST, "/api/designers/*/reviews")
                         .hasRole("CUSTOMER")
+                        // #43 Customer reporting; #42 User Admin-only report decisions and queue.
+                        .requestMatchers(HttpMethod.POST, "/api/designers/*/reports")
+                        .hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/admin/designer-reports",
+                                "/api/admin/designer-reports/*")
+                        .hasRole("USER_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/admin/designer-reports/*/decision")
+                        .hasRole("USER_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/auth/manager/me").hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.GET, "/api/manager/reports/activity")

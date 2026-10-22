@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getDesignerProfile } from '../api/designerProfile.js'
 import DesignerReviewAction from '../components/DesignerReviewAction.jsx'
+import DesignerReportAction from '../components/DesignerReportAction.jsx'
 import DesignerReviewsSection from '../components/DesignerReviewsSection.jsx'
 import { directoryAddress } from '../designer/designerDirectoryRules.js'
 import {
@@ -79,8 +80,11 @@ export default function DesignerProfilePage() {
               <h1 id="public-profile-title">{profile.name}</h1>
               <p className="public-profile-lede">Learn about this designer and explore the projects in their portfolio.</p>
             </div>
-            <DesignerReviewAction designerId={profile.id} designerName={profile.name}
-              onSubmitted={reviewSubmitted} />
+            <div className="designer-report-profile-actions">
+              <DesignerReviewAction designerId={profile.id} designerName={profile.name}
+                onSubmitted={reviewSubmitted} />
+              <DesignerReportAction designerId={profile.id} designerName={profile.name} />
+            </div>
           </div>
           {reviewSuccess && <Alert className="designer-review-success" role="status" type="success"
             showIcon message="Review submitted" description={reviewSuccess} />}
