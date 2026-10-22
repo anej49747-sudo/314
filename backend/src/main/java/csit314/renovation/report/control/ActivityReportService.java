@@ -54,7 +54,7 @@ public class ActivityReportService {
                 total(days, DailyActivityResponse::reviewsSubmitted), complete, start,
                 "Engagement events are recorded only from Story #32 tracking; periods before tracking "
                 + "started are incomplete. Login history began with Story #41; older login attempts "
-                + "cannot be reconstructed. Review and account creation timestamps may predate both.",
+                + "cannot be reconstructed. Anonymous totals are retained when accounts are deleted.",
                 days);
     }
 

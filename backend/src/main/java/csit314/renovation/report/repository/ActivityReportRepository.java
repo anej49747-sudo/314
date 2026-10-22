@@ -24,19 +24,19 @@ public class ActivityReportRepository {
     }
 
     public Map<LocalDate, Long> successfulLogins(ReportPeriod period) {
-        return daily("SELECT (e.occurred_at AT TIME ZONE 'Asia/Singapore')::date AS report_day, "
+        return withDeleted(daily("SELECT (e.occurred_at AT TIME ZONE 'Asia/Singapore')::date AS report_day, "
                 + "COUNT(*) AS total FROM user_login_events e "
                 + "JOIN user_accounts a ON a.id = e.account_id "
                 + "WHERE e.successful = true AND a.role IN " + CUSTOMER_DESIGNER
-                + " AND e.occurred_at >= ? AND e.occurred_at < ? GROUP BY report_day", period);
+                + " AND e.occurred_at >= ? AND e.occurred_at < ? GROUP BY report_day", period), period, "LOGINS");
     }
 
     public Map<LocalDate, Long> dailyUniqueUsers(ReportPeriod period) {
-        return daily("SELECT (e.occurred_at AT TIME ZONE 'Asia/Singapore')::date AS report_day, "
+        return withDeleted(daily("SELECT (e.occurred_at AT TIME ZONE 'Asia/Singapore')::date AS report_day, "
                 + "COUNT(DISTINCT e.account_id) AS total FROM user_login_events e "
                 + "JOIN user_accounts a ON a.id = e.account_id "
                 + "WHERE e.successful = true AND a.role IN " + CUSTOMER_DESIGNER
-                + " AND e.occurred_at >= ? AND e.occurred_at < ? GROUP BY report_day", period);
+                + " AND e.occurred_at >= ? AND e.occurred_at < ? GROUP BY report_day", period), period, "UNIQUE_USERS");
     }
 
     public long periodUniqueUsers(ReportPeriod period) {
@@ -45,19 +45,29 @@ public class ActivityReportRepository {
                 + "WHERE e.successful = true AND a.role IN " + CUSTOMER_DESIGNER
                 + " AND e.occurred_at >= ? AND e.occurred_at < ?", Long.class,
                 Timestamp.from(period.fromInclusive()), Timestamp.from(period.toExclusive()));
-        return count == null ? 0L : count;
+        String bucket = switch (period.frequency()) {
+            case "daily" -> "DAY";
+            case "weekly" -> "WEEK";
+            case "monthly" -> "MONTH";
+            default -> throw new IllegalArgumentException("Invalid period");
+        };
+        Long removed = jdbc.queryForObject("SELECT COALESCE(SUM(total), 0) "
+                + "FROM deleted_account_activity_totals "
+                + "WHERE metric = 'UNIQUE_USERS' AND period_type = ? AND period_start = ?",
+                Long.class, bucket, java.sql.Date.valueOf(period.startDate()));
+        return (count == null ? 0L : count) + (removed == null ? 0L : removed);
     }
 
     public Map<LocalDate, Long> newAccounts(ReportPeriod period) {
-        return daily("SELECT (a.created_at AT TIME ZONE 'Asia/Singapore')::date AS report_day, "
+        return withDeleted(daily("SELECT (a.created_at AT TIME ZONE 'Asia/Singapore')::date AS report_day, "
                 + "COUNT(*) AS total FROM user_accounts a WHERE a.role IN " + CUSTOMER_DESIGNER
-                + " AND a.created_at >= ? AND a.created_at < ? GROUP BY report_day", period);
+                + " AND a.created_at >= ? AND a.created_at < ? GROUP BY report_day", period), period, "NEW_ACCOUNTS");
     }
 
     public Map<LocalDate, Long> reviews(ReportPeriod period) {
-        return daily("SELECT (r.created_at AT TIME ZONE 'Asia/Singapore')::date AS report_day, "
+        return withDeleted(daily("SELECT (r.created_at AT TIME ZONE 'Asia/Singapore')::date AS report_day, "
                 + "COUNT(*) AS total FROM designer_reviews r "
-                + "WHERE r.created_at >= ? AND r.created_at < ? GROUP BY report_day", period);
+                + "WHERE r.created_at >= ? AND r.created_at < ? GROUP BY report_day", period), period, "REVIEWS");
     }
 
     public Map<LocalDate, Long> engagement(ReportPeriod period, String eventType) {
@@ -71,6 +81,20 @@ public class ActivityReportRepository {
         }, eventType,
                 Timestamp.from(period.fromInclusive()), Timestamp.from(period.toExclusive()));
         return result;
+    }
+
+    private Map<LocalDate, Long> withDeleted(Map<LocalDate, Long> live,
+            ReportPeriod period, String metric) {
+        jdbc.query("SELECT period_start, total FROM deleted_account_activity_totals "
+                + "WHERE period_type = 'DAY' AND metric = ? "
+                + "AND period_start >= ? AND period_start <= ?",
+                rs -> {
+                    live.merge(rs.getDate("period_start").toLocalDate(),
+                            rs.getLong("total"), Long::sum);
+                },
+                metric, java.sql.Date.valueOf(period.startDate()),
+                java.sql.Date.valueOf(period.endDate()));
+        return live;
     }
 
     private Map<LocalDate, Long> daily(String sql, ReportPeriod period) {
