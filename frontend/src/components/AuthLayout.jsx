@@ -26,6 +26,7 @@ export default function AuthLayout() {
   const account = session.status === 'authenticated' ? session.account : null
   const accountPath = accountAreaPath(account)
   const isCustomer = account?.role === 'CUSTOMER'
+  const isAdmin = account?.role === 'USER_ADMIN'
 
   async function onLogout() {
     if (loggingOut) return
@@ -66,6 +67,12 @@ export default function AuthLayout() {
               <Link to="/customer/favourites" className="header-link"
                 aria-current={pathname === '/customer/favourites' ? 'page' : undefined}>
                 My Favourites
+              </Link>
+            )}
+            {isAdmin && (
+              <Link to="/admin/accounts" className="header-link"
+                aria-current={pathname === '/admin/accounts' ? 'page' : undefined}>
+                Search accounts
               </Link>
             )}
             {accountPath ? <>
