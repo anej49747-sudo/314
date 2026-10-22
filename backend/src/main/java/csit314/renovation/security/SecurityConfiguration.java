@@ -112,6 +112,8 @@ public class SecurityConfiguration {
                         .hasRole("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/manager/me").hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("PLATFORM_MANAGER")
+                        .requestMatchers(HttpMethod.GET, "/api/manager/reports/activity")
+                        .hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/admin/me", "/api/admin/accounts",
                                 "/api/admin/accounts/*/login-history")
                         .hasRole("USER_ADMIN")

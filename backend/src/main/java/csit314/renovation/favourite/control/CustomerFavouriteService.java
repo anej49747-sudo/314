@@ -20,6 +20,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import csit314.renovation.report.repository.PlatformEngagementRecorder;
 
 @Service
 public class CustomerFavouriteService {
@@ -27,14 +28,16 @@ public class CustomerFavouriteService {
     private final CustomerProjectFavouriteRepository favourites;
     private final PublicProjectDetailsService publicProjects;
     private final DesignerCompanyRepository companies;
+    private final PlatformEngagementRecorder engagement;
 
     public CustomerFavouriteService(UserAccountRepository accounts,
             CustomerProjectFavouriteRepository favourites, PublicProjectDetailsService publicProjects,
-            DesignerCompanyRepository companies) {
+            DesignerCompanyRepository companies, PlatformEngagementRecorder engagement) {
         this.accounts = accounts;
         this.favourites = favourites;
         this.publicProjects = publicProjects;
         this.companies = companies;
+        this.engagement = engagement;
     }
 
     @Transactional(readOnly = true)
@@ -74,7 +77,7 @@ public class CustomerFavouriteService {
     public void save(Authentication authentication, Long projectId) {
         Long customerId = requireCustomer(authentication).getId();
         publicProjects.requirePublicProject(projectId);
-        favourites.saveIfAbsent(customerId, projectId);
+        if (favourites.saveIfAbsent(customerId, projectId) > 0) engagement.recordFavouriteAdded();
     }
 
     @Transactional
@@ -82,7 +85,7 @@ public class CustomerFavouriteService {
         Long customerId = requireCustomer(authentication).getId();
         // A customer can remove an old favourite even when its designer is now inactive.
         // Neither existence nor visibility is disclosed by this idempotent response.
-        favourites.removeIfPresent(customerId, projectId);
+        if (favourites.removeIfPresent(customerId, projectId) > 0) engagement.recordFavouriteRemoved();
     }
 
     private UserAccount requireCustomer(Authentication authentication) {
