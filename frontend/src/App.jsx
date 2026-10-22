@@ -22,6 +22,7 @@ import ProjectSearchPage from './pages/ProjectSearchPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
 import ProjectCategoriesPage from './pages/ProjectCategoriesPage.jsx'
+import ActivityReportsPage from './pages/ActivityReportsPage.jsx'
 
 const theme = {
   token: {
@@ -64,6 +65,7 @@ export default function App() {
             <Route path="admin/designers/new" element={<CreateDesignerPage />} />
             <Route path="admin/accounts" element={<AdminAccountSearchPage />} />
             <Route path="manager/categories" element={<ProjectCategoriesPage />} />
+            <Route path="manager/reports" element={<ActivityReportsPage />} />
             <Route path="*" element={<Navigate to="/register" replace />} />
           </Route>
         </Routes>
