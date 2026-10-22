@@ -107,6 +107,8 @@ public class UserAccount {
     public String getPasswordHash() { return passwordHash; }
     public UserRole getRole() { return role; }
     public boolean isActive() { return active; }
+
+    public void setActiveForModeration(boolean active) { this.active = active; }
     public boolean isPasswordChangeRequired() { return passwordChangeRequired; }
 
     public void replacePasswordHash(String newPasswordHash) {

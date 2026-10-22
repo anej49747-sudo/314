@@ -25,28 +25,35 @@ public class AuthenticationService {
     private final UserAccountRepository accounts;
     private final SecurityContextRepository contextRepository;
     private final SessionAuthenticationStrategy sessionStrategy;
+    private final LoginAttemptRecorder loginAttemptRecorder;
 
     public AuthenticationService(AuthenticationManager authenticationManager,
             UserAccountRepository accounts, SecurityContextRepository contextRepository,
-            SessionAuthenticationStrategy sessionStrategy) {
+            SessionAuthenticationStrategy sessionStrategy, LoginAttemptRecorder loginAttemptRecorder) {
         this.authenticationManager = authenticationManager;
         this.accounts = accounts;
         this.contextRepository = contextRepository;
         this.sessionStrategy = sessionStrategy;
+        this.loginAttemptRecorder = loginAttemptRecorder;
     }
 
     public AccountProfileResponse login(LoginRequest request, HttpServletRequest servletRequest,
             HttpServletResponse servletResponse) {
         String email = request.email().strip().toLowerCase(Locale.ROOT);
-        Authentication authentication = authenticationManager.authenticate(
-                UsernamePasswordAuthenticationToken.unauthenticated(email, request.password()));
-
-        UserAccount account = accounts.findByEmailIgnoreCase(authentication.getName())
-                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
-        // The account is checked again because only current, active accounts may start sessions.
-        if (!account.isActive()) {
-            throw new BadCredentialsException("Invalid credentials");
+        Authentication authentication;
+        UserAccount account;
+        try {
+            authentication = authenticationManager.authenticate(
+                    UsernamePasswordAuthenticationToken.unauthenticated(email, request.password()));
+            account = accounts.findByEmailIgnoreCase(authentication.getName())
+                    .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+            // The account is checked again because only current, active accounts may start sessions.
+            if (!account.isActive()) throw new BadCredentialsException("Invalid credentials");
+        } catch (org.springframework.security.core.AuthenticationException failure) {
+            loginAttemptRecorder.record(email, false);
+            throw failure;
         }
+        loginAttemptRecorder.record(email, true);
 
         // Custom JSON authentication does not automatically run Spring Security's session strategies.
         // Rotate session ID (fixation defense) and invalidate the pre-login CSRF token.

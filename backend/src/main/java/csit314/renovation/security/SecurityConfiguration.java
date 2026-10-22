@@ -112,7 +112,11 @@ public class SecurityConfiguration {
                         .hasRole("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/manager/me").hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("PLATFORM_MANAGER")
-                        .requestMatchers(HttpMethod.GET, "/api/auth/admin/me", "/api/admin/accounts")
+                        .requestMatchers(HttpMethod.GET, "/api/auth/admin/me", "/api/admin/accounts",
+                                "/api/admin/accounts/*/login-history")
+                        .hasRole("USER_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/admin/accounts/*/suspend",
+                                "/api/admin/accounts/*/reactivate")
                         .hasRole("USER_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/auth/designer/me", "/api/designer/area")
                         .hasRole("INTERIOR_DESIGNER")
@@ -136,6 +140,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/admin/designers").hasRole("USER_ADMIN")
                         .anyRequest().denyAll());
         http.addFilterBefore(new DesignerPasswordGateFilter(accounts), AuthorizationFilter.class);
+        http.addFilterBefore(new ActiveAccountSessionFilter(accounts), DesignerPasswordGateFilter.class);
         return http.build();
     }
 }
