@@ -77,6 +77,12 @@ export default function AuthLayout() {
               </Link>
             )}
             {isAdmin && (
+              <Link to="/admin/reports" className="header-link"
+                aria-current={pathname === '/admin/reports' ? 'page' : undefined}>
+                Designer reports
+              </Link>
+            )}
+            {isAdmin && (
               <Link to="/admin/accounts" className="header-link"
                 aria-current={pathname === '/admin/accounts' ? 'page' : undefined}>
                 Search accounts
