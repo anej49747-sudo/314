@@ -1,6 +1,7 @@
 package csit314.renovation.favourite.boundary;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -215,11 +216,14 @@ class CustomerFavouriteIntegrationTest {
     void inactiveCustomerCannotModifyFavouritesUsingAnExistingSession() throws Exception {
         UserAccount account = customer("customer@example.com");
         MockHttpSession session = login("customer@example.com");
-        jdbc.update("UPDATE user_accounts SET active = false WHERE id = ?", account.getId());
-        mvc.perform(get(url(project.getId())).session(session)).andExpect(status().isForbidden());
         JsonNode token = csrf(session);
+        jdbc.update("UPDATE user_accounts SET active = false WHERE id = ?", account.getId());
         mvc.perform(put(url(project.getId())).session(session)
                 .header(token.get("headerName").asText(), token.get("token").asText()))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
+        assertTrue(session.isInvalid());
+        mvc.perform(get(url(project.getId()))).andExpect(status().isUnauthorized());
+        assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM customer_project_favourites",
+                Integer.class));
     }
 }

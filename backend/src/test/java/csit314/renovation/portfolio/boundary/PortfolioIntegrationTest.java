@@ -1,6 +1,7 @@
 package csit314.renovation.portfolio.boundary;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -156,6 +157,7 @@ class PortfolioIntegrationTest {
     void suspendedDesignerCannotListPortfolioWithExistingSession() throws Exception {
         MockHttpSession session = login("first@example.com", PASSWORD);
         jdbc.update("UPDATE user_accounts SET active = false WHERE id = ?", first.getId());
-        mvc.perform(get(ENDPOINT).session(session)).andExpect(status().isForbidden());
+        mvc.perform(get(ENDPOINT).session(session)).andExpect(status().isUnauthorized());
+        assertTrue(session.isInvalid());
     }
 }
