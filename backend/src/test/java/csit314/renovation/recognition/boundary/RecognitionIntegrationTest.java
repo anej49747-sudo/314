@@ -19,6 +19,8 @@ import csit314.renovation.category.entity.ProjectCategory;
 import csit314.renovation.category.repository.ProjectCategoryRepository;
 import csit314.renovation.portfolio.entity.InteriorDesignProject;
 import csit314.renovation.portfolio.entity.ProjectStatus;
+import csit314.renovation.portfolio.entity.ProjectImage;
+import csit314.renovation.portfolio.repository.ProjectImageRepository;
 import csit314.renovation.portfolio.repository.InteriorDesignProjectRepository;
 import csit314.renovation.recognition.repository.DesignerAwardRepository;
 import csit314.renovation.recognition.repository.ProjectOfMonthRepository;
@@ -50,6 +52,7 @@ class RecognitionIntegrationTest {
     @Autowired UserAccountRepository accounts;
     @Autowired ProjectCategoryRepository categories;
     @Autowired InteriorDesignProjectRepository projects;
+    @Autowired ProjectImageRepository projectImages;
     @Autowired ProjectOfMonthRepository featured;
     @Autowired DesignerAwardRepository awards;
     @Autowired PasswordEncoder encoder;
@@ -139,6 +142,25 @@ class RecognitionIntegrationTest {
         mvc.perform(get("/api/recognitions")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.featuredProject").isEmpty());
         assertEquals(2, projects.count());
+    }
+
+    @Test
+    void publicFeatureIncludesFirstRealPhotoWithoutRequiringProjectDetailsVisit() throws Exception {
+        var project = projects.findById(projectId).orElseThrow();
+        var second = projectImages.saveAndFlush(new ProjectImage(project,
+                "homepage-demo-second.jpg", "image/jpeg", 120, 2));
+        var first = projectImages.saveAndFlush(new ProjectImage(project,
+                "homepage-demo-first.jpg", "image/jpeg", 120, 1));
+        SessionCsrf manager = login("recognition.manager@test.local", "ManagerPassword123!");
+        mvc.perform(put("/api/manager/recognitions/projects/{month}", currentMonth)
+                .session(manager.session()).header(manager.header(), manager.token())
+                .contentType(MediaType.APPLICATION_JSON).content("{\"projectId\":" + projectId + "}"))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/recognitions")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.featuredProject.coverUrl").value(
+                        "/api/projects/" + projectId + "/images/" + first.getId()));
+        assertEquals(2, projectImages.count());
+        assertTrue(second.getId() != null);
     }
 
     @Test

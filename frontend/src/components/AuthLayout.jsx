@@ -1,4 +1,5 @@
 import { Alert, Button } from 'antd'
+import { House } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { currentSession, logoutSession } from '../api/authentication.js'
@@ -48,8 +49,12 @@ export default function AuthLayout() {
     <div className="site">
       <header className="site-header">
         <div className="site-header-inner">
-          <span className="brand">Renovation Matching Platform</span>
+          <Link to="/" className="brand brand-link" aria-label="Lucky Dog home">
+            <span className="brand-house"><House size={21} strokeWidth={2} aria-hidden="true" /></span>
+            Lucky Dog
+          </Link>
           <nav className="site-nav" aria-label="Main navigation">
+            <Link to="/" className="header-link" aria-current={pathname === "/" ? "page" : undefined}>Home</Link>
             <Link to="/designers" className="header-link"
               aria-current={pathname.startsWith('/designers') ? 'page' : undefined}>
               Interior designers

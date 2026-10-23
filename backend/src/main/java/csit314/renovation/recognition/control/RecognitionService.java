@@ -6,6 +6,7 @@ import csit314.renovation.account.repository.UserAccountRepository;
 import csit314.renovation.authentication.control.AuthenticationService;
 import csit314.renovation.portfolio.entity.InteriorDesignProject;
 import csit314.renovation.portfolio.repository.InteriorDesignProjectRepository;
+import csit314.renovation.portfolio.repository.ProjectImageRepository;
 import csit314.renovation.recognition.dto.AwardResponse;
 import csit314.renovation.recognition.dto.FeaturedProjectResponse;
 import csit314.renovation.recognition.dto.MonthlyFeatureResponse;
@@ -32,15 +33,17 @@ public class RecognitionService {
     private static final ZoneId PLATFORM_ZONE = ZoneId.of("Asia/Singapore");
     private final AuthenticationService authenticationService;
     private final InteriorDesignProjectRepository projects;
+    private final ProjectImageRepository projectImages;
     private final UserAccountRepository accounts;
     private final ProjectOfMonthRepository featuredProjects;
     private final DesignerAwardRepository awards;
 
     public RecognitionService(AuthenticationService authenticationService,
-            InteriorDesignProjectRepository projects, UserAccountRepository accounts,
+            InteriorDesignProjectRepository projects, ProjectImageRepository projectImages, UserAccountRepository accounts,
             ProjectOfMonthRepository featuredProjects, DesignerAwardRepository awards) {
         this.authenticationService = authenticationService;
         this.projects = projects;
+        this.projectImages = projectImages;
         this.accounts = accounts;
         this.featuredProjects = featuredProjects;
         this.awards = awards;
@@ -72,7 +75,15 @@ public class RecognitionService {
         String currentMonth = YearMonth.from(LocalDate.now(PLATFORM_ZONE)).toString();
         FeaturedProjectResponse featured = featuredProjects.findById(currentMonth)
                 .filter(item -> publiclyVisible(item.getProject()))
-                .map(FeaturedProjectResponse::from).orElse(null);
+                .map(item -> {
+                    FeaturedProjectResponse response = FeaturedProjectResponse.from(item);
+                    var photos = projectImages.findByProject_IdInOrderByDisplayOrderAscIdAsc(
+                            List.of(item.getProject().getId()));
+                    if (photos.isEmpty()) return response;
+                    var first = photos.get(0);
+                    return response.withCover("/api/projects/" + item.getProject().getId()
+                            + "/images/" + first.getId());
+                }).orElse(null);
         return new PublicRecognitionResponse(featured,
                 awards.findByDesigner_RoleAndDesigner_ActiveTrueOrderByAwardedAtDescIdDesc(
                         UserRole.INTERIOR_DESIGNER).stream().map(AwardResponse::from).toList());
