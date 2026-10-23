@@ -71,6 +71,18 @@ export default function AuthLayout() {
               </Link>
             )}
             {isManager && (
+              <Link to="/manager/categories" className="header-link"
+                aria-current={pathname === '/manager/categories' ? 'page' : undefined}>
+                Project categories
+              </Link>
+            )}
+            {isManager && (
+              <Link to="/manager/projects" className="header-link"
+                aria-current={pathname === '/manager/projects' ? 'page' : undefined}>
+                Edit projects
+              </Link>
+            )}
+            {isManager && (
               <Link to="/manager/reports" className="header-link"
                 aria-current={pathname === '/manager/reports' ? 'page' : undefined}>
                 Activity reports

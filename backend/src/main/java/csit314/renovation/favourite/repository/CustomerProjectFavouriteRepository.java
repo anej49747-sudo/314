@@ -15,7 +15,7 @@ public interface CustomerProjectFavouriteRepository extends JpaRepository<Custom
     @Query("SELECT favourite FROM CustomerProjectFavourite favourite "
             + "JOIN FETCH favourite.project project "
             + "JOIN FETCH project.designer designer "
-            + "JOIN FETCH project.category "
+            + "LEFT JOIN FETCH project.category "
             + "WHERE favourite.customer.id = :customerId "
             + "AND designer.role = :role AND designer.active = true "
             + "ORDER BY favourite.createdAt DESC, favourite.id DESC")

@@ -11,6 +11,7 @@ import csit314.renovation.authentication.control.AuthenticationService;
 import csit314.renovation.category.dto.CreateCategoryRequest;
 import csit314.renovation.category.entity.ProjectCategory;
 import csit314.renovation.category.repository.ProjectCategoryRepository;
+import csit314.renovation.portfolio.repository.InteriorDesignProjectRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -22,6 +23,7 @@ import org.springframework.security.core.Authentication;
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
     @Mock ProjectCategoryRepository repository;
+    @Mock InteriorDesignProjectRepository projects;
     @Mock AuthenticationService authenticationService;
     @Mock Authentication authentication;
     @InjectMocks CategoryService service;
