@@ -1,4 +1,5 @@
 import { Alert, Button } from 'antd'
+import { House } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { currentSession, logoutSession } from '../api/authentication.js'
@@ -26,6 +27,8 @@ export default function AuthLayout() {
   const account = session.status === 'authenticated' ? session.account : null
   const accountPath = accountAreaPath(account)
   const isCustomer = account?.role === 'CUSTOMER'
+  const isAdmin = account?.role === 'USER_ADMIN'
+  const isManager = account?.role === 'PLATFORM_MANAGER'
 
   async function onLogout() {
     if (loggingOut) return
@@ -46,8 +49,12 @@ export default function AuthLayout() {
     <div className="site">
       <header className="site-header">
         <div className="site-header-inner">
-          <span className="brand">Renovation Matching Platform</span>
+          <Link to="/" className="brand brand-link" aria-label="Lucky Dog home">
+            <span className="brand-house"><House size={21} strokeWidth={2} aria-hidden="true" /></span>
+            Lucky Dog
+          </Link>
           <nav className="site-nav" aria-label="Main navigation">
+            <Link to="/" className="header-link" aria-current={pathname === "/" ? "page" : undefined}>Home</Link>
             <Link to="/designers" className="header-link"
               aria-current={pathname.startsWith('/designers') ? 'page' : undefined}>
               Interior designers
@@ -55,6 +62,10 @@ export default function AuthLayout() {
             <Link to="/projects" className="header-link"
               aria-current={pathname === '/projects' ? 'page' : undefined}>
               Explore projects
+            </Link>
+            <Link to="/articles" className="header-link"
+              aria-current={pathname.startsWith('/articles') ? 'page' : undefined}>
+              Articles
             </Link>
             {isCustomer && (
               <Link to="/customer/compare" className="header-link"
@@ -66,6 +77,48 @@ export default function AuthLayout() {
               <Link to="/customer/favourites" className="header-link"
                 aria-current={pathname === '/customer/favourites' ? 'page' : undefined}>
                 My Favourites
+              </Link>
+            )}
+            {isManager && (
+              <Link to="/manager/categories" className="header-link"
+                aria-current={pathname === '/manager/categories' ? 'page' : undefined}>
+                Project categories
+              </Link>
+            )}
+            {isManager && (
+              <Link to="/manager/projects" className="header-link"
+                aria-current={pathname === '/manager/projects' ? 'page' : undefined}>
+                Edit projects
+              </Link>
+            )}
+            {isManager && (
+              <Link to="/manager/articles" className="header-link"
+                aria-current={pathname === '/manager/articles' ? 'page' : undefined}>
+                Create Article
+              </Link>
+            )}
+            {isManager && (
+              <Link to="/manager/recognitions" className="header-link"
+                aria-current={pathname === "/manager/recognitions" ? "page" : undefined}>
+                Recognition
+              </Link>
+            )}
+            {isManager && (
+              <Link to="/manager/reports" className="header-link"
+                aria-current={pathname === '/manager/reports' ? 'page' : undefined}>
+                Activity reports
+              </Link>
+            )}
+            {isAdmin && (
+              <Link to="/admin/reports" className="header-link"
+                aria-current={pathname === '/admin/reports' ? 'page' : undefined}>
+                Designer reports
+              </Link>
+            )}
+            {isAdmin && (
+              <Link to="/admin/accounts" className="header-link"
+                aria-current={pathname === '/admin/accounts' ? 'page' : undefined}>
+                Search accounts
               </Link>
             )}
             {accountPath ? <>

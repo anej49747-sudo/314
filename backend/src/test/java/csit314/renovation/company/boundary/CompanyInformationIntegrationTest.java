@@ -1,6 +1,7 @@
 package csit314.renovation.company.boundary;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -211,11 +212,12 @@ class CompanyInformationIntegrationTest {
         MockHttpSession active = login("designer1@example.com", PASSWORD);
         CsrfSession activeToken = csrf(active);
         jdbc.update("UPDATE user_accounts SET active = false WHERE email = 'designer1@example.com'");
-        mvc.perform(get(ENDPOINT).session(active)).andExpect(status().isForbidden());
         mvc.perform(put(ENDPOINT).session(active).header(activeToken.header(), activeToken.token())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(details("Company", "", "")))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
+        assertTrue(active.isInvalid());
+        mvc.perform(get(ENDPOINT)).andExpect(status().isUnauthorized());
         assertEquals(0, companies.count());
     }
 }

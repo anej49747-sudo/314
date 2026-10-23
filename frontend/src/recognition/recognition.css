@@ -1,0 +1,25 @@
+.recognition-featured-badge { display:inline-flex; align-items:center; background:#fff5d6; color:#795608;
+  border:1px solid #ead28c; border-radius:999px; padding:5px 12px; font-size:.82rem; font-weight:700; }
+.recognition-awards { display:flex; flex-wrap:wrap; gap:7px; margin:10px 0; align-items:center; }
+.recognition-award-badge { display:inline-flex; gap:3px; border:1px solid #e8d6b7; color:#805c25;
+  background:#fff8ec; font-size:.79rem; line-height:1.4; border-radius:7px; padding:5px 9px;
+  font-weight:600; max-width:100%; overflow-wrap:anywhere; }
+.recognition-award-badge small {font-weight:400; color:#526581;}
+.recognition-overflow { color:#526581; font-size:.81rem; white-space:nowrap; font-weight:600; }
+.recognition-feature-row {display:flex; align-items:center; flex-wrap:wrap; gap:14px; margin:12px 0 22px;}
+.recognition-manager-page {max-width:1140px; margin:0 auto; padding:16px 0 56px;}
+.recognition-manager-page h1 {font-size:2rem; margin:6px 0 7px;}
+.recognition-manager-page .recognition-subtitle {color:#526581; margin-bottom:26px;}
+.recognition-manager-card {margin-bottom:22px;}
+.recognition-manager-row {display:flex; align-items:end; gap:14px; flex-wrap:wrap; margin-bottom:18px;}
+.recognition-manager-field {display:flex; flex-direction:column; gap:7px; min-width:200px;}
+.recognition-manager-field span {font-weight:600; color:#344054;}
+.recognition-manager-date {border:1px solid #d0d8e2; border-radius:8px; font:inherit; height:44px; padding:0 12px;}
+.recognition-manager-selected {background:#f6f8fb; border:1px solid #d0d8e2; border-radius:9px; padding:15px; margin-bottom:15px;}
+.recognition-manager-muted {color:#526581; font-size:.9rem;}
+.recognition-manager-actions {display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+.recognition-manager-awards-list {margin-top:24px;}
+.recognition-manager-award-item {display:flex;justify-content:space-between;align-items:center;gap:12px;
+  border-bottom:1px solid #e6ebf0; padding:11px 0; flex-wrap:wrap;}
+.recognition-manager-award-text {overflow-wrap:anywhere;}
+.recognition-manager-panel-label {font-weight:600;margin-bottom:8px;}

@@ -1,6 +1,7 @@
 package csit314.renovation.review.boundary;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -175,9 +176,11 @@ class DesignerReviewIntegrationTest {
     void inactiveCustomerCannotSubmitUsingPreviouslyEstablishedSession() throws Exception {
         UserAccount customer = customer("customer@example.com");
         MockHttpSession session = login("customer@example.com");
+        JsonNode token = csrf(session);
         jdbc.update("UPDATE user_accounts SET active = false WHERE id = ?", customer.getId());
-        mvc.perform(review(session, csrf(session), designerId, "{\"rating\":5}"))
-                .andExpect(status().isForbidden());
+        mvc.perform(review(session, token, designerId, "{\"rating\":5}"))
+                .andExpect(status().isUnauthorized());
+        assertTrue(session.isInvalid());
         assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM designer_reviews", Integer.class));
     }
 }

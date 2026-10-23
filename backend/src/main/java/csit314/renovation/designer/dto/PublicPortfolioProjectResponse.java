@@ -8,6 +8,6 @@ public record PublicPortfolioProjectResponse(Long id, String title, String categ
         ProjectStatus status) {
     public static PublicPortfolioProjectResponse from(InteriorDesignProject project) {
         return new PublicPortfolioProjectResponse(project.getId(), project.getTitle(),
-                project.getCategory().getName(), project.getStatus());
+                project.getCategoryDisplayName(), project.getStatus());
     }
 }

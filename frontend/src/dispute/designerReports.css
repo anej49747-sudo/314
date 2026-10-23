@@ -1,0 +1,22 @@
+.designer-report-profile-actions { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; }
+.designer-report-action { display: grid; gap: 8px; max-width: 360px; }
+.designer-report-action .designer-report-button { background: #b42318; border-color: #b42318; }
+.designer-report-action .designer-report-button:hover { background: #912018 !important; border-color: #912018 !important; }
+.designer-report-form-field { display: grid; gap: 8px; margin: 16px 0; }
+.designer-report-form-field label { font-weight: 650; font-size: 13px; }
+.designer-report-help { color: #526581; font-size: 12px; }
+.admin-designer-reports { width: min(100%, 1120px); }
+.admin-designer-reports .report-eyebrow { color: #365b82; text-transform: uppercase; letter-spacing: .09em; font-weight: 700; font-size: 12px; }
+.admin-designer-reports .report-heading { margin: 7px 0 10px; font-size: 34px; }
+.admin-designer-reports .report-intro { color: #526581; margin: 0 0 24px; }
+.admin-designer-reports .report-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+.admin-designer-reports .report-stat-value { font-size: 28px; font-weight: 750; color: #1d2939; }
+.admin-designer-reports .report-search-fields { display: flex; gap: 12px; align-items: end; margin-bottom: 22px; }
+.admin-designer-reports .report-search-fields > div { display: grid; gap: 6px; }
+.admin-designer-reports .report-search-fields label { font-size: 13px; font-weight: 650; }
+.admin-designer-reports .report-search-fields .report-search-text { flex: 1; }
+.admin-designer-reports .report-table-container { overflow-x: auto; }
+.admin-designer-reports .report-detail-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.admin-designer-reports .report-detail-field { margin: 13px 0; }
+.admin-designer-reports .report-detail-field strong { display: block; margin-bottom: 6px; }
+.admin-designer-reports .report-outcome-form { display: grid; gap: 13px; margin-top: 20px; padding: 18px; background: #f8fafc; border: 1px solid #d0d8e2; border-radius: 10px; }

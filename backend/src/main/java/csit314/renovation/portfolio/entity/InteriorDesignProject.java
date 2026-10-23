@@ -28,8 +28,8 @@ public class InteriorDesignProject {
     @JoinColumn(name = "designer_id", nullable = false)
     private UserAccount designer;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
     private ProjectCategory category;
 
     @Column(nullable = false, length = 160)
@@ -81,6 +81,8 @@ public class InteriorDesignProject {
     public Long getId() { return id; }
     public UserAccount getDesigner() { return designer; }
     public ProjectCategory getCategory() { return category; }
+    public Long getCategoryIdOrNull() { return category == null ? null : category.getId(); }
+    public String getCategoryDisplayName() { return category == null ? "Uncategorised" : category.getName(); }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
     public ProjectStatus getStatus() { return status; }

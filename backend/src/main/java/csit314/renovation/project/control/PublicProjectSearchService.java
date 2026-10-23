@@ -57,7 +57,7 @@ public class PublicProjectSearchService {
                     || company.getCompanyName().isBlank()
                     ? designer.getDisplayName() : company.getCompanyName();
             return new PublicProjectSearchResponse(project.getId(), project.getTitle(),
-                    project.getDescription(), project.getCategory().getName(), project.getStatus(),
+                    project.getDescription(), project.getCategoryDisplayName(), project.getStatus(),
                     new PublicProjectDesignerResponse(designer.getId(), designerName,
                             company == null ? null : company.getAddress()));
         }).toList();

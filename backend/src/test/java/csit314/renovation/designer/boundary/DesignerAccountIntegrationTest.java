@@ -174,7 +174,8 @@ class DesignerAccountIntegrationTest {
         mvc.perform(post("/api/admin/designers").session(admin)
                         .header(fresh.headerName(), fresh.token())
                         .contentType(MediaType.APPLICATION_JSON).content(validRequest()))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
+        assertTrue(admin.isInvalid());
         assertEquals(2, accounts.count());
     }
 }

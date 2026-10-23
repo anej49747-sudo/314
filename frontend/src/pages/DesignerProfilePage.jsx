@@ -2,7 +2,10 @@ import { Alert, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getDesignerProfile } from '../api/designerProfile.js'
+import { usePublicRecognitions } from '../recognition/usePublicRecognitions.js'
+import { DesignerAwardBadges, FeaturedProjectBadge } from '../components/RecognitionBadges.jsx'
 import DesignerReviewAction from '../components/DesignerReviewAction.jsx'
+import DesignerReportAction from '../components/DesignerReportAction.jsx'
 import DesignerReviewsSection from '../components/DesignerReviewsSection.jsx'
 import { directoryAddress } from '../designer/designerDirectoryRules.js'
 import {
@@ -16,6 +19,7 @@ import { portfolioStatusLabel } from '../designer/portfolioRules.js'
 export default function DesignerProfilePage() {
   const { designerId } = useParams()
   const [profile, setProfile] = useState(null)
+  const { awards, featuredProject } = usePublicRecognitions()
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [error, setError] = useState('')
@@ -78,9 +82,13 @@ export default function DesignerProfilePage() {
             <div>
               <h1 id="public-profile-title">{profile.name}</h1>
               <p className="public-profile-lede">Learn about this designer and explore the projects in their portfolio.</p>
+              <DesignerAwardBadges awards={awards} designerId={profile.id} />
             </div>
-            <DesignerReviewAction designerId={profile.id} designerName={profile.name}
-              onSubmitted={reviewSubmitted} />
+            <div className="designer-report-profile-actions">
+              <DesignerReviewAction designerId={profile.id} designerName={profile.name}
+                onSubmitted={reviewSubmitted} />
+              <DesignerReportAction designerId={profile.id} designerName={profile.name} />
+            </div>
           </div>
           {reviewSuccess && <Alert className="designer-review-success" role="status" type="success"
             showIcon message="Review submitted" description={reviewSuccess} />}
@@ -116,6 +124,7 @@ export default function DesignerProfilePage() {
                         : 'public-profile-status'}>
                         {portfolioStatusLabel(project.status)}
                       </span>
+                      <FeaturedProjectBadge featuredProject={featuredProject} projectId={project.id} />
                       <h3>{project.title}</h3>
                       <p className="public-profile-project-category">{project.categoryName}</p>
                       <Link className="public-profile-project-link"

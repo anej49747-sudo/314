@@ -16,8 +16,8 @@ public record PortfolioProjectResponse(Long id, String title, String description
     public static PortfolioProjectResponse from(InteriorDesignProject project, List<ProjectImageResponse> images,
             long viewCount, long favouriteCount) {
         return new PortfolioProjectResponse(project.getId(), project.getTitle(),
-                project.getDescription(), project.getCategory().getId(),
-                project.getCategory().getName(), project.getStatus(), project.getCreatedAt(), images,
+                project.getDescription(), project.getCategoryIdOrNull(),
+                project.getCategoryDisplayName(), project.getStatus(), project.getCreatedAt(), images,
                 viewCount, favouriteCount);
     }
 }

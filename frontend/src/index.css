@@ -172,3 +172,13 @@ a:focus-visible { outline: 3px solid #365b82; outline-offset: 3px; border-radius
 .portfolio-form-actions { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
 .portfolio-project-cover { width: 100%; max-height: 210px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
 @media (max-width: 520px) { .portfolio-form-actions { flex-direction: column-reverse; } .portfolio-form-actions .ant-btn { width: 100%; } }
+
+/* Lucky Dog public branding, shared on every route. */
+.brand-link { display: inline-flex; align-items: center; gap: 10px; color: #1d2939; text-decoration: none; white-space: nowrap; }
+.brand-link:hover { color: #365b82; }
+.brand-house { display: inline-grid; place-items: center; flex-shrink: 0; width: 39px; height: 39px; border-radius: 10px; background: #eaf1f9; color: #365b82; }
+.site-header { position: relative; z-index: 5; }
+.site-nav { row-gap: 10px; }
+.site-nav .site-register-link { display: inline-flex; align-items: center; min-height: 40px; background: #365b82; border-radius: 8px; padding: 8px 14px; color: #fff; }
+.site-nav .site-register-link:hover { background: #2a486b; color: white; }
+.site > .auth-main:has(.lucky-homepage) { display: block; padding: 0; }

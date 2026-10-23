@@ -36,6 +36,7 @@ class AuthenticationServiceTest {
     @Mock UserAccountRepository accounts;
     @Mock SecurityContextRepository contexts;
     @Mock SessionAuthenticationStrategy sessions;
+    @Mock LoginAttemptRecorder recorder;
     @Mock HttpServletRequest request;
     @Mock HttpServletResponse response;
     @InjectMocks AuthenticationService service;
@@ -58,6 +59,7 @@ class AuthenticationServiceTest {
 
         assertEquals("jane@example.com", result.email());
         assertEquals("CUSTOMER", result.role());
+        verify(recorder).record("jane@example.com", true);
         verify(sessions).onAuthentication(authenticated, request, response);
         verify(contexts).saveContext(any(SecurityContext.class), any(HttpServletRequest.class),
                 any(HttpServletResponse.class));
@@ -69,6 +71,7 @@ class AuthenticationServiceTest {
         when(manager.authenticate(any(Authentication.class))).thenThrow(new BadCredentialsException("Invalid"));
         assertThrows(BadCredentialsException.class, () -> service.login(
                 new LoginRequest("jane@example.com", "bad"), request, response));
+        verify(recorder).record("jane@example.com", false);
         org.mockito.Mockito.verifyNoInteractions(contexts, sessions);
     }
 }

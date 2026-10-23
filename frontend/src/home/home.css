@@ -1,0 +1,113 @@
+/* Lucky Dog public homepage — desktop-first, matches the approved light-blue mockup. */
+.lucky-homepage { color: #1d2939; background: #f8fafc; overflow-x: clip; }
+.lucky-homepage * { min-width: 0; }
+.lucky-container { width: min(100%, 1120px); margin-inline: auto; padding-inline: 24px; }
+.lucky-homepage h1, .lucky-homepage h2, .lucky-homepage h3 { margin-top: 0; letter-spacing: -.032em; line-height: 1.24; }
+.lucky-homepage a { text-decoration: none; }
+.lucky-homepage a:hover { color: #294b72; }
+.lucky-eyebrow { margin: 0 0 14px; color: #365b82; text-transform: uppercase; font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+.lucky-hero { background: linear-gradient(110deg,#f8fafc 0%,#f5f9fd 52%,#edf4fb 100%); border-bottom: 1px solid #e4ebf2; }
+.lucky-hero-grid { display: grid; grid-template-columns: .92fr 1.08fr; align-items: center; gap: 54px; min-height: 540px; padding-block: 55px 65px; }
+.lucky-hero h1 { font-size: clamp(36px,4vw,53px); letter-spacing: -.05em; font-weight: 790; line-height: 1.13; margin-bottom: 21px; }
+.lucky-hero-copy { font-size: 16px; color: #526581; line-height: 1.75; margin: 0 0 26px; max-width: 455px; }
+.lucky-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 11px; margin-bottom: 33px; }
+.lucky-btn { display: inline-flex; justify-content: center; align-items: center; gap: 9px; min-height: 45px; padding: 12px 18px; border: 1px solid #b9c8d8; border-radius: 8px; font-size: 14px; font-weight: 750; transition: background .15s, border .15s; }
+.lucky-btn-primary { background: #365b82; color: #fff; border-color: #365b82; }
+.lucky-btn-primary:hover { background: #2a486b; color: #fff !important; }
+.lucky-btn-outline { background: #fff; color: #365b82; }
+.lucky-btn-outline:hover { background: #edf4fb; }
+.lucky-hero-notes { border-top: 1px solid #d8e2ec; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding-top: 18px; color: #526581; font-size: 12px; font-weight: 650; }
+.lucky-hero-notes span { display: inline-flex; align-items: center; gap: 6px; }
+.lucky-hero-notes svg { color: #067647; }
+.lucky-hero-media { position: relative; padding: 0 0 21px 26px; height: 415px; }
+.lucky-hero-main-photo { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 14px; box-shadow: 0 24px 55px #1f3c591f; }
+.lucky-hero-inset-photo { position: absolute; left: 0; bottom: -3px; width: 180px; height: 139px; object-fit: cover; border: 5px solid #fff; border-radius: 12px; box-shadow: 0 13px 25px #1d29392b; }
+.lucky-hero-media-tag { position: absolute; top: 18px; right: -11px; padding: 10px 14px; background: #fff; border: 1px solid #e6edf3; border-radius: 9px; font-size: 12px; font-weight: 700; box-shadow: 0 10px 24px #1d29391c; }
+.lucky-hero-media-tag span { color: #4fa28b; margin-right: 5px; }
+.lucky-how { background: #fff; border-bottom: 1px solid #e4e9ef; }
+.lucky-how-inner { display: flex; align-items: center; justify-content: space-between; gap: 25px; padding-block: 35px; }
+.lucky-how h2 { font-size: 19px; max-width: 175px; margin: 0; flex: 0 0 200px; }
+.lucky-how-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px; flex: 1; }
+.lucky-how-steps > div { display: flex; align-items: flex-start; gap: 11px; }
+.lucky-how-steps p { margin: 0; color: #526581; line-height: 1.55; font-size: 12px; }
+.lucky-how-steps strong { color: #1d2939; font-size: 13px; }
+.lucky-how-icon { display: grid; place-items: center; flex: 0 0 39px; width: 39px; height: 39px; border-radius: 9px; background: #eef3f8; color: #365b82; }
+.lucky-loading { display: flex; gap: 11px; justify-content: center; align-items: center; padding: 15px; font-size: 14px; color: #526581; }
+.lucky-data-error { padding-top: 24px; }
+.lucky-section { padding-block: 75px; }
+.lucky-section-white { background: #fff; }
+.lucky-section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; margin-bottom: 27px; }
+.lucky-section-head h2 { font-size: 28px; margin: 0 0 8px; }
+.lucky-section-head p:not(.lucky-eyebrow) { color: #526581; font-size: 14px; line-height: 1.65; margin: 0; }
+.lucky-section-link, .lucky-card-link { font-size: 13px; font-weight: 750; display: inline-flex; align-items: center; gap: 6px; }
+.lucky-section-link { padding-bottom: 4px; white-space: nowrap; }
+.lucky-featured-card { display: grid; grid-template-columns: 1.14fr .86fr; background: #fff; border: 1px solid #d0d8e2; border-radius: 14px; overflow: hidden; box-shadow: 0 12px 32px #2b4f740b; }
+.lucky-featured-media { position: relative; min-height: 340px; background: #e9f0f8; }
+.lucky-featured-media > img { display: block; position: absolute; width: 100%; height: 100%; object-fit: cover; inset: 0; }
+.lucky-media-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; color: #526581; }
+.lucky-media-placeholder small { font-size: 12px; }
+.lucky-featured-pill { position: absolute; top: 20px; left: 20px; padding: 7px 11px; border-radius: 30px; border: 1px solid #d2e1f2; background: #fff; color: #365b82; font-weight: 800; font-size: 11px; }
+.lucky-featured-info { padding: 37px 37px 40px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+.lucky-featured-info .lucky-eyebrow { margin-bottom: 10px; }
+.lucky-featured-info h3 { font-size: 26px; margin: 0 0 13px; overflow-wrap: anywhere; }
+.lucky-featured-info > p:not(.lucky-eyebrow) { color: #526581; font-size: 14px; line-height: 1.68; margin: 0 0 15px; overflow-wrap: anywhere; }
+.lucky-featured-info > p.lucky-featured-by { font-size: 12px; margin-bottom: 19px; }
+.lucky-feature-tags { display: flex; gap: 9px; flex-wrap: wrap; margin: 3px 0 16px; }
+.lucky-feature-tags span { color: #475d78; background: #f1f5f9; font-size: 12px; border-radius: 6px; padding: 6px 9px; }
+.lucky-empty-feature, .lucky-empty-cards { background: #fff; border: 1px dashed #b7c7d7; border-radius: 12px; padding: 35px; }
+.lucky-empty-feature { display: flex; align-items: center; gap: 23px; }
+.lucky-empty-icon { display: grid; place-items: center; background: #eef3f8; width: 77px; height: 77px; flex: none; border-radius: 12px; color: #365b82; }
+.lucky-empty-feature h3 { font-size: 18px; margin: 0 0 6px; }
+.lucky-empty-feature p, .lucky-empty-cards p { color: #526581; font-size: 14px; line-height: 1.6; margin: 0 0 11px; }
+.lucky-empty-feature a, .lucky-empty-cards a { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 700; }
+.lucky-empty-cards { display: flex; align-items: center; flex-direction: column; text-align: center; gap: 5px; color: #365b82; }
+.lucky-designer-grid, .lucky-article-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
+.lucky-designer-card, .lucky-article-card { background: #fff; border: 1px solid #d0d8e2; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+.lucky-designer-card { min-height: 240px; padding: 22px; align-items: flex-start; }
+.lucky-designer-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.lucky-designer-avatar { display: grid; place-items: center; flex: 0 0 48px; width: 48px; height: 48px; background: #edf3fa; border-radius: 10px; color: #365b82; font-size: 19px; font-weight: 800; }
+.lucky-designer-heading h3 { font-size: 17px; margin: 0 0 3px; overflow-wrap: anywhere; }
+.lucky-designer-heading span:not(.lucky-designer-avatar) { color: #526581; font-size: 12px; }
+.lucky-designer-description { display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; color: #526581; font-size: 13px; line-height: 1.65; margin: 0 0 14px; overflow-wrap: anywhere; }
+.lucky-designer-card .recognition-awards { margin: 0 0 16px; }
+.lucky-designer-card .lucky-card-link { margin-top: auto; padding-top: 10px; }
+.lucky-article-card { min-height: 355px; }
+.lucky-article-photo { display: flex; align-items: center; justify-content: center; height: 172px; background: #eaf1f9; color: #365b82; }
+.lucky-article-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.lucky-article-body { display: flex; flex-direction: column; flex: 1; padding: 18px 20px 21px; align-items: flex-start; }
+.lucky-article-body > span { font-size: 11px; font-weight: 700; color: #75869a; margin-bottom: 9px; }
+.lucky-article-body h3 { font-size: 17px; margin: 0 0 10px; overflow-wrap: anywhere; }
+.lucky-article-body p { font-size: 13px; color: #526581; line-height: 1.65; margin: 0 0 18px; overflow-wrap: anywhere; }
+.lucky-article-body .lucky-card-link { margin-top: auto; }
+.lucky-final-cta { background: #edf4fa; border-block: 1px solid #dce7f1; }
+.lucky-final-inner { display: flex; justify-content: space-between; align-items: center; gap: 25px; padding-block: 53px; }
+.lucky-final-inner h2 { font-size: 25px; margin: 0 0 10px; }
+.lucky-final-inner p { font-size: 14px; color: #526581; margin: 0; }
+.lucky-final-inner .lucky-btn { flex: none; }
+.lucky-footer { background: #fff; }
+.lucky-footer-inner { display: flex; justify-content: space-between; gap: 20px; padding-block: 26px; color: #526581; font-size: 12px; }
+.lucky-footer-inner strong { color: #1d2939; }
+@media (max-width: 960px) {
+  .lucky-hero-grid { gap: 28px; }
+  .lucky-hero-media { height: 340px; }
+  .lucky-designer-grid, .lucky-article-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 740px) {
+  .lucky-hero-grid { grid-template-columns: 1fr; }
+  .lucky-hero-media { max-width: 600px; width: 100%; }
+  .lucky-how-inner, .lucky-final-inner { flex-direction: column; align-items: flex-start; }
+  .lucky-how h2 { flex: none; max-width: none; }
+  .lucky-featured-card { grid-template-columns: 1fr; }
+  .lucky-featured-media { min-height: 270px; }
+  .lucky-section-head { align-items: flex-start; flex-wrap: wrap; }
+}
+@media (max-width: 520px) {
+  .lucky-container { padding-inline: 18px; }
+  .lucky-section { padding-block: 46px; }
+  .lucky-hero-grid { padding-block: 42px 54px; }
+  .lucky-hero-media-tag { right: 0; }
+  .lucky-how-steps, .lucky-designer-grid, .lucky-article-grid { grid-template-columns: 1fr; }
+  .lucky-how-steps { width: 100%; }
+  .lucky-featured-info { padding: 28px 22px; }
+  .lucky-footer-inner { flex-direction: column; }
+}

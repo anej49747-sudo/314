@@ -2,6 +2,8 @@ import { Alert, Button, Modal, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { getPublicProject } from '../api/publicProjects.js'
+import { usePublicRecognitions } from '../recognition/usePublicRecognitions.js'
+import { FeaturedProjectBadge } from '../components/RecognitionBadges.jsx'
 import { getFavouriteStatus, removeFavourite, saveFavourite } from '../api/favourites.js'
 import { designerProfilePath } from '../designer/designerDirectoryRules.js'
 import {
@@ -21,6 +23,7 @@ export default function PublicProjectDetailsPage() {
   const navigate = useNavigate()
   const back = projectBackLink(state)
   const [project, setProject] = useState(null)
+  const { featuredProject } = usePublicRecognitions()
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [error, setError] = useState('')
@@ -142,6 +145,7 @@ export default function PublicProjectDetailsPage() {
         <>
           <p className="public-profile-eyebrow">Interior design project</p>
           <h1 id="public-project-title">{project.title}</h1>
+          <div className="recognition-feature-row"><FeaturedProjectBadge featuredProject={featuredProject} projectId={project.id} /></div>
           <p className="public-project-lede">Explore this project's design approach and the work involved.</p>
           <div className="public-project-tags" aria-label="Project category and status">
             <span className={project.status === 'COMPLETED'

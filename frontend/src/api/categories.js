@@ -15,3 +15,9 @@ export async function createCategory(values) {
   const { data } = await client.post('/categories', values, { headers })
   return data
 }
+
+export async function deleteCategory(categoryId) {
+  const headers = await csrfHeaders()
+  const { data } = await client.delete(`/categories/${encodeURIComponent(categoryId)}`, { headers })
+  return data
+}
