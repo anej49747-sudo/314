@@ -25,6 +25,9 @@ import RegisterPage from './pages/RegisterPage.jsx'
 import ProjectCategoriesPage from './pages/ProjectCategoriesPage.jsx'
 import ActivityReportsPage from './pages/ActivityReportsPage.jsx'
 import ManagerProjectsPage from './pages/ManagerProjectsPage.jsx'
+import ArticlesPage from './pages/ArticlesPage.jsx'
+import ArticleDetailsPage from './pages/ArticleDetailsPage.jsx'
+import ManagerArticlesPage from './pages/ManagerArticlesPage.jsx'
 
 const theme = {
   token: {
@@ -53,6 +56,8 @@ export default function App() {
             <Route path="designers/:designerId" element={<DesignerProfilePage />} />
             <Route path="projects" element={<ProjectSearchPage />} />
             <Route path="projects/:projectId" element={<PublicProjectDetailsPage />} />
+            <Route path="articles" element={<ArticlesPage />} />
+            <Route path="articles/:articleId" element={<ArticleDetailsPage />} />
             <Route path="customer" element={<CustomerPage />} />
             <Route path="customer/account" element={<CustomerAccountSettingsPage />} />
             <Route path="customer/favourites" element={<CustomerFavouritesPage />} />
@@ -69,6 +74,7 @@ export default function App() {
             <Route path="admin/reports" element={<AdminDesignerReportsPage />} />
             <Route path="manager/categories" element={<ProjectCategoriesPage />} />
             <Route path="manager/projects" element={<ManagerProjectsPage />} />
+            <Route path="manager/articles" element={<ManagerArticlesPage />} />
             <Route path="manager/reports" element={<ActivityReportsPage />} />
             <Route path="*" element={<Navigate to="/register" replace />} />
           </Route>

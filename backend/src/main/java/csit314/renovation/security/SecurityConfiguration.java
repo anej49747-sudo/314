@@ -91,6 +91,11 @@ public class SecurityConfiguration {
                                 "/api/designers/{designerId}", "/api/projects", "/api/projects/{projectId}",
                                 "/api/projects/*/images/*")
                         .permitAll()
+                        // #8 public article reading; cover bytes use the same opaque image store.
+                        .requestMatchers(HttpMethod.GET, "/api/articles", "/api/articles/*",
+                                "/api/articles/*/cover").permitAll()
+                        // #36 only Platform Managers can publish articles (session + CSRF).
+                        .requestMatchers(HttpMethod.POST, "/api/manager/articles").hasRole("PLATFORM_MANAGER")
                         // Story #52: the saved-project list is private to the signed-in customer.
                         .requestMatchers(HttpMethod.GET, "/api/customer/account")
                         .hasRole("CUSTOMER")
