@@ -93,6 +93,12 @@ export default function AuthLayout() {
               </Link>
             )}
             {isManager && (
+              <Link to="/manager/recognitions" className="header-link"
+                aria-current={pathname === "/manager/recognitions" ? "page" : undefined}>
+                Recognition
+              </Link>
+            )}
+            {isManager && (
               <Link to="/manager/reports" className="header-link"
                 aria-current={pathname === '/manager/reports' ? 'page' : undefined}>
                 Activity reports

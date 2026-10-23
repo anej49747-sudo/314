@@ -91,6 +91,9 @@ public class SecurityConfiguration {
                                 "/api/designers/{designerId}", "/api/projects", "/api/projects/{projectId}",
                                 "/api/projects/*/images/*")
                         .permitAll()
+                        // #34/#35 public recognitions and manager-only selection/grant operations.
+                        .requestMatchers(HttpMethod.GET, "/api/recognitions").permitAll()
+                        .requestMatchers("/api/manager/recognitions/**").hasRole("PLATFORM_MANAGER")
                         // #8 public article reading; cover bytes use the same opaque image store.
                         .requestMatchers(HttpMethod.GET, "/api/articles", "/api/articles/*",
                                 "/api/articles/*/cover").permitAll()

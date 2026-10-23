@@ -6,6 +6,8 @@ import { listCategories } from '../api/categories.js'
 import { currentSession } from '../api/authentication.js'
 import { getSavedProjects } from '../api/favourites.js'
 import { getPublicProjects } from '../api/publicProjects.js'
+import { usePublicRecognitions } from '../recognition/usePublicRecognitions.js'
+import { FeaturedProjectBadge } from '../components/RecognitionBadges.jsx'
 import { projectStatusLabel } from '../project/projectDetailsRules.js'
 import {
   normalizeProjectQuery,
@@ -27,6 +29,7 @@ export default function ProjectSearchPage() {
   const [categoryRevision, setCategoryRevision] = useState(0)
   const [revision, setRevision] = useState(0)
   const [projects, setProjects] = useState([])
+  const { featuredProject } = usePublicRecognitions()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [savedIds, setSavedIds] = useState(new Set())
@@ -234,6 +237,7 @@ export default function ProjectSearchPage() {
                     </span>
                   )}
                 </div>
+                <FeaturedProjectBadge featuredProject={featuredProject} projectId={project.id} />
                 <h3>{project.title}</h3>
                 <p className="project-search-description">{projectSearchDescription(project.description)}</p>
                 <div className="project-search-card-footer">
