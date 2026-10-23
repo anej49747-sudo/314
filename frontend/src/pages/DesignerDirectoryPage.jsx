@@ -2,6 +2,8 @@ import { Alert, Button, Empty, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { getDesignerDirectory } from '../api/designerDirectory.js'
+import { usePublicRecognitions } from '../recognition/usePublicRecognitions.js'
+import { DesignerAwardBadges } from '../components/RecognitionBadges.jsx'
 import { currentSession } from '../api/authentication.js'
 import { MAX_COMPARE_DESIGNERS, normalizeComparisonIds, toggleComparisonId } from '../designer/compareDesignersRules.js'
 import '../designer/compareDesigners.css'
@@ -11,6 +13,7 @@ export default function DesignerDirectoryPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const [designers, setDesigners] = useState([])
+  const { awards } = usePublicRecognitions()
   const [customer, setCustomer] = useState(false)
   const [selectedIds, setSelectedIds] = useState(() => normalizeComparisonIds(location.state?.designerIds))
   const [selectionMessage, setSelectionMessage] = useState('')
@@ -100,6 +103,7 @@ export default function DesignerDirectoryPage() {
           {designers.map((designer) => (
             <article className="designer-directory-card" key={designer.id}>
               <h3>{designer.name}</h3>
+              <DesignerAwardBadges awards={awards} designerId={designer.id} compact />
               {directoryAddress(designer.address) && (
                 <p className="designer-directory-address">{directoryAddress(designer.address)}</p>
               )}

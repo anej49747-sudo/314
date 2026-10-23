@@ -28,6 +28,7 @@ import ManagerProjectsPage from './pages/ManagerProjectsPage.jsx'
 import ArticlesPage from './pages/ArticlesPage.jsx'
 import ArticleDetailsPage from './pages/ArticleDetailsPage.jsx'
 import ManagerArticlesPage from './pages/ManagerArticlesPage.jsx'
+import ManagerRecognitionsPage from './pages/ManagerRecognitionsPage.jsx'
 
 const theme = {
   token: {
@@ -75,6 +76,7 @@ export default function App() {
             <Route path="manager/categories" element={<ProjectCategoriesPage />} />
             <Route path="manager/projects" element={<ManagerProjectsPage />} />
             <Route path="manager/articles" element={<ManagerArticlesPage />} />
+            <Route path="manager/recognitions" element={<ManagerRecognitionsPage />} />
             <Route path="manager/reports" element={<ActivityReportsPage />} />
             <Route path="*" element={<Navigate to="/register" replace />} />
           </Route>
