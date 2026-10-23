@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InteriorDesignProjectRepository extends JpaRepository<InteriorDesignProject, Long> {
+    long countByCategory_Id(Long categoryId);
+
     // Public discovery: only projects of active, admin-provisioned designers.
     @EntityGraph(attributePaths = {"designer", "category"})
     List<InteriorDesignProject> findByDesigner_RoleAndDesigner_ActiveTrueOrderByCreatedAtDescIdDesc(

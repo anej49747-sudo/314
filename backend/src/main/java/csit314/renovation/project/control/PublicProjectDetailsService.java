@@ -38,7 +38,7 @@ public class PublicProjectDetailsService {
                 ? designer.getDisplayName() : company.getCompanyName();
 
         return new PublicProjectDetailsResponse(project.getId(), project.getTitle(),
-                project.getDescription(), project.getCategory().getName(), project.getStatus(),
+                project.getDescription(), project.getCategoryDisplayName(), project.getStatus(),
                 new PublicProjectDesignerResponse(designer.getId(), name,
                         company == null ? null : company.getAddress()),
                 images.findByProject_IdInOrderByDisplayOrderAscIdAsc(java.util.List.of(projectId)).stream()
