@@ -1,6 +1,7 @@
 import { ConfigProvider } from 'antd'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import AuthLayout from './components/AuthLayout.jsx'
+import HomePage from './pages/HomePage.jsx'
 import AddPortfolioProjectPage from './pages/AddPortfolioProjectPage.jsx'
 import CustomerPage from './pages/CustomerPage.jsx'
 import CustomerAccountSettingsPage from './pages/CustomerAccountSettingsPage.jsx'
@@ -50,7 +51,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<AuthLayout />}>
-            <Route index element={<Navigate to="/register" replace />} />
+            <Route index element={<HomePage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="designers" element={<DesignerDirectoryPage />} />
@@ -78,7 +79,7 @@ export default function App() {
             <Route path="manager/articles" element={<ManagerArticlesPage />} />
             <Route path="manager/recognitions" element={<ManagerRecognitionsPage />} />
             <Route path="manager/reports" element={<ActivityReportsPage />} />
-            <Route path="*" element={<Navigate to="/register" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
       </BrowserRouter>
