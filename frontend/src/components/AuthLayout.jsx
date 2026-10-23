@@ -58,6 +58,10 @@ export default function AuthLayout() {
               aria-current={pathname === '/projects' ? 'page' : undefined}>
               Explore projects
             </Link>
+            <Link to="/articles" className="header-link"
+              aria-current={pathname.startsWith('/articles') ? 'page' : undefined}>
+              Articles
+            </Link>
             {isCustomer && (
               <Link to="/customer/compare" className="header-link"
                 aria-current={pathname === '/customer/compare' ? 'page' : undefined}>
@@ -80,6 +84,12 @@ export default function AuthLayout() {
               <Link to="/manager/projects" className="header-link"
                 aria-current={pathname === '/manager/projects' ? 'page' : undefined}>
                 Edit projects
+              </Link>
+            )}
+            {isManager && (
+              <Link to="/manager/articles" className="header-link"
+                aria-current={pathname === '/manager/articles' ? 'page' : undefined}>
+                Create Article
               </Link>
             )}
             {isManager && (
