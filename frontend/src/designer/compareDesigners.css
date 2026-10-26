@@ -36,7 +36,7 @@
 .compare-project-title { font-size: 14px; font-weight: 600; line-height: 1.4; text-decoration: none; overflow-wrap: anywhere; }
 .compare-project-title:hover, .compare-portfolio-footer a:hover { text-decoration: underline; }
 .compare-project-status { padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; line-height: 1.4; }
-.compare-project-status-completed { color: #067647; background: #eaf6ef; }
+.compare-project-status-completed { color: #15803d; background: #dcfce7; }
 .compare-project-status-current { color: #365b82; background: #eaf1fa; }
 .compare-portfolio-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px 10px; padding-top: 5px; font-size: 12px; }
 .compare-portfolio-footer span { color: #526581; }

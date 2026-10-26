@@ -4,6 +4,7 @@ import csit314.renovation.authentication.control.AuthenticationService;
 import csit314.renovation.authentication.control.DesignerPasswordService;
 import csit314.renovation.authentication.dto.AccountProfileResponse;
 import csit314.renovation.authentication.dto.ChangePasswordRequest;
+import csit314.renovation.authentication.dto.UpdateOwnPasswordRequest;
 import csit314.renovation.authentication.dto.LoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -64,6 +65,13 @@ public class AuthenticationController {
     public void changeDesignerPassword(@Valid @RequestBody ChangePasswordRequest request,
             Authentication authentication) {
         designerPasswordService.changePassword(request, authentication);
+    }
+
+    @PostMapping({"/auth/update-own-password", "/auth/account/change-password"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateOwnPassword(@Valid @RequestBody UpdateOwnPasswordRequest request,
+            Authentication authentication) {
+        designerPasswordService.updateOwnPassword(request, authentication);
     }
 
     @GetMapping("/auth/manager/me")

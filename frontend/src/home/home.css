@@ -24,14 +24,6 @@
 .lucky-hero-inset-photo { position: absolute; left: 0; bottom: -3px; width: 180px; height: 139px; object-fit: cover; border: 5px solid #fff; border-radius: 12px; box-shadow: 0 13px 25px #1d29392b; }
 .lucky-hero-media-tag { position: absolute; top: 18px; right: -11px; padding: 10px 14px; background: #fff; border: 1px solid #e6edf3; border-radius: 9px; font-size: 12px; font-weight: 700; box-shadow: 0 10px 24px #1d29391c; }
 .lucky-hero-media-tag span { color: #4fa28b; margin-right: 5px; }
-.lucky-how { background: #fff; border-bottom: 1px solid #e4e9ef; }
-.lucky-how-inner { display: flex; align-items: center; justify-content: space-between; gap: 25px; padding-block: 35px; }
-.lucky-how h2 { font-size: 19px; max-width: 175px; margin: 0; flex: 0 0 200px; }
-.lucky-how-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px; flex: 1; }
-.lucky-how-steps > div { display: flex; align-items: flex-start; gap: 11px; }
-.lucky-how-steps p { margin: 0; color: #526581; line-height: 1.55; font-size: 12px; }
-.lucky-how-steps strong { color: #1d2939; font-size: 13px; }
-.lucky-how-icon { display: grid; place-items: center; flex: 0 0 39px; width: 39px; height: 39px; border-radius: 9px; background: #eef3f8; color: #365b82; }
 .lucky-loading { display: flex; gap: 11px; justify-content: center; align-items: center; padding: 15px; font-size: 14px; color: #526581; }
 .lucky-data-error { padding-top: 24px; }
 .lucky-section { padding-block: 75px; }
@@ -95,8 +87,7 @@
 @media (max-width: 740px) {
   .lucky-hero-grid { grid-template-columns: 1fr; }
   .lucky-hero-media { max-width: 600px; width: 100%; }
-  .lucky-how-inner, .lucky-final-inner { flex-direction: column; align-items: flex-start; }
-  .lucky-how h2 { flex: none; max-width: none; }
+  .lucky-final-inner { flex-direction: column; align-items: flex-start; }
   .lucky-featured-card { grid-template-columns: 1fr; }
   .lucky-featured-media { min-height: 270px; }
   .lucky-section-head { align-items: flex-start; flex-wrap: wrap; }
@@ -106,8 +97,7 @@
   .lucky-section { padding-block: 46px; }
   .lucky-hero-grid { padding-block: 42px 54px; }
   .lucky-hero-media-tag { right: 0; }
-  .lucky-how-steps, .lucky-designer-grid, .lucky-article-grid { grid-template-columns: 1fr; }
-  .lucky-how-steps { width: 100%; }
+  .lucky-designer-grid, .lucky-article-grid { grid-template-columns: 1fr; }
   .lucky-featured-info { padding: 28px 22px; }
   .lucky-footer-inner { flex-direction: column; }
 }

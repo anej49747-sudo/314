@@ -83,6 +83,46 @@ public class ActivityReportRepository {
         return result;
     }
 
+    /** Role-specific counts exclude anonymised deleted-account history (role was discarded). */
+    public Map<LocalDate, Long> roleLogins(ReportPeriod period, String role, boolean unique) {
+        String count = unique ? "COUNT(DISTINCT e.account_id)" : "COUNT(*)";
+        return dailyRole("SELECT (e.occurred_at AT TIME ZONE 'Asia/Singapore')::date AS report_day, "
+                + count + " AS total FROM user_login_events e "
+                + "JOIN user_accounts a ON a.id = e.account_id "
+                + "WHERE e.successful = true AND a.role = ? "
+                + "AND e.occurred_at >= ? AND e.occurred_at < ? GROUP BY report_day", period, role);
+    }
+
+    public long periodRoleUniqueUsers(ReportPeriod period, String role) {
+        Long count = jdbc.queryForObject("SELECT COUNT(DISTINCT e.account_id) "
+                + "FROM user_login_events e JOIN user_accounts a ON a.id = e.account_id "
+                + "WHERE e.successful = true AND a.role = ? "
+                + "AND e.occurred_at >= ? AND e.occurred_at < ?", Long.class,
+                role, Timestamp.from(period.fromInclusive()), Timestamp.from(period.toExclusive()));
+        return count == null ? 0 : count;
+    }
+
+    public Map<LocalDate, Long> roleRegistrations(ReportPeriod period, String role) {
+        return dailyRole("SELECT (a.created_at AT TIME ZONE 'Asia/Singapore')::date AS report_day, "
+                + "COUNT(*) AS total FROM user_accounts a WHERE a.role = ? "
+                + "AND a.created_at >= ? AND a.created_at < ? GROUP BY report_day", period, role);
+    }
+
+    public Map<LocalDate, Long> designerProjectsCreated(ReportPeriod period) {
+        return daily("SELECT (p.created_at AT TIME ZONE 'Asia/Singapore')::date AS report_day, "
+                + "COUNT(*) AS total FROM interior_design_projects p "
+                + "WHERE p.created_at >= ? AND p.created_at < ? GROUP BY report_day", period);
+    }
+
+    private Map<LocalDate, Long> dailyRole(String sql, ReportPeriod period, String role) {
+        Map<LocalDate, Long> result = new HashMap<>();
+        jdbc.query(sql, rs -> {
+            result.put(rs.getDate("report_day").toLocalDate(), rs.getLong("total"));
+        }, role,
+                Timestamp.from(period.fromInclusive()), Timestamp.from(period.toExclusive()));
+        return result;
+    }
+
     private Map<LocalDate, Long> withDeleted(Map<LocalDate, Long> live,
             ReportPeriod period, String metric) {
         jdbc.query("SELECT period_start, total FROM deleted_account_activity_totals "

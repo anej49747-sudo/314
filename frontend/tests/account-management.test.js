@@ -5,7 +5,7 @@ import {
   singaporeLoginTime, moderationErrorMessage, historyErrorMessage,
 } from '../src/account/accountManagementRules.js'
 
-test('active and inactive accounts expose correct moderation actions', () => {
+test('active and suspended accounts expose correct moderation actions', () => {
   assert.equal(moderationActionLabel(true), 'Suspend')
   assert.equal(moderationActionLabel(false), 'Reactivate')
 })

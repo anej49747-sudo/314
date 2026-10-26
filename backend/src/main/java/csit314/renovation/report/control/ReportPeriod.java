@@ -13,6 +13,23 @@ public record ReportPeriod(String frequency, LocalDate startDate, LocalDate endD
         Instant fromInclusive, Instant toExclusive) {
     public static final ZoneId SINGAPORE = ZoneId.of("Asia/Singapore");
 
+    public static ReportPeriod range(String startValue, String endValue) {
+        LocalDate start;
+        LocalDate end;
+        try {
+            start = LocalDate.parse(startValue);
+            end = LocalDate.parse(endValue);
+        } catch (DateTimeParseException | NullPointerException ex) {
+            throw new IllegalArgumentException("Select valid start and end dates (yyyy-MM-dd)");
+        }
+        if (end.isBefore(start)) {
+            throw new IllegalArgumentException("End date cannot be before start date");
+        }
+        // Include the last selected day in Singapore time, even across DST changes elsewhere.
+        return new ReportPeriod("custom", start, end, start.atStartOfDay(SINGAPORE).toInstant(),
+                end.plusDays(1).atStartOfDay(SINGAPORE).toInstant());
+    }
+
     public static ReportPeriod of(String frequencyValue, String selectedDate) {
         String frequency = frequencyValue == null ? "" : frequencyValue.strip().toLowerCase(Locale.ROOT);
         if (!frequency.equals("daily") && !frequency.equals("weekly") && !frequency.equals("monthly")) {

@@ -4,6 +4,7 @@ import csit314.renovation.account.entity.UserAccount;
 import csit314.renovation.account.entity.UserRole;
 import csit314.renovation.account.repository.UserAccountRepository;
 import csit314.renovation.authentication.dto.ChangePasswordRequest;
+import csit314.renovation.authentication.dto.UpdateOwnPasswordRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,4 +42,25 @@ public class DesignerPasswordService {
         account.replacePasswordHash(encoder.encode(request.newPassword()));
         // JPA dirty checking persists both the new hash and cleared requirement atomically.
     }
+    // Voluntary password change: requires reauthentication with the current password.
+    @Transactional
+    public void updateOwnPassword(UpdateOwnPasswordRequest request, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Designer account required");
+        }
+        UserAccount account = accounts.findByEmailIgnoreCase(authentication.getName())
+                .orElseThrow(() -> new AccessDeniedException("Designer account required"));
+        if (!account.isActive() || (account.getRole() != UserRole.INTERIOR_DESIGNER
+                && account.getRole() != UserRole.CUSTOMER) || account.isPasswordChangeRequired()) {
+            throw new AccessDeniedException("Active customer or designer account required");
+        }
+        if (!encoder.matches(request.currentPassword(), account.getPasswordHash())) {
+            throw new PasswordChangeException("Current password is incorrect.");
+        }
+        if (encoder.matches(request.newPassword(), account.getPasswordHash())) {
+            throw new PasswordChangeException("New password must be different from your current password.");
+        }
+        account.replacePasswordHash(encoder.encode(request.newPassword()));
+    }
+
 }

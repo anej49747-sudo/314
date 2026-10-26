@@ -15,6 +15,8 @@ import csit314.renovation.category.repository.ProjectCategoryRepository;
 import csit314.renovation.company.repository.DesignerCompanyRepository;
 import csit314.renovation.portfolio.entity.InteriorDesignProject;
 import csit314.renovation.portfolio.entity.ProjectStatus;
+import csit314.renovation.portfolio.entity.ProjectImage;
+import csit314.renovation.portfolio.repository.ProjectImageRepository;
 import csit314.renovation.portfolio.repository.InteriorDesignProjectRepository;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
@@ -41,12 +43,14 @@ class DesignerProfileIntegrationTest {
     @Autowired DesignerCompanyRepository companies;
     @Autowired ProjectCategoryRepository categories;
     @Autowired InteriorDesignProjectRepository projects;
+    @Autowired ProjectImageRepository images;
     @Autowired PasswordEncoder encoder;
     @Autowired JdbcTemplate jdbc;
 
     @BeforeEach
     void prepare() {
         safeDatabase();
+        images.deleteAll();
         projects.deleteAll();
         companies.deleteAll();
         categories.deleteAll();
@@ -56,6 +60,7 @@ class DesignerProfileIntegrationTest {
     @AfterEach
     void cleanup() {
         safeDatabase();
+        images.deleteAll();
         projects.deleteAll();
         companies.deleteAll();
         categories.deleteAll();
@@ -111,6 +116,24 @@ class DesignerProfileIntegrationTest {
                 .andExpect(jsonPath("$.passwordHash").doesNotExist())
                 .andExpect(jsonPath("$.role").doesNotExist())
                 .andExpect(jsonPath("$.active").doesNotExist());
+    }
+
+
+    @Test
+    void publicProfileIncludesFirstImageForEachPortfolioProject() throws Exception {
+        UserAccount designer = designer("Photo Studio", "profile-cover@example.com");
+        ProjectCategory category = categories.saveAndFlush(new ProjectCategory("Japandi"));
+        InteriorDesignProject project = projects.saveAndFlush(new InteriorDesignProject(designer,
+                category, "Photo Portfolio", "Featured project", ProjectStatus.COMPLETED));
+        ProjectImage first = images.saveAndFlush(new ProjectImage(project,
+                "profile-cover-first.png", "image/png", 100, 0));
+        images.saveAndFlush(new ProjectImage(project,
+                "profile-cover-later.png", "image/png", 100, 2));
+
+        mvc.perform(get(url(designer)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.projects[0].coverImageUrl").value(
+                        "/api/projects/" + project.getId() + "/images/" + first.getId()));
     }
 
     @Test

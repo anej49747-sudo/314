@@ -21,7 +21,7 @@ test('safe display labels match account type and existing active boolean', () =>
   assert.equal(accountRoleLabel('CUSTOMER'), 'Renovation Customer')
   assert.equal(accountRoleLabel('INTERIOR_DESIGNER'), 'Interior Designer')
   assert.equal(accountStatusLabel(true), 'Active')
-  assert.equal(accountStatusLabel(false), 'Inactive')
+  assert.equal(accountStatusLabel(false), 'Suspended')
   assert.equal(accountRoleLabel('USER_ADMIN'), 'Unknown role')
 })
 

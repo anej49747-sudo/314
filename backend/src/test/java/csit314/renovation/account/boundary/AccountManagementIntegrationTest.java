@@ -106,8 +106,17 @@ class AccountManagementIntegrationTest {
         mvc.perform(get("/api/auth/session").session(customer.session()))
                 .andExpect(status().isUnauthorized());
         assertTrue(customer.session().isInvalid());
-        assertEquals(401, attempt(csrf(), "customer@example.com", "StrongPassword123!")
-                .getResponse().getStatus());
+        // Correct credentials for a suspended account return the explicit suspension response.
+        MvcResult suspendedLogin = attempt(csrf(), "customer@example.com", "StrongPassword123!");
+        assertEquals(423, suspendedLogin.getResponse().getStatus());
+        assertEquals("Your account has been suspended, please contact the administrator through admin@luckydog.com",
+                json.readTree(suspendedLogin.getResponse().getContentAsString()).get("message").asText());
+
+        // Incorrect credentials remain a generic 401, even for a suspended account.
+        MvcResult suspendedWrongPassword = attempt(csrf(), "customer@example.com", "WrongPassword123!");
+        assertEquals(401, suspendedWrongPassword.getResponse().getStatus());
+        assertEquals("Invalid email or password.",
+                json.readTree(suspendedWrongPassword.getResponse().getContentAsString()).get("message").asText());
         mvc.perform(put(uri + "/reactivate").session(admin.session())
                 .header(admin.header(), admin.token()))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.active").value(true));

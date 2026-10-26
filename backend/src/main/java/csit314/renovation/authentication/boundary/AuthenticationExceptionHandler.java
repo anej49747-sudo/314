@@ -1,6 +1,7 @@
 package csit314.renovation.authentication.boundary;
 
 import csit314.renovation.authentication.control.PasswordChangeException;
+import csit314.renovation.authentication.control.SuspendedAccountException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(assignableTypes = AuthenticationController.class)
 public class AuthenticationExceptionHandler {
     public record ErrorResponse(String message) {}
+
+    @ExceptionHandler(SuspendedAccountException.class)
+    public ResponseEntity<ErrorResponse> suspendedAccount(SuspendedAccountException ignored) {
+        return ResponseEntity.status(HttpStatus.LOCKED)
+                .body(new ErrorResponse("Your account has been suspended, please contact the administrator through admin@luckydog.com"));
+    }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> invalidCredentials(AuthenticationException ignored) {

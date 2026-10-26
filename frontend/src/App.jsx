@@ -4,6 +4,9 @@ import AuthLayout from './components/AuthLayout.jsx'
 import HomePage from './pages/HomePage.jsx'
 import AddPortfolioProjectPage from './pages/AddPortfolioProjectPage.jsx'
 import CustomerPage from './pages/CustomerPage.jsx'
+import AccountSecurityPage from './pages/AccountSecurityPage.jsx'
+import ChangeAccountEmailPage from './pages/ChangeAccountEmailPage.jsx'
+import CustomerChangePasswordPage from './pages/CustomerChangePasswordPage.jsx'
 import CustomerAccountSettingsPage from './pages/CustomerAccountSettingsPage.jsx'
 import CustomerFavouritesPage from './pages/CustomerFavouritesPage.jsx'
 import CompareDesignersPage from './pages/CompareDesignersPage.jsx'
@@ -30,6 +33,9 @@ import ArticlesPage from './pages/ArticlesPage.jsx'
 import ArticleDetailsPage from './pages/ArticleDetailsPage.jsx'
 import ManagerArticlesPage from './pages/ManagerArticlesPage.jsx'
 import ManagerRecognitionsPage from './pages/ManagerRecognitionsPage.jsx'
+import ManagerDashboardPage from './pages/ManagerDashboardPage.jsx'
+import './ui/uiOverhaul.css'
+import './ui/visualPolish.css'
 
 const theme = {
   token: {
@@ -62,10 +68,15 @@ export default function App() {
             <Route path="articles/:articleId" element={<ArticleDetailsPage />} />
             <Route path="customer" element={<CustomerPage />} />
             <Route path="customer/account" element={<CustomerAccountSettingsPage />} />
+            <Route path="customer/security" element={<AccountSecurityPage role="customer" />} />
+            <Route path="customer/change-email" element={<ChangeAccountEmailPage role="customer" />} />
+            <Route path="customer/change-password" element={<CustomerChangePasswordPage />} />
             <Route path="customer/favourites" element={<CustomerFavouritesPage />} />
             <Route path="customer/compare" element={<CompareDesignersPage />} />
             <Route path="designer" element={<DesignerPage />} />
             <Route path="designer/account" element={<DesignerAccountSettingsPage />} />
+            <Route path="designer/security" element={<AccountSecurityPage role="designer" />} />
+            <Route path="designer/change-email" element={<ChangeAccountEmailPage role="designer" />} />
             <Route path="designer/change-password" element={<DesignerChangePasswordPage />} />
             <Route path="designer/company-information" element={<CompanyInformationPage />} />
             <Route path="designer/portfolio" element={<DesignerPortfolioPage />} />
@@ -74,6 +85,7 @@ export default function App() {
             <Route path="admin/designers/new" element={<CreateDesignerPage />} />
             <Route path="admin/accounts" element={<AdminAccountSearchPage />} />
             <Route path="admin/reports" element={<AdminDesignerReportsPage />} />
+            <Route path="manager" element={<ManagerDashboardPage />} />
             <Route path="manager/categories" element={<ProjectCategoriesPage />} />
             <Route path="manager/projects" element={<ManagerProjectsPage />} />
             <Route path="manager/articles" element={<ManagerArticlesPage />} />

@@ -1,0 +1,65 @@
+/* UI overhaul: restrained cards, richer project previews and responsive navigation. */
+.ui-dashboard { width: min(1120px,100%); min-width: 0; padding: 12px 0 50px; margin: 0 auto; }
+.ui-dashboard-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-bottom: 30px; }
+.ui-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #365b82; margin: 0 0 10px; }
+.ui-dashboard-header h1 { font-size: clamp(28px,3.5vw,38px); line-height: 1.22; letter-spacing: -.03em; margin: 0 0 12px; }
+.ui-dashboard-header p:last-child { color: #526581; margin: 0; line-height: 1.6; }
+.ui-text-action { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; font-size: 14px; text-decoration: none; }
+.ui-text-action:hover { text-decoration: underline; }
+.ui-shortcuts, .ui-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+.ui-shortcut-card, .ui-management-card { position: relative; display: flex; flex-direction: column; gap: 11px; min-width: 0; min-height: 176px; border: 1px solid #d0d8e2; border-radius: 12px; background: #fff; padding: 23px; color: #1d2939; text-decoration: none; transition: transform .16s,box-shadow .16s,border-color .16s; }
+.ui-shortcut-card:hover, .ui-management-card:hover { border-color: #95a8bf; box-shadow: 0 10px 30px rgba(26,46,77,.08); transform: translateY(-2px); color: #1d2939; }
+.ui-shortcut-icon { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; background: #edf3f9; color: #365b82; border-radius: 10px; }
+.ui-shortcut-title, .ui-management-card strong { font-size: 17px; font-weight: 750; }
+.ui-shortcut-detail, .ui-management-card > span:not(.ui-shortcut-icon) { font-size: 13px; line-height: 1.5; color: #526581; }
+.ui-shortcut-arrow { position: absolute; right: 18px; top: 27px; color: #365b82; }
+.ui-dashboard-section { margin-top: 38px; }
+.ui-dashboard-section > h2, .ui-section-heading h2 { font-size: 23px; letter-spacing: -.03em; margin: 0 0 5px; }
+.ui-section-heading { display: flex; align-items: end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 19px; }
+.ui-section-heading p { color: #526581; margin: 0; font-size: 14px; }
+.ui-image-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+.ui-customer-saved { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.ui-image-card { display: flex; flex-direction: column; min-width: 0; background: #fff; border: 1px solid #d0d8e2; border-radius: 12px; overflow: hidden; text-decoration: none; color: #1d2939; transition: box-shadow .16s; }
+.ui-image-card:hover { box-shadow: 0 8px 25px rgba(26,46,77,.09); color: #1d2939; }
+.ui-image-card img, .ui-image-empty { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
+.ui-image-empty { display: grid; place-items: center; background: #eaf0f6; color: #365b82; }
+.ui-image-card-content { display: flex; flex-direction: column; gap: 5px; padding: 16px; }
+.ui-image-card-content strong { font-size: 15px; overflow-wrap: anywhere; }
+.ui-image-card-content span { color: #526581; font-size: 13px; }
+.ui-metric { display: flex; flex-direction: column; gap: 8px; padding: 18px 22px; background: #fff; border: 1px solid #d0d8e2; border-radius: 12px; }
+.ui-metric svg { color: #365b82; }
+.ui-metric strong { font-size: 30px; line-height: 1.2; }
+.ui-metric span { font-size: 13px; color: #526581; }
+.ui-empty-state { padding: 38px 20px; background: #fff; text-align: center; border: 1px dashed #bdc9d6; border-radius: 12px; color: #526581; }
+.ui-empty-state h3 { color: #1d2939; margin-bottom: 6px; }
+.ui-management-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 17px; }
+.ui-management-card { min-height: 195px; }
+.site-nav .ui-account-menu-trigger { height: 43px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #d0d8e2; border-radius: 24px; padding: 4px 10px 4px 5px; color: #365b82; }
+.ui-header-avatar { display: inline-flex; align-items: center; justify-content: center; background: #eaf0f7; width: 31px; height: 31px; border-radius: 50%; }
+.ui-account-trigger-name { max-width: 125px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.ui-account-identity { display: flex; flex-direction: column; max-width: 220px; padding: 5px 3px; gap: 3px; overflow-wrap: anywhere; }
+.ui-account-identity span { font-size: 12px; color: #526581; }
+.ui-mobile-nav-toggle { display: none; background: transparent; border: 1px solid #d0d8e2; border-radius: 8px; padding: 9px; color: #365b82; cursor: pointer; }
+.project-search-card .project-search-cover-link { display: block; margin: -23px -23px 18px; border-radius: 12px 12px 0 0; overflow: hidden; }
+.project-search-cover { display: block; width: 100%; aspect-ratio: 16/10; object-fit: cover; background: #edf3f9; }
+.public-profile-project-photo-link { display: block; margin: -19px -19px 15px; border-radius: 10px 10px 0 0; overflow: hidden; }
+.public-profile-project-photo { display: block; width: 100%; aspect-ratio: 16/10; object-fit: cover; background: #edf3f9; }
+.admin-account-top-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; margin-bottom: 8px; }
+.admin-account-top-row h1 { margin: 0; }
+.site-nav { gap: 15px; }
+@media (max-width: 1000px) { .ui-management-grid,.ui-image-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .ui-account-trigger-name { max-width: 95px; } }
+@media (max-width: 720px) {
+ .ui-shortcuts,.ui-metrics,.ui-management-grid,.ui-image-grid { grid-template-columns: 1fr; }
+ .ui-shortcut-card { min-height: 136px; }
+ .ui-mobile-nav-toggle { display: inline-flex; margin-left: auto; }
+ .site-header-inner { flex-wrap: wrap; }
+ .site-nav { display: none; width: 100%; flex-direction: column; align-items: stretch; gap: 0; border-top: 1px solid #e7ecf2; padding-top: 10px; }
+ .site-nav.ui-nav-open { display: flex; }
+ .site-nav .header-link { padding: 11px 6px; }
+ .site-nav .ui-account-menu-trigger { margin: 10px 0 2px; width: 100%; justify-content: flex-start; }
+ .ui-section-heading { align-items: start; }
+ .ui-dashboard { padding-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+ .ui-shortcut-card,.ui-management-card,.ui-image-card { transition: none; }
+}

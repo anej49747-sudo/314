@@ -136,7 +136,7 @@ public class SecurityConfiguration {
                         .hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/api/manager/projects/*")
                         .hasRole("PLATFORM_MANAGER")
-                        .requestMatchers(HttpMethod.GET, "/api/manager/reports/activity")
+                        .requestMatchers(HttpMethod.GET, "/api/manager/reports/activity", "/api/manager/reports/activity/range")
                         .hasRole("PLATFORM_MANAGER")
                         .requestMatchers(HttpMethod.GET, "/api/auth/admin/me", "/api/admin/accounts",
                                 "/api/admin/accounts/*/login-history")
@@ -165,6 +165,9 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT, "/api/designer/company-information")
                         .hasRole("INTERIOR_DESIGNER")
                         .requestMatchers(HttpMethod.POST, "/api/auth/change-password").hasRole("INTERIOR_DESIGNER")
+                        .requestMatchers(HttpMethod.POST, "/api/auth/update-own-password",
+                                "/api/auth/account/change-password")
+                        .hasAnyRole("CUSTOMER", "INTERIOR_DESIGNER")
                         .requestMatchers(HttpMethod.POST, "/api/admin/designers").hasRole("USER_ADMIN")
                         .anyRequest().denyAll());
         http.addFilterBefore(new DesignerPasswordGateFilter(accounts), AuthorizationFilter.class);

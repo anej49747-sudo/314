@@ -94,7 +94,7 @@ class CustomerLoginIntegrationTest {
     }
 
     @Test
-    void invalidCredentialsAndInactiveAccountsAreRejectedWithSamePublicMessage() throws Exception {
+    void invalidCredentialsStayGenericButVerifiedSuspendedLoginShowsSuspensionMessage() throws Exception {
         CsrfSession wrongPasswordCsrf = csrf();
         MvcResult wrong = login(wrongPasswordCsrf, "jane@example.com", "Incorrect123!");
         assertEquals(401, wrong.getResponse().getStatus());
@@ -102,9 +102,17 @@ class CustomerLoginIntegrationTest {
         mvc.perform(get("/api/auth/me").session(wrongPasswordCsrf.session())).andExpect(status().isUnauthorized());
 
         jdbc.update("UPDATE user_accounts SET active = false WHERE email = ?", "jane@example.com");
-        MvcResult inactive = login(csrf(), "jane@example.com", "SecurePass1!");
-        assertEquals(401, inactive.getResponse().getStatus());
-        assertEquals("Invalid email or password.", json.readTree(inactive.getResponse().getContentAsString()).get("message").asText());
+        // A wrong password must not reveal whether this email belongs to a suspended account.
+        MvcResult suspendedWrongPassword = login(csrf(), "jane@example.com", "Incorrect123!");
+        assertEquals(401, suspendedWrongPassword.getResponse().getStatus());
+        assertEquals("Invalid email or password.",
+                json.readTree(suspendedWrongPassword.getResponse().getContentAsString()).get("message").asText());
+
+        // A valid password for a suspended account receives the explicit suspension notice.
+        MvcResult suspended = login(csrf(), "jane@example.com", "SecurePass1!");
+        assertEquals(423, suspended.getResponse().getStatus());
+        assertEquals("Your account has been suspended, please contact the administrator through admin@luckydog.com",
+                json.readTree(suspended.getResponse().getContentAsString()).get("message").asText());
     }
 
     @Test
@@ -145,6 +153,37 @@ class CustomerLoginIntegrationTest {
         MvcResult result = login(csrf(), "jane@example.com", "SecurePass1!");
         assertEquals(200, result.getResponse().getStatus());
         return (MockHttpSession) result.getRequest().getSession(false);
+    }
+
+
+    @Test
+    void customerCanChangePasswordOnlyWithCorrectCurrentPassword() throws Exception {
+        MockHttpSession session = loggedInSession();
+        CsrfSession token = csrfFor(session);
+        String path = "/api/auth/account/change-password";
+
+        mvc.perform(post(path).session(session).header(token.header(), token.token())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"currentPassword":"WrongPassword1!","newPassword":"NewSecurePass2!"}
+                        """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Current password is incorrect."));
+        mvc.perform(post(path).session(session).header(token.header(), token.token())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"currentPassword":"SecurePass1!","newPassword":"SecurePass1!"}
+                        """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("New password must be different from your current password."));
+        mvc.perform(post(path).session(session).header(token.header(), token.token())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"currentPassword":"SecurePass1!","newPassword":"NewSecurePass2!"}
+                        """))
+                .andExpect(status().isNoContent());
+        assertEquals(401, login(csrf(), "jane@example.com", "SecurePass1!").getResponse().getStatus());
+        assertEquals(200, login(csrf(), "jane@example.com", "NewSecurePass2!").getResponse().getStatus());
     }
 
     @Test

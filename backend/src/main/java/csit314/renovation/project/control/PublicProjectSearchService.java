@@ -6,6 +6,8 @@ import csit314.renovation.company.entity.DesignerCompany;
 import csit314.renovation.company.repository.DesignerCompanyRepository;
 import csit314.renovation.portfolio.entity.InteriorDesignProject;
 import csit314.renovation.portfolio.repository.InteriorDesignProjectRepository;
+import csit314.renovation.portfolio.repository.ProjectImageRepository;
+import java.util.LinkedHashMap;
 import csit314.renovation.project.dto.PublicProjectDesignerResponse;
 import csit314.renovation.project.dto.PublicProjectSearchResponse;
 import java.util.List;
@@ -19,11 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class PublicProjectSearchService {
     private final InteriorDesignProjectRepository projects;
     private final DesignerCompanyRepository companies;
+    private final ProjectImageRepository images;
 
     public PublicProjectSearchService(InteriorDesignProjectRepository projects,
-            DesignerCompanyRepository companies) {
+            DesignerCompanyRepository companies, ProjectImageRepository images) {
         this.projects = projects;
         this.companies = companies;
+        this.images = images;
     }
 
     @Transactional(readOnly = true)
@@ -50,6 +54,13 @@ public class PublicProjectSearchService {
                 .map(project -> project.getDesigner().getId()).distinct().toList()).stream()
                 .collect(Collectors.toMap(DesignerCompany::getDesignerId, Function.identity()));
 
+        // Batch-fetch the first image for every project; this does not record a project view.
+        Map<Long, String> coverByProject = new LinkedHashMap<>();
+        images.findByProject_IdInOrderByDisplayOrderAscIdAsc(results.stream()
+                .map(InteriorDesignProject::getId).toList()).forEach(image ->
+                coverByProject.putIfAbsent(image.getProjectId(),
+                        "/api/projects/" + image.getProjectId() + "/images/" + image.getId()));
+
         return results.stream().map(project -> {
             UserAccount designer = project.getDesigner();
             DesignerCompany company = byDesignerId.get(designer.getId());
@@ -59,7 +70,7 @@ public class PublicProjectSearchService {
             return new PublicProjectSearchResponse(project.getId(), project.getTitle(),
                     project.getDescription(), project.getCategoryDisplayName(), project.getStatus(),
                     new PublicProjectDesignerResponse(designer.getId(), designerName,
-                            company == null ? null : company.getAddress()));
+                            company == null ? null : company.getAddress()), coverByProject.get(project.getId()));
         }).toList();
     }
 }

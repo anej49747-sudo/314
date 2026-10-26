@@ -17,6 +17,7 @@ import csit314.renovation.category.repository.ProjectCategoryRepository;
 import csit314.renovation.company.repository.DesignerCompanyRepository;
 import csit314.renovation.portfolio.entity.InteriorDesignProject;
 import csit314.renovation.portfolio.entity.ProjectStatus;
+import csit314.renovation.portfolio.entity.ProjectImage;
 import csit314.renovation.portfolio.repository.InteriorDesignProjectRepository;
 import csit314.renovation.portfolio.repository.ProjectImageRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -123,6 +124,37 @@ class PublicProjectSearchIntegrationTest {
         assertFalse(results.get(1).get("designer").has("email"));
         assertFalse(results.get(1).get("designer").has("passwordHash"));
         assertFalse(results.get(1).get("designer").has("active"));
+    }
+
+
+    @Test
+    void listingIncludesFirstPhotoUrlWithoutRecordingAProjectView() throws Exception {
+        UserAccount designer = designer("Cover Studio", "covers@example.com");
+        InteriorDesignProject pictured = project(designer, "Pictured Project", "Gallery example");
+        project(designer, "No Image Project", "No gallery yet");
+        ProjectImage later = images.saveAndFlush(new ProjectImage(pictured,
+                "later-search-cover.png", "image/png", 123, 2));
+        ProjectImage first = images.saveAndFlush(new ProjectImage(pictured,
+                "first-search-cover.png", "image/png", 123, 0));
+        Long before = jdbc.queryForObject("SELECT COUNT(*) FROM platform_engagement_events "
+                + "WHERE event_type = 'PROJECT_VIEW'", Long.class);
+
+        JsonNode results = search(null);
+        assertEquals(2, results.size());
+        JsonNode picturedRow = null;
+        JsonNode noImageRow = null;
+        for (JsonNode row : results) {
+            if (row.get("title").asText().equals("Pictured Project")) picturedRow = row;
+            if (row.get("title").asText().equals("No Image Project")) noImageRow = row;
+        }
+        assertTrue(picturedRow != null && noImageRow != null);
+        assertTrue(noImageRow.get("coverImageUrl").isNull());
+        assertEquals("/api/projects/" + pictured.getId() + "/images/" + first.getId(),
+                picturedRow.get("coverImageUrl").asText());
+        assertTrue(!picturedRow.get("coverImageUrl").asText().endsWith("/" + later.getId()));
+        Long after = jdbc.queryForObject("SELECT COUNT(*) FROM platform_engagement_events "
+                + "WHERE event_type = 'PROJECT_VIEW'", Long.class);
+        assertEquals(before, after);
     }
 
     @Test

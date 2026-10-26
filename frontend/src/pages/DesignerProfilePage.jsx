@@ -119,6 +119,11 @@ export default function DesignerProfilePage() {
                 <div className="public-profile-project-grid">
                   {profile.projects.map((project) => (
                     <article className="public-profile-project" key={project.id}>
+                      {project.coverImageUrl && <Link to={publicProjectPath(project.id)} className="public-profile-project-photo-link"
+                        aria-label={`View ${project.title}`}>
+                        <img className="public-profile-project-photo" src={project.coverImageUrl}
+                          alt={`Cover photo for ${project.title}`} loading="lazy" />
+                      </Link>}
                       <span className={project.status === 'COMPLETED'
                         ? 'public-profile-status public-profile-status-completed'
                         : 'public-profile-status'}>
@@ -126,7 +131,7 @@ export default function DesignerProfilePage() {
                       </span>
                       <FeaturedProjectBadge featuredProject={featuredProject} projectId={project.id} />
                       <h3>{project.title}</h3>
-                      <p className="public-profile-project-category">{project.categoryName}</p>
+                      <p className="public-profile-project-category"><span className="ld-category-kicker">Design style</span>{project.categoryName}</p>
                       <Link className="public-profile-project-link"
                         to={publicProjectPath(project.id)}
                         state={{ designerId: profile.id, projectTitle: project.title }}>

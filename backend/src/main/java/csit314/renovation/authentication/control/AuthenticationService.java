@@ -11,6 +11,8 @@ import java.util.Locale;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -22,15 +24,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
     private final UserAccountRepository accounts;
     private final SecurityContextRepository contextRepository;
     private final SessionAuthenticationStrategy sessionStrategy;
     private final LoginAttemptRecorder loginAttemptRecorder;
 
-    public AuthenticationService(AuthenticationManager authenticationManager,
+    public AuthenticationService(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder,
             UserAccountRepository accounts, SecurityContextRepository contextRepository,
             SessionAuthenticationStrategy sessionStrategy, LoginAttemptRecorder loginAttemptRecorder) {
         this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
         this.accounts = accounts;
         this.contextRepository = contextRepository;
         this.sessionStrategy = sessionStrategy;
@@ -49,6 +53,16 @@ public class AuthenticationService {
                     .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
             // The account is checked again because only current, active accounts may start sessions.
             if (!account.isActive()) throw new BadCredentialsException("Invalid credentials");
+        } catch (DisabledException disabled) {
+            // Authentication provider checks disabled accounts before the password. Verify it
+            // separately to avoid revealing account status for a guessed email address.
+            boolean validSuspendedLogin = accounts.findByEmailIgnoreCase(email)
+                    .filter(candidate -> !candidate.isActive())
+                    .filter(candidate -> passwordEncoder.matches(request.password(), candidate.getPasswordHash()))
+                    .isPresent();
+            loginAttemptRecorder.record(email, false);
+            if (validSuspendedLogin) throw new SuspendedAccountException();
+            throw new BadCredentialsException("Invalid credentials");
         } catch (org.springframework.security.core.AuthenticationException failure) {
             loginAttemptRecorder.record(email, false);
             throw failure;

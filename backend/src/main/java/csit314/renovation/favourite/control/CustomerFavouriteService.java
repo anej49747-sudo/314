@@ -9,6 +9,8 @@ import csit314.renovation.favourite.entity.CustomerProjectFavourite;
 import csit314.renovation.favourite.dto.CustomerFavouriteStatusResponse;
 import csit314.renovation.favourite.repository.CustomerProjectFavouriteRepository;
 import csit314.renovation.portfolio.entity.InteriorDesignProject;
+import csit314.renovation.portfolio.repository.ProjectImageRepository;
+import java.util.HashMap;
 import csit314.renovation.project.dto.PublicProjectDesignerResponse;
 import csit314.renovation.project.dto.PublicProjectSearchResponse;
 import java.util.List;
@@ -28,15 +30,17 @@ public class CustomerFavouriteService {
     private final CustomerProjectFavouriteRepository favourites;
     private final PublicProjectDetailsService publicProjects;
     private final DesignerCompanyRepository companies;
+    private final ProjectImageRepository images;
     private final PlatformEngagementRecorder engagement;
 
     public CustomerFavouriteService(UserAccountRepository accounts,
             CustomerProjectFavouriteRepository favourites, PublicProjectDetailsService publicProjects,
-            DesignerCompanyRepository companies, PlatformEngagementRecorder engagement) {
+            DesignerCompanyRepository companies, ProjectImageRepository images, PlatformEngagementRecorder engagement) {
         this.accounts = accounts;
         this.favourites = favourites;
         this.publicProjects = publicProjects;
         this.companies = companies;
+        this.images = images;
         this.engagement = engagement;
     }
 
@@ -51,6 +55,11 @@ public class CustomerFavouriteService {
         Map<Long, DesignerCompany> companyByDesigner = companies.findAllById(saved.stream()
                 .map(entry -> entry.getProject().getDesigner().getId()).distinct().toList()).stream()
                 .collect(Collectors.toMap(DesignerCompany::getDesignerId, Function.identity()));
+        Map<Long, String> covers = new HashMap<>();
+        images.findByProject_IdInOrderByDisplayOrderAscIdAsc(saved.stream()
+                .map(entry -> entry.getProject().getId()).toList()).forEach(image ->
+                covers.putIfAbsent(image.getProjectId(),
+                        "/api/projects/" + image.getProjectId() + "/images/" + image.getId()));
         return saved.stream().map(entry -> {
             InteriorDesignProject project = entry.getProject();
             UserAccount designer = project.getDesigner();
@@ -61,7 +70,7 @@ public class CustomerFavouriteService {
             return new PublicProjectSearchResponse(project.getId(), project.getTitle(),
                     project.getDescription(), project.getCategoryDisplayName(), project.getStatus(),
                     new PublicProjectDesignerResponse(designer.getId(), name,
-                            company == null ? null : company.getAddress()));
+                            company == null ? null : company.getAddress()), covers.get(project.getId()));
         }).toList();
     }
 

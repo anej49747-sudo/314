@@ -23,3 +23,10 @@
   border-bottom:1px solid #e6ebf0; padding:11px 0; flex-wrap:wrap;}
 .recognition-manager-award-text {overflow-wrap:anywhere;}
 .recognition-manager-panel-label {font-weight:600;margin-bottom:8px;}
+
+.recognition-month-picker{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.recognition-month-picker .ant-select{min-width:155px}
+.recognition-month-picker .ant-input{width:105px}
+
+.recognition-status-completed{color:#15803d;font-weight:700}
+.recognition-status-current{color:#365b82;font-weight:700}

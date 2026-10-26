@@ -23,3 +23,10 @@ test('handles CSRF and server errors without leaking internal response details',
   assert.match(loginFailureMessage({ response: { status: 500, data: { message: 'DB password=secret' } } }), /try again/i)
   assert.doesNotMatch(loginFailureMessage({ response: { status: 500, data: { message: 'DB password=secret' } } }), /secret/i)
 })
+
+
+test('suspended accounts have dedicated feedback, distinct from invalid credentials', () => {
+  assert.match(loginFailureMessage({ response: { status: 423 } }), /account has been suspended/i)
+  assert.match(loginFailureMessage({ response: { status: 423 } }), /admin@luckydog\.com/)
+  assert.equal(loginFailureMessage({ response: { status: 401 } }), 'Invalid email or password.')
+})

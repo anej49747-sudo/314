@@ -1,13 +1,13 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  REPORT_METRICS, reportCsv, selectedReportPeriod, todayInSingapore,
+  REPORT_METRICS, reportCsv, selectedReportPeriod, todayInSingapore, previousMonthInSingapore,
 } from '../src/report/activityReportRules.js'
 
-test('Story #32: exactly seven approved user activity metrics', () => {
+test('Activity dashboard: six useful visible metrics (removed favourites hidden)', () => {
   assert.deepEqual(REPORT_METRICS.map(({ key }) => key), [
     'logins', 'uniqueUsers', 'newAccounts', 'projectViews',
-    'favouritesAdded', 'favouritesRemoved', 'reviewsSubmitted',
+    'favouritesAdded', 'reviewsSubmitted',
   ])
 })
 
@@ -39,6 +39,12 @@ test('Story #32: CSV includes partial data warning and genuine period unique use
     startDate: '2026-10-21', endDate: '2026-10-21' }
   const csv = reportCsv(data)
   assert.match(csv, /"Period total","3","2"/)
+  assert.match(csv, /Favourites removed/)
   assert.match(csv, /"1 \(partial\)"/)
   assert.match(csv, /"Incomplete"/)
+})
+
+test('Report dashboard defaults to previous Singapore month', () => {
+  assert.equal(previousMonthInSingapore(new Date('2026-10-24T09:00:00Z')), '2026-09-01')
+  assert.equal(previousMonthInSingapore(new Date('2027-01-04T09:00:00Z')), '2026-12-01')
 })

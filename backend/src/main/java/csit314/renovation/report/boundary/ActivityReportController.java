@@ -2,6 +2,7 @@ package csit314.renovation.report.boundary;
 
 import csit314.renovation.report.control.ActivityReportService;
 import csit314.renovation.report.dto.ActivityReportResponse;
+import csit314.renovation.report.dto.RangeActivityResponse;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,14 @@ public class ActivityReportController {
     private final ActivityReportService reports;
 
     public ActivityReportController(ActivityReportService reports) { this.reports = reports; }
+
+    @GetMapping("/reports/activity/range")
+    public ResponseEntity<RangeActivityResponse> range(
+            @RequestParam String startDate, @RequestParam String endDate,
+            Authentication authentication) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+                .body(reports.generateRange(startDate, endDate, authentication));
+    }
 
     @GetMapping("/reports/activity")
     public ResponseEntity<ActivityReportResponse> report(

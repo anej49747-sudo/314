@@ -144,7 +144,7 @@ export default function ManagerRecognitionsPage() {
   const projectColumns = [
     { title: 'Project', dataIndex: 'title', render: (value) => <strong>{value}</strong> },
     { title: 'Designer', dataIndex: 'designerName' },
-    { title: 'Status', dataIndex: 'status', render: (status) => status === 'COMPLETED' ? 'Completed' : 'Current' },
+    { title: 'Status', dataIndex: 'status', render: (status) => <span className={status === 'COMPLETED' ? 'recognition-status-completed' : 'recognition-status-current'}>{status === 'COMPLETED' ? 'Completed' : 'Current'}</span> },
     { title: 'Action', render: (_, project) => <Button disabled={busy} onClick={() => setSelectedProject(project)}>Select</Button> },
   ]
 
@@ -153,13 +153,34 @@ export default function ManagerRecognitionsPage() {
       <p>Choose one eligible published project for each calendar month. Earlier monthly selections remain available.</p>
       <div className="recognition-manager-row">
         <label className="recognition-manager-field"><span>Feature month</span>
-          <input className="recognition-manager-date" type="month" value={month}
-            onChange={(event) => { setMonth(event.target.value); setSelectedProject(null); setActionError('') }} />
+          <div className="recognition-month-picker">
+            <Select aria-label="Feature month" value={Number(month.slice(5, 7))}
+              options={Array.from({ length: 12 }, (_, index) => ({
+                value: index + 1,
+                label: new Intl.DateTimeFormat('en-SG', { month: 'long', timeZone: 'UTC' })
+                  .format(new Date(Date.UTC(2026, index, 1))),
+              }))}
+              onChange={(value) => { setMonth(`${month.slice(0, 4)}-${String(value).padStart(2, '0')}`); setSelectedProject(null); setActionError('') }} />
+            <Input aria-label="Feature year" type="number" min={1} max={9999} step={1}
+              value={Number(month.slice(0, 4))}
+              onChange={(event) => { const year = Number(event.target.value)
+                if (Number.isInteger(year) && year >= 1 && year <= 9999) {
+                  setMonth(`${String(year).padStart(4, '0')}-${month.slice(5, 7)}`)
+                  setSelectedProject(null); setActionError('')
+                }
+              }} />
+          </div>
         </label>
       </div>
       {monthLoading ? <Spin /> : <div className="recognition-manager-selected">
-        {feature ? <><strong>Selected for {month}</strong><p>{feature.projectTitle} (Project #{feature.projectId})</p>
-          <Button danger disabled={busy} onClick={clearFeature}>Remove feature</Button></>
+        {feature ? <div className="recognition-feature-preview">
+          {feature.coverUrl && <img src={feature.coverUrl} alt={`Featured project: ${feature.projectTitle}`} loading="lazy" />}
+          <div className="recognition-feature-preview-content">
+            <strong>Selected for {month}</strong>
+            <p>{feature.projectTitle} (Project #{feature.projectId})</p>
+            <Button danger disabled={busy} onClick={clearFeature}>Remove</Button>
+          </div>
+        </div>
           : <p>No project selected for {month}.</p>}
       </div>}
       {selectedProject && <div className="recognition-manager-selected">

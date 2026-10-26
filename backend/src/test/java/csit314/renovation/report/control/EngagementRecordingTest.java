@@ -52,7 +52,7 @@ class EngagementRecordingTest {
         when(favourites.saveIfAbsent(5L, 8L)).thenReturn(1, 0);
         when(favourites.removeIfPresent(5L, 8L)).thenReturn(1, 0);
         CustomerFavouriteService service = new CustomerFavouriteService(accounts, favourites,
-                projects, companies, engagement);
+                projects, companies, org.mockito.Mockito.mock(csit314.renovation.portfolio.repository.ProjectImageRepository.class), engagement);
         service.save(auth, 8L);
         service.save(auth, 8L);
         service.remove(auth, 8L);

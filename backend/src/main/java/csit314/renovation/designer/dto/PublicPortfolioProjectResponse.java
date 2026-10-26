@@ -3,11 +3,11 @@ package csit314.renovation.designer.dto;
 import csit314.renovation.portfolio.entity.InteriorDesignProject;
 import csit314.renovation.portfolio.entity.ProjectStatus;
 
-/** Only fields needed for a portfolio preview; project detail belongs to Story #6. */
+/** Safe portfolio card fields, including a public photo URL (never a storage key). */
 public record PublicPortfolioProjectResponse(Long id, String title, String categoryName,
-        ProjectStatus status) {
-    public static PublicPortfolioProjectResponse from(InteriorDesignProject project) {
+        ProjectStatus status, String coverImageUrl) {
+    public static PublicPortfolioProjectResponse from(InteriorDesignProject project, String coverUrl) {
         return new PublicPortfolioProjectResponse(project.getId(), project.getTitle(),
-                project.getCategoryDisplayName(), project.getStatus());
+                project.getCategoryDisplayName(), project.getStatus(), coverUrl);
     }
 }

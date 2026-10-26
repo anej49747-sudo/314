@@ -123,6 +123,68 @@ class ActivityReportIntegrationTest {
                 .andExpect(jsonPath("$.days.length()").value(1));
     }
 
+
+    @Test
+    void customRangeSeparatesCustomerAndDesignerActivityInSingaporeTime() throws Exception {
+        MockHttpSession manager = login("report-manager@example.com");
+        mvc.perform(get("/api/manager/reports/activity/range").session(manager)
+                .param("startDate", "2026-10-22").param("endDate", "2026-10-22"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Cache-Control", org.hamcrest.Matchers.containsString("no-store")))
+                .andExpect(jsonPath("$.timezone").value("Asia/Singapore"))
+                .andExpect(jsonPath("$.startDate").value("2026-10-22"))
+                .andExpect(jsonPath("$.endDate").value("2026-10-22"))
+                .andExpect(jsonPath("$.customer.logins").value(2))
+                .andExpect(jsonPath("$.customer.uniqueUsers").value(1))
+                .andExpect(jsonPath("$.customer.newAccounts").value(1))
+                .andExpect(jsonPath("$.designer.logins").value(1))
+                .andExpect(jsonPath("$.designer.uniqueUsers").value(1))
+                .andExpect(jsonPath("$.designer.newAccounts").value(0))
+                .andExpect(jsonPath("$.designer.projectsCreated").value(0))
+                .andExpect(jsonPath("$.projectViews").value(1))
+                .andExpect(jsonPath("$.favouritesAdded").value(1))
+                .andExpect(jsonPath("$.reviewsSubmitted").value(1))
+                .andExpect(jsonPath("$.engagementComplete").value(true))
+                .andExpect(jsonPath("$.days.length()").value(1))
+                .andExpect(jsonPath("$.days[0].customerLogins").value(2))
+                .andExpect(jsonPath("$.days[0].designerLogins").value(1));
+
+        // Cross-day totals must count each role's user once, even if that user logs in twice.
+        mvc.perform(get("/api/manager/reports/activity/range").session(manager)
+                .param("startDate", "2026-10-20").param("endDate", "2026-10-22"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.customer.uniqueUsers").value(1))
+                .andExpect(jsonPath("$.designer.uniqueUsers").value(1))
+                .andExpect(jsonPath("$.customer.newAccounts").value(1))
+                .andExpect(jsonPath("$.designer.newAccounts").value(1))
+                .andExpect(jsonPath("$.days.length()").value(3));
+    }
+
+    @Test
+    void customRangeIsManagerOnlyAndRejectsInvalidDates() throws Exception {
+        String path = "/api/manager/reports/activity/range";
+        mvc.perform(get(path).param("startDate", "2026-10-22")
+                        .param("endDate", "2026-10-22"))
+                .andExpect(status().isUnauthorized());
+        mvc.perform(get(path).session(login("report-customer@example.com"))
+                        .param("startDate", "2026-10-22")
+                        .param("endDate", "2026-10-22"))
+                .andExpect(status().isForbidden());
+        mvc.perform(get(path).session(login("report-admin@example.com"))
+                        .param("startDate", "2026-10-22")
+                        .param("endDate", "2026-10-22"))
+                .andExpect(status().isForbidden());
+        MockHttpSession manager = login("report-manager@example.com");
+        mvc.perform(get(path).session(manager)
+                        .param("startDate", "2026-10-23").param("endDate", "2026-10-22"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(get(path).session(manager)
+                        .param("startDate", "2026-02-30").param("endDate", "2026-03-01"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(get(path).session(manager).param("startDate", "2026-10-22"))
+                .andExpect(status().isBadRequest());
+    }
+
     @Test
     void unauthenticatedCustomerAndUserAdminCannotReadReport() throws Exception {
         mvc.perform(get("/api/manager/reports/activity")

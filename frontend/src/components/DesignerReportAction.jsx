@@ -64,7 +64,7 @@ export default function DesignerReportAction({ designerId, designerName }) {
   }
 
   return <div className="designer-report-action">
-    {(access === 'customer' || access === 'guest' || access === 'loading' || access === 'error') && (
+    {access === 'customer' && (
       <Button className="designer-report-button" type="primary" danger
         disabled={access === 'loading'} onClick={openReport}>Report designer</Button>
     )}

@@ -8,7 +8,7 @@ import {
 } from '../dispute/reportRules.js'
 import '../dispute/designerReports.css'
 
-const statusColors = { OPEN: 'warning', RESOLVED: 'success', DISMISSED: 'default' }
+const statusColors = { OPEN: '#16a34a', RESOLVED: 'default', DISMISSED: 'default' }
 
 function ReportStatus({ status }) {
   return <Tag color={statusColors[status] ?? 'default'}>{status}</Tag>

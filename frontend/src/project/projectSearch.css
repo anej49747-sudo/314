@@ -39,7 +39,7 @@
 .project-search-saved-warning { margin-bottom: 20px; }
 .project-search-category, .project-search-status { border-radius: 5px; padding: 5px 9px; font-size: 11px; font-weight: 700; }
 .project-search-category { background: #f1f4f7; color: #53657b; }
-.project-search-status-completed { color: #067647; background: #e9f7ef; }
+.project-search-status-completed { color: #15803d; background: #dcfce7; }
 .project-search-status-current { color: #365b82; background: #edf3f9; }
 .project-search-card h3 { margin: 0 0 9px; font-size: 18px; line-height: 1.4; letter-spacing: -.02em; overflow-wrap: anywhere; }
 .project-search-description { margin: 0; color: #526581; font-size: 13.5px; line-height: 1.65; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }

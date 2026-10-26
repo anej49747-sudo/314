@@ -8,7 +8,7 @@ import '../designer/designerAccountSettings.css'
 /** Shared Story #14/#21 visual form; role checks are also enforced by the backend. */
 export default function AccountSettingsFormPage({
   backPath, backText, eyebrow, roleLabel, intro, description, advisory,
-  footer, afterContent, currentAccount, loadAccount, updateAccount, requirePasswordChange = false,
+  footer, afterContent, currentAccount, loadAccount, updateAccount, requirePasswordChange = false, fields = "both", pageTitle = "My account",
 }) {
   const navigate = useNavigate()
   const [form] = Form.useForm()
@@ -56,7 +56,7 @@ export default function AccountSettingsFormPage({
     setError('')
     setSuccess('')
     try {
-      const saved = await updateAccount(buildAccountSettingsPayload(values))
+      const saved = await updateAccount(buildAccountSettingsPayload({ ...initial, ...values }))
       if (saved.signInRequired) {
         navigate('/login', { replace: true, state: { accountEmailChanged: true } })
         return
@@ -82,7 +82,7 @@ export default function AccountSettingsFormPage({
       <Link className="designer-settings-back" to={backPath}>← {backText}</Link>
       <p className="company-eyebrow">{eyebrow}</p>
       <div className="designer-settings-heading">
-        <h1>My account</h1>
+        <h1>{pageTitle}</h1>
         <span className="designer-settings-role">{roleLabel}</span>
       </div>
       <p className="company-intro">{intro}</p>
@@ -94,20 +94,20 @@ export default function AccountSettingsFormPage({
         <p className="designer-settings-card-description">{description}</p>
         {loading && <div className="loading-state" role="status"><Spin /> <span>Loading account details…</span></div>}
         {!loading && initial && <Form form={form} layout="vertical" disabled={saving} onFinish={onSave}
-          onValuesChange={(_, values) => { setChanged(accountSettingsChanged(initial, values)); setSuccess('') }}>
-          <Form.Item name="displayName" label="Display name" rules={[
+          onValuesChange={(_, values) => { setChanged(accountSettingsChanged(initial, { ...initial, ...values })); setSuccess('') }}>
+          {fields !== "email" && <Form.Item name="displayName" label="Display name" rules={[
             { required: true, whitespace: true, message: 'Enter your display name.' },
             { max: 160, message: 'Display name must be 160 characters or fewer.' },
           ]} extra="Shown in your account area. Does not change other profile information.">
             <Input maxLength={160} autoComplete="name" placeholder="Enter your display name" />
-          </Form.Item>
-          <Form.Item name="email" label="Email address" rules={[
+          </Form.Item>}
+          {fields !== "name" && <Form.Item name="email" label="Email address" rules={[
             { required: true, whitespace: true, message: 'Enter your email address.' },
             { type: 'email', message: 'Enter a valid email address.' },
             { max: 254, message: 'Email must be 254 characters or fewer.' },
           ]} extra="Used to sign in. If changed, you'll need to sign in again with the new address.">
             <Input maxLength={254} autoComplete="email" inputMode="email" placeholder="name@example.com" />
-          </Form.Item>
+          </Form.Item>}
           <div className="designer-settings-advisory">
             <strong>Only your account details change here.</strong> {advisory}
           </div>

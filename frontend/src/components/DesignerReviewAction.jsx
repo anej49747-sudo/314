@@ -87,7 +87,7 @@ export default function DesignerReviewAction({ designerId, designerName, onSubmi
   const missingRating = attempted && !validReviewRating(rating)
 
   return <>
-    {access !== 'other' && <div className="designer-review-action">
+    {access === 'customer' && <div className="designer-review-action">
       <Button type="primary" onClick={openReview} disabled={access === 'loading'}>
         <span aria-hidden="true">☆</span> {access === 'guest' ? 'Log in to write a review' : 'Write a review'}
       </Button>

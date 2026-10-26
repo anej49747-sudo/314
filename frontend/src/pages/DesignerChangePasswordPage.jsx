@@ -1,7 +1,7 @@
 import { Alert, Button, Form, Input, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { changeDesignerPassword, currentDesigner } from '../api/designerAuthentication.js'
+import { changeDesignerPassword, currentDesigner, updateOwnDesignerPassword } from '../api/designerAuthentication.js'
 import { logoutSession } from '../api/authentication.js'
 import { logoutFailureMessage } from '../auth/logoutRules.js'
 import AuthCard from '../components/AuthCard.jsx'
@@ -13,11 +13,12 @@ export default function DesignerChangePasswordPage() {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
+  const [firstLogin, setFirstLogin] = useState(true)
 
   useEffect(() => {
     let active = true
     currentDesigner().then((account) => {
-      if (active && !account.passwordChangeRequired) navigate('/designer', { replace: true })
+      if (active) setFirstLogin(Boolean(account.passwordChangeRequired))
     }).catch((failure) => {
       if (!active) return
       if ([401, 403].includes(failure.response?.status)) navigate('/login', { replace: true })
@@ -33,7 +34,8 @@ export default function DesignerChangePasswordPage() {
     setSubmitting(true)
     setError('')
     try {
-      await changeDesignerPassword(buildPasswordChangePayload(values))
+      if (firstLogin) await changeDesignerPassword(buildPasswordChangePayload(values))
+      else await updateOwnDesignerPassword({ currentPassword: values.currentPassword, newPassword: values.newPassword })
       navigate('/designer', { replace: true, state: { passwordChanged: true } })
     } catch (failure) {
       setError(passwordChangeFailureMessage(failure))
@@ -56,12 +58,16 @@ export default function DesignerChangePasswordPage() {
   }
 
   return (
-    <AuthCard title="Set your new password"
-      description="For your security, choose a new password before accessing designer features.">
+    <AuthCard title={firstLogin ? 'Set your new password' : 'Change password'}
+      description={firstLogin ? 'For your security, choose a new password before accessing designer features.' : 'Verify your current password before choosing a new one.'}>
       {checking && !error && <div className="loading-state"><Spin /> <span>Checking your account…</span></div>}
       {error && <Alert className="form-feedback" type="error" showIcon role="alert" message={error} />}
       {!checking && <>
       <Form layout="vertical" onFinish={onSubmit} disabled={submitting || loggingOut} autoComplete="off">
+        {!firstLogin && <Form.Item name="currentPassword" label="Current password"
+          rules={[{ required: true, message: 'Enter your current password' }]}>
+          <Input.Password autoComplete="current-password" />
+        </Form.Item>}
         <Form.Item name="newPassword" label="New password" rules={[{ required: true, message: 'Enter a new password' },
           { validator: (_, value) => {
             const message = value ? validatePasswordChange({ newPassword: value, confirmPassword: value }) : null
@@ -77,7 +83,7 @@ export default function DesignerChangePasswordPage() {
             } })]}>
           <Input.Password autoComplete="new-password" />
         </Form.Item>
-        <Button type="primary" htmlType="submit" block loading={submitting} className="submit-button">Set password</Button>
+        <Button type="primary" htmlType="submit" block loading={submitting} className="submit-button">{firstLogin ? 'Set password' : 'Change password'}</Button>
       </Form>
       <Button block type="default" className="submit-button" loading={loggingOut}
         disabled={submitting} onClick={onLogout}>Log out</Button>

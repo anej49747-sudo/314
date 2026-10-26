@@ -9,12 +9,13 @@ export default function DesignerAccountSettingsPage() {
     backText="Back to designer area"
     eyebrow="Designer workspace"
     roleLabel="Interior designer account"
-    intro="Keep your account name and sign-in email address up to date. Your company information is managed separately."
-    description="Update the information associated with your designer login."
-    advisory="Portfolio, company information and your password remain unchanged."
+    intro="Update your display name. Email and password changes have their own secure pages."
+    fields="name" pageTitle="My profile"
+    description="Choose how your account name appears inside Lucky Dog."
+    advisory="Your email, portfolio, company details and password remain unchanged."
     footer={<>
       <span>Looking for business settings? <Link to="/designer/company-information">Manage company information →</Link></span>
-      <span>Password changes aren't available on this page.</span>
+      <span><Link to="/designer/security">Account security →</Link></span>
     </>}
     currentAccount={currentDesigner}
     loadAccount={getDesignerAccountSettings}

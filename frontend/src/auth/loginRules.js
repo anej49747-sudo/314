@@ -8,6 +8,7 @@ export function buildLoginPayload(values) {
 
 export function loginFailureMessage(failure) {
   const status = failure?.response?.status
+  if (status === 423) return 'Your account has been suspended, please contact the administrator through admin@luckydog.com'
   if (status === 401) return 'Invalid email or password.'
   if (status === 400) return 'Please enter a valid email and password.'
   if (status === 403) return 'Your security session has expired. Refresh the page and try again.'

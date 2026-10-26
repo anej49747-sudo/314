@@ -19,7 +19,12 @@ export function buildPasswordChangePayload(values) {
 export function passwordChangeFailureMessage(failure) {
   const code = failure?.response?.status
   if (code === 401) return 'Your session has expired. Please log in again.'
-  if (code === 400) return 'Check your new password and try again.'
+  if (code === 400) {
+    const message = failure?.response?.data?.message
+    return ['Current password is incorrect.', 'New password must be different from your current password.',
+      'New password must be different from your initial password.'].includes(message)
+      ? message : 'Check your new password and try again.'
+  }
   if (code === 403) return 'Password setup is unavailable for this account or your session has expired. Please log in again.'
   return 'Unable to change your password right now. Please try again.'
 }

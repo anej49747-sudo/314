@@ -5,8 +5,8 @@ export function accountAreaPath(account) {
     case 'CUSTOMER': return '/customer'
     case 'INTERIOR_DESIGNER':
       return account.passwordChangeRequired ? '/designer/change-password' : '/designer'
-    case 'USER_ADMIN': return '/admin/designers/new'
-    case 'PLATFORM_MANAGER': return '/manager/categories'
+    case 'USER_ADMIN': return '/admin/accounts'
+    case 'PLATFORM_MANAGER': return '/manager'
     default: return null
   }
 }

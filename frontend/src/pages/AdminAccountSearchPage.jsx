@@ -1,4 +1,5 @@
-import { Alert, Button, Card, Drawer, Input, Modal, Select, Spin, Table, Tag, message } from 'antd'
+import { Alert, Button, Card, Drawer, Dropdown, Input, Modal, Select, Spin, Table, Tag, message } from 'antd'
+import { MoreHorizontal } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { currentAdmin } from '../api/designerAccounts.js'
@@ -174,16 +175,19 @@ export default function AdminAccountSearchPage() {
     { title: 'Email', dataIndex: 'email', key: 'email' },
     { title: 'Role', dataIndex: 'role', key: 'role', render: accountRoleLabel },
     { title: 'Status', dataIndex: 'active', key: 'active', render: (active) => (
-      <Tag color={active ? 'success' : 'default'}>{accountStatusLabel(active)}</Tag>
+      <Tag color={active ? '#16a34a' : '#dc2626'}>{accountStatusLabel(active)}</Tag>
     ) },
-    { title: 'Actions', key: 'actions', width: 365, render: (_, account) => (
+    { title: 'Actions', key: 'actions', width: 190, render: (_, account) => (
       <div className="admin-account-row-actions">
         <Button size="small" onClick={() => openHistory(account)}>Login history</Button>
-        <Button size="small" danger={account.active} onClick={() => openModeration(account)}>
-          {moderationActionLabel(account.active)}
-        </Button>
-        {account.role === 'INTERIOR_DESIGNER' && <Button size="small" danger
-          onClick={() => openDelete(account)}>Delete account</Button>}
+        <Dropdown trigger={['click']} placement="bottomRight" menu={{ items: [
+          { key: 'moderate', label: moderationActionLabel(account.active), danger: account.active,
+            onClick: () => openModeration(account) },
+          ...(account.role === 'INTERIOR_DESIGNER' ? [{ key: 'delete', danger: true,
+            label: 'Delete account', onClick: () => openDelete(account) }] : []),
+        ] }}>
+          <Button size="small" aria-label={`More actions for ${account.displayName}`} icon={<MoreHorizontal size={17} />} />
+        </Dropdown>
       </div>
     ) },
   ]
@@ -197,7 +201,12 @@ export default function AdminAccountSearchPage() {
   return (
     <div className="admin-account-search-page">
       <p className="admin-account-eyebrow">User administration</p>
-      <h1>Manage user accounts</h1>
+      <div className="admin-account-top-row">
+        <h1>Account Management</h1>
+        <Button type="primary" onClick={() => navigate('/admin/designers/new')}>
+          Create Designer Account
+        </Button>
+      </div>
       <p className="admin-account-intro">
         Find Renovation Customer and Interior Designer accounts, manage their access,
         and review recorded login attempts. Privileged accounts are not shown.
@@ -224,7 +233,7 @@ export default function AdminAccountSearchPage() {
                 <Select value={draft.status} options={[
                   { label: 'All statuses', value: '' },
                   { label: 'Active', value: 'active' },
-                  { label: 'Inactive', value: 'inactive' },
+                  { label: 'Suspended', value: 'inactive' },
                 ]} onChange={(status) => setDraft((current) => ({ ...current, status }))} />
               </label>
             </div>

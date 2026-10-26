@@ -10,6 +10,7 @@ import csit314.renovation.account.entity.UserAccount;
 import csit314.renovation.account.repository.UserAccountRepository;
 import csit314.renovation.authentication.dto.AccountProfileResponse;
 import csit314.renovation.authentication.dto.LoginRequest;
+import org.springframework.security.authentication.DisabledException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
     @Mock AuthenticationManager manager;
+    @Mock org.springframework.security.crypto.password.PasswordEncoder encoder;
     @Mock UserAccountRepository accounts;
     @Mock SecurityContextRepository contexts;
     @Mock SessionAuthenticationStrategy sessions;
@@ -64,6 +66,35 @@ class AuthenticationServiceTest {
         verify(contexts).saveContext(any(SecurityContext.class), any(HttpServletRequest.class),
                 any(HttpServletResponse.class));
         assertEquals(authenticated, SecurityContextHolder.getContext().getAuthentication());
+    }
+
+
+    @Test
+    void matchingPasswordForSuspendedAccountShowsSuspensionWithoutStartingSession() {
+        UserAccount suspended = UserAccount.newCustomer(null, "Jane", "jane@example.com", "encoded-password");
+        suspended.setActiveForModeration(false);
+        when(manager.authenticate(any(Authentication.class))).thenThrow(new DisabledException("Disabled"));
+        when(accounts.findByEmailIgnoreCase("jane@example.com")).thenReturn(Optional.of(suspended));
+        when(encoder.matches("correct-password", "encoded-password")).thenReturn(true);
+
+        assertThrows(SuspendedAccountException.class, () -> service.login(
+                new LoginRequest("jane@example.com", "correct-password"), request, response));
+        verify(recorder).record("jane@example.com", false);
+        org.mockito.Mockito.verifyNoInteractions(contexts, sessions);
+    }
+
+    @Test
+    void wrongPasswordForSuspendedAccountRemainsGeneric() {
+        UserAccount suspended = UserAccount.newCustomer(null, "Jane", "jane@example.com", "encoded-password");
+        suspended.setActiveForModeration(false);
+        when(manager.authenticate(any(Authentication.class))).thenThrow(new DisabledException("Disabled"));
+        when(accounts.findByEmailIgnoreCase("jane@example.com")).thenReturn(Optional.of(suspended));
+        when(encoder.matches("wrong-password", "encoded-password")).thenReturn(false);
+
+        assertThrows(BadCredentialsException.class, () -> service.login(
+                new LoginRequest("jane@example.com", "wrong-password"), request, response));
+        verify(recorder).record("jane@example.com", false);
+        org.mockito.Mockito.verifyNoInteractions(contexts, sessions);
     }
 
     @Test

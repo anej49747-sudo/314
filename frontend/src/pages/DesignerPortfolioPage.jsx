@@ -1,7 +1,7 @@
 import { Alert, Button, Card, Empty, Modal, Segmented, Spin, Tag } from 'antd'
 import { useEffect, useState } from 'react'
 import { Eye, Heart } from 'lucide-react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { deletePortfolioProject, getMyPortfolio } from '../api/portfolio.js'
 import { currentDesigner, currentDesignerArea } from '../api/designerAuthentication.js'
 import { filteredPortfolio, portfolioStatusLabel, portfolioSummary } from '../designer/portfolioRules.js'
@@ -113,9 +113,9 @@ export default function DesignerPortfolioPage() {
                     src={project.images[0].url} alt={`Cover photo for ${project.title}`} />}
                   <div className="portfolio-project-heading">
                     <h2>{project.title}</h2>
-                    <Tag color={project.status === 'CURRENT' ? 'blue' : 'green'}>{portfolioStatusLabel(project.status)}</Tag>
+                    <Tag color={project.status === 'CURRENT' ? '#365b82' : '#16a34a'}>{portfolioStatusLabel(project.status)}</Tag>
                   </div>
-                  <p className="portfolio-project-category">{project.categoryName}</p>
+                  <p className="portfolio-project-category"><span className="ld-category-kicker">Style</span>{project.categoryName}</p>
                   <p className="portfolio-project-description">{project.description}</p>
                   <div className="portfolio-project-metrics" aria-label={`Interest metrics for ${project.title}`}>
                     <div className="portfolio-project-metric">
@@ -128,6 +128,9 @@ export default function DesignerPortfolioPage() {
                     </div>
                   </div>
                   <div className="portfolio-project-actions">
+                    <Link to={`/projects/${project.id}`} target="_blank" rel="noopener noreferrer" className="portfolio-preview-link" aria-label={`Preview ${project.title} as a visitor`}>
+                      <Eye size={15} aria-hidden="true" /> Preview
+                    </Link>
                     <Button size="small" onClick={() => navigate(`/designer/portfolio/${project.id}/edit`)}>
                       Edit project
                     </Button>

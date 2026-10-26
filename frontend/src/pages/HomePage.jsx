@@ -1,5 +1,5 @@
 import { Alert, Button, Spin } from 'antd'
-import { ArrowRight, BookOpen, Check, FileText, Home, Search, Sparkles, Users } from 'lucide-react'
+import { ArrowRight, BookOpen, Check, FileText, Home, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listArticles } from '../api/articles.js'
@@ -69,20 +69,9 @@ export default function HomePage() {
           </div>
         </div>
         <div className="lucky-hero-media" aria-label="Renovation inspiration photographs">
-          <img className="lucky-hero-main-photo" src="/homepage/living-room.jpg" alt="Warm and bright modern living room with natural finishes" />
-          <img className="lucky-hero-inset-photo" src="/homepage/kitchen.jpg" alt="Modern neutral-toned kitchen renovation" />
+          <img className="lucky-hero-main-photo" src={featured?.coverUrl || "/homepage/living-room.jpg"} alt={featured?.title ? `Featured renovation: ${featured.title}` : "Warm and bright modern living room with natural finishes"} />
+          <img className="lucky-hero-inset-photo" src={articles[0]?.coverUrl || "/homepage/kitchen.jpg"} alt={articles[0]?.coverUrl ? `Renovation inspiration: ${articles[0].title}` : "Modern neutral-toned kitchen renovation"} />
           <span className="lucky-hero-media-tag"><span aria-hidden="true">●</span> Ideas for your next home</span>
-        </div>
-      </div>
-    </section>
-
-    <section className="lucky-how" aria-labelledby="lucky-how-heading">
-      <div className="lucky-container lucky-how-inner">
-        <h2 id="lucky-how-heading">How Lucky Dog works</h2>
-        <div className="lucky-how-steps">
-          <div><span className="lucky-how-icon"><Search size={19} /></span><p><strong>Discover</strong><br />Browse designers and renovation projects.</p></div>
-          <div><span className="lucky-how-icon"><Users size={19} /></span><p><strong>Compare</strong><br />Explore portfolios and compare designers.</p></div>
-          <div><span className="lucky-how-icon"><Home size={19} /></span><p><strong>Get inspired</strong><br />Save favourites and plan your next step.</p></div>
         </div>
       </div>
     </section>

@@ -22,11 +22,11 @@ export default function LoginPage() {
       if (account.role === 'CUSTOMER') {
         navigate(customerLoginDestination(location.state), { replace: true })
       } else if (account.role === 'USER_ADMIN') {
-        navigate('/admin/designers/new', { replace: true })
+        navigate('/admin/accounts', { replace: true })
       } else if (account.role === 'INTERIOR_DESIGNER') {
         navigate(designerLoginDestination(account), { replace: true })
       } else if (account.role === 'PLATFORM_MANAGER') {
-        navigate('/manager/categories', { replace: true })
+        navigate('/manager', { replace: true })
       } else {
         setError('This account does not have access to this area.')
       }

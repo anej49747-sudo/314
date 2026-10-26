@@ -223,8 +223,13 @@ export default function ProjectSearchPage() {
           <div className="project-search-grid" aria-label="Project search results">
             {projects.map((project) => (
               <article className="project-search-card" key={project.id}>
+                {project.coverImageUrl && <Link to={projectSearchPath(project.id)}
+                  className="project-search-cover-link" aria-label={`View ${project.title}`}>
+                  <img className="project-search-cover" src={project.coverImageUrl}
+                    alt={`Cover photo for ${project.title}`} loading="lazy" />
+                </Link>}
                 <div className="project-search-tags">
-                  <span className="project-search-category">{project.categoryName}</span>
+                  <span className="project-search-category"><span className="ld-category-kicker">Style</span>{project.categoryName}</span>
                   <span className={project.status === 'COMPLETED'
                     ? 'project-search-status project-search-status-completed'
                     : 'project-search-status project-search-status-current'}>

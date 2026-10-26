@@ -16,7 +16,7 @@ export function accountRoleLabel(role) {
 }
 
 export function accountStatusLabel(active) {
-  return active ? 'Active' : 'Inactive'
+  return active ? 'Active' : 'Suspended'
 }
 
 export function accountSearchFailureMessage(failure) {

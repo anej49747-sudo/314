@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import csit314.renovation.account.entity.UserAccount;
 import csit314.renovation.account.repository.UserAccountRepository;
 import csit314.renovation.authentication.dto.ChangePasswordRequest;
+import csit314.renovation.authentication.dto.UpdateOwnPasswordRequest;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,4 +74,47 @@ class DesignerPasswordServiceTest {
                 new ChangePasswordRequest("NewPassword1!"), authentication));
         verify(encoder, never()).encode(anyString());
     }
+    @Test
+    void establishedDesignerCanUpdatePasswordWithCurrentPassword() {
+        UserAccount account = designer();
+        account.replacePasswordHash("establishedHash");
+        when(encoder.matches("OldPassword1!", "establishedHash")).thenReturn(true);
+        when(encoder.encode("NewPassword2!")).thenReturn("newHash");
+        service.updateOwnPassword(new UpdateOwnPasswordRequest("OldPassword1!", "NewPassword2!"), authentication);
+        assertTrue("newHash".equals(account.getPasswordHash()));
+    }
+
+    @Test
+    void rejectsWrongCurrentPasswordWithoutChangingHash() {
+        UserAccount account = designer();
+        account.replacePasswordHash("establishedHash");
+        assertThrows(PasswordChangeException.class, () -> service.updateOwnPassword(
+                new UpdateOwnPasswordRequest("WrongPassword1!", "NewPassword2!"), authentication));
+        assertTrue("establishedHash".equals(account.getPasswordHash()));
+        verify(encoder, never()).encode(anyString());
+    }
+
+    @Test
+    void establishedCustomerCanChangePasswordWithCurrentPassword() {
+        UserAccount customer = UserAccount.newCustomer(null, "Customer", "customer@example.com", "storedHash");
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn("customer@example.com");
+        when(accounts.findByEmailIgnoreCase("customer@example.com")).thenReturn(Optional.of(customer));
+        when(encoder.matches("OldPassword1!", "storedHash")).thenReturn(true);
+        when(encoder.encode("NewPassword2!")).thenReturn("newCustomerHash");
+        service.updateOwnPassword(new UpdateOwnPasswordRequest("OldPassword1!", "NewPassword2!"), authentication);
+        assertTrue("newCustomerHash".equals(customer.getPasswordHash()));
+    }
+
+    @Test
+    void customerCannotChangePasswordWithIncorrectCurrentPassword() {
+        UserAccount customer = UserAccount.newCustomer(null, "Customer", "customer@example.com", "storedHash");
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn("customer@example.com");
+        when(accounts.findByEmailIgnoreCase("customer@example.com")).thenReturn(Optional.of(customer));
+        assertThrows(PasswordChangeException.class, () -> service.updateOwnPassword(
+                new UpdateOwnPasswordRequest("BadPassword1!", "NewPassword2!"), authentication));
+        assertTrue("storedHash".equals(customer.getPasswordHash()));
+    }
+
 }

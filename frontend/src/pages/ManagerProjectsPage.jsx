@@ -85,7 +85,7 @@ export default function ManagerProjectsPage() {
     { title: 'Interior Designer', dataIndex: 'designerName', key: 'designerName' },
     { title: 'Category', key: 'category', render: (_, project) => categoryDisplayName(project) },
     { title: 'Status', dataIndex: 'status', key: 'status', render: (status) =>
-      <Tag color={status === 'COMPLETED' ? 'success' : 'default'}>{status === 'COMPLETED' ? 'Completed' : 'Current'}</Tag> },
+      <Tag color={status === 'COMPLETED' ? '#16a34a' : '#365b82'}>{status === 'COMPLETED' ? 'Completed' : 'Current'}</Tag> },
     { title: 'Action', key: 'action', render: (_, project) =>
       <Button onClick={() => openEdit(project)}>Edit</Button> },
   ]

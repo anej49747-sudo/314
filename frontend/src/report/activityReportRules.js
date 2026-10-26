@@ -4,8 +4,15 @@ export const REPORT_METRICS = [
   { key: 'newAccounts', label: 'New accounts', hint: 'Customers and interior designers' },
   { key: 'projectViews', label: 'Project views', hint: 'Qualifying project-detail views' },
   { key: 'favouritesAdded', label: 'Favourites added', hint: 'Actual first saves' },
-  { key: 'favouritesRemoved', label: 'Favourites removed', hint: 'Actual successful removals' },
   { key: 'reviewsSubmitted', label: 'Reviews submitted', hint: 'Customer review submissions' },
+]
+
+// Sprint 3 still exports the full reporting data; only the on-screen dashboard
+// hides favourites removed at the user's request.
+export const CSV_REPORT_METRICS = [
+  ...REPORT_METRICS.slice(0, 5),
+  { key: 'favouritesRemoved', label: 'Favourites removed' },
+  ...REPORT_METRICS.slice(5),
 ]
 
 const ENGAGEMENT_KEYS = new Set(['projectViews', 'favouritesAdded', 'favouritesRemoved'])
@@ -19,6 +26,15 @@ export function todayInSingapore(now = new Date()) {
   }).formatToParts(now)
   const value = Object.fromEntries(parts.map(({ type, value: part }) => [type, part]))
   return `${value.year}-${value.month}-${value.day}`
+}
+
+// Default to the previous complete month, which makes historical reports useful
+// instead of displaying an empty current-month dashboard by default.
+export function previousMonthInSingapore(now = new Date()) {
+  const current = todayInSingapore(now)
+  const first = new Date(`${current.slice(0, 7)}-01T00:00:00Z`)
+  first.setUTCMonth(first.getUTCMonth() - 1)
+  return first.toISOString().slice(0, 10)
 }
 
 function utcDate(value) { return new Date(`${value}T00:00:00Z`) }
@@ -56,11 +72,11 @@ function csvCell(value) {
 }
 
 export function reportCsv(data) {
-  const header = ['Date', ...REPORT_METRICS.map((metric) => metric.label), 'Engagement coverage']
-  const rows = data.days.map((day) => [day.date, ...REPORT_METRICS.map(({ key }) =>
+  const header = ['Date', ...CSV_REPORT_METRICS.map((metric) => metric.label), 'Engagement coverage']
+  const rows = data.days.map((day) => [day.date, ...CSV_REPORT_METRICS.map(({ key }) =>
     isEngagementMetric(key) && !day.engagementComplete ? `${day[key]} (partial)` : day[key],
   ), day.engagementComplete ? 'Complete' : 'Incomplete'])
-  const total = ['Period total', ...REPORT_METRICS.map(({ key }) =>
+  const total = ['Period total', ...CSV_REPORT_METRICS.map(({ key }) =>
     isEngagementMetric(key) && !data.engagementComplete ? `${data[key]} (partial)` : data[key],
   ), data.engagementComplete ? 'Complete' : 'Incomplete']
   return [header, ...rows, total].map((row) => row.map(csvCell).join(',')).join('\r\n') + '\r\n'
