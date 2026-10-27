@@ -16,6 +16,7 @@ import AdminAccountSearchPage from './pages/AdminAccountSearchPage.jsx'
 import AdminDesignerReportsPage from './pages/AdminDesignerReportsPage.jsx'
 import DesignerChangePasswordPage from './pages/DesignerChangePasswordPage.jsx'
 import DesignerPage from './pages/DesignerPage.jsx'
+import MessagesPage from './pages/MessagesPage.jsx'
 import DesignerAccountSettingsPage from './pages/DesignerAccountSettingsPage.jsx'
 import DesignerPortfolioPage from './pages/DesignerPortfolioPage.jsx'
 import DesignerDirectoryPage from './pages/DesignerDirectoryPage.jsx'
@@ -71,9 +72,11 @@ export default function App() {
             <Route path="customer/security" element={<AccountSecurityPage role="customer" />} />
             <Route path="customer/change-email" element={<ChangeAccountEmailPage role="customer" />} />
             <Route path="customer/change-password" element={<CustomerChangePasswordPage />} />
+            <Route path="customer/messages" element={<MessagesPage role="customer" />} />
             <Route path="customer/favourites" element={<CustomerFavouritesPage />} />
             <Route path="customer/compare" element={<CompareDesignersPage />} />
             <Route path="designer" element={<DesignerPage />} />
+            <Route path="designer/messages" element={<MessagesPage role="designer" />} />
             <Route path="designer/account" element={<DesignerAccountSettingsPage />} />
             <Route path="designer/security" element={<AccountSecurityPage role="designer" />} />
             <Route path="designer/change-email" element={<ChangeAccountEmailPage role="designer" />} />

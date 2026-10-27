@@ -6,6 +6,7 @@ import { usePublicRecognitions } from '../recognition/usePublicRecognitions.js'
 import { DesignerAwardBadges, FeaturedProjectBadge } from '../components/RecognitionBadges.jsx'
 import DesignerReviewAction from '../components/DesignerReviewAction.jsx'
 import DesignerReportAction from '../components/DesignerReportAction.jsx'
+import MessageDesignerAction from '../components/MessageDesignerAction.jsx'
 import DesignerReviewsSection from '../components/DesignerReviewsSection.jsx'
 import { directoryAddress } from '../designer/designerDirectoryRules.js'
 import {
@@ -85,6 +86,7 @@ export default function DesignerProfilePage() {
               <DesignerAwardBadges awards={awards} designerId={profile.id} />
             </div>
             <div className="designer-report-profile-actions">
+              <MessageDesignerAction designerId={profile.id} designerName={profile.name} />
               <DesignerReviewAction designerId={profile.id} designerName={profile.name}
                 onSubmitted={reviewSubmitted} />
               <DesignerReportAction designerId={profile.id} designerName={profile.name} />

@@ -4,6 +4,10 @@ import { isValidProjectId } from './projectDetailsRules.js'
 export function customerLoginDestination(state) {
   const path = state?.returnTo
   if (path === '/customer/favourites') return path
+  if (typeof path === 'string' && /^\/customer\/messages\?designerId=[1-9]\d*$/.test(path)) {
+    const id = path.slice(path.indexOf('=') + 1)
+    if (Number.isSafeInteger(Number(id))) return path
+  }
   const match = typeof path === 'string' ? /^\/projects\/([1-9]\d*)$/.exec(path) : null
   return match && isValidProjectId(match[1]) ? path : '/customer'
 }

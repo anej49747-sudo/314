@@ -2,6 +2,8 @@ package csit314.renovation.account.repository;
 
 import csit314.renovation.account.entity.UserAccount;
 import csit314.renovation.account.entity.UserRole;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,11 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
     Optional<UserAccount> findByEmailIgnoreCase(String email);
     List<UserAccount> findByRoleAndActiveTrue(UserRole role);
     Optional<UserAccount> findByIdAndRoleAndActiveTrue(Long id, UserRole role);
+
+    // Serialize simultaneous first messages from one customer to prevent duplicate threads.
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT account FROM UserAccount account WHERE account.id = :id")
+    Optional<UserAccount> lockForMessaging(@Param("id") Long id);
 
     // LOCATE treats the submitted search as literal text, not a SQL LIKE wildcard pattern.
     @Query("""

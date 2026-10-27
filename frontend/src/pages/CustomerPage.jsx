@@ -1,5 +1,5 @@
 import { Alert, Button, Spin } from 'antd'
-import { ArrowRight, Heart, Search, ShieldCheck, Users } from 'lucide-react'
+import { ArrowRight, Heart, MessageSquare, Search, ShieldCheck, Users } from 'lucide-react'
 import { ActionCard, ImagePreviewCard, SectionHeading } from '../components/VisualCards.jsx'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -11,6 +11,7 @@ const shortcuts = [
   { title: 'Explore projects', detail: 'Discover inspiring renovations', to: '/projects', Icon: Search },
   { title: 'My favourites', detail: 'Revisit projects you saved', to: '/customer/favourites', Icon: Heart },
   { title: 'Compare designers', detail: 'Find the right studio for you', to: '/customer/compare', Icon: Users },
+  { title: 'My messages', detail: 'Chat privately with designers', to: '/customer/messages', Icon: MessageSquare },
 ]
 
 export default function CustomerPage() {
