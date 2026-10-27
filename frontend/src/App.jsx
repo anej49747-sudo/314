@@ -17,6 +17,7 @@ import AdminDesignerReportsPage from './pages/AdminDesignerReportsPage.jsx'
 import DesignerChangePasswordPage from './pages/DesignerChangePasswordPage.jsx'
 import DesignerPage from './pages/DesignerPage.jsx'
 import MessagesPage from './pages/MessagesPage.jsx'
+import DesignerProjectQuestionsPage from './pages/DesignerProjectQuestionsPage.jsx'
 import DesignerAccountSettingsPage from './pages/DesignerAccountSettingsPage.jsx'
 import DesignerPortfolioPage from './pages/DesignerPortfolioPage.jsx'
 import DesignerDirectoryPage from './pages/DesignerDirectoryPage.jsx'
@@ -77,6 +78,7 @@ export default function App() {
             <Route path="customer/compare" element={<CompareDesignersPage />} />
             <Route path="designer" element={<DesignerPage />} />
             <Route path="designer/messages" element={<MessagesPage role="designer" />} />
+            <Route path="designer/project-questions" element={<DesignerProjectQuestionsPage />} />
             <Route path="designer/account" element={<DesignerAccountSettingsPage />} />
             <Route path="designer/security" element={<AccountSecurityPage role="designer" />} />
             <Route path="designer/change-email" element={<ChangeAccountEmailPage role="designer" />} />

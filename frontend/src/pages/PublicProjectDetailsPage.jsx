@@ -14,6 +14,7 @@ import {
 } from '../project/projectDetailsRules.js'
 import { photoAlt, projectPhotos, shiftedPhotoIndex } from '../project/photoGalleryRules.js'
 import { favouriteAccessState, favouriteButtonLabel, favouriteResultMessage } from '../project/favouriteRules.js'
+import ProjectQuestionsPanel from '../qa/ProjectQuestionsPanel.jsx'
 import '../project/projectDetails.css'
 import '../project/favouriteControls.css'
 
@@ -206,6 +207,7 @@ export default function PublicProjectDetailsPage() {
               </div>
             )}
           </section>
+          <ProjectQuestionsPanel key={project.id} project={project} />
         </>
       )}
       <Modal open={loginPromptOpen} onCancel={() => setLoginPromptOpen(false)}

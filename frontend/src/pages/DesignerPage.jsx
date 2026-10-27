@@ -1,5 +1,5 @@
 import { Alert, Button, Spin } from 'antd'
-import { ArrowRight, Building2, Eye, FolderOpen, Heart, MessageSquare, Plus, ShieldCheck } from 'lucide-react'
+import { ArrowRight, Building2, Eye, FolderOpen, Heart, MessageSquare, MessageCircleQuestion, Plus, ShieldCheck } from 'lucide-react'
 import { ActionCard, ImagePreviewCard, SectionHeading } from '../components/VisualCards.jsx'
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -67,7 +67,8 @@ export default function DesignerPage() {
           {[{ to: '/designer/portfolio', label: 'My portfolio', detail: 'View and edit your projects', Icon: FolderOpen },
             { to: '/designer/company-information', label: 'Company information', detail: 'Update your studio profile', Icon: Building2 },
             { to: '/designer/security', label: 'Account security', detail: 'Change email or password', Icon: ShieldCheck },
-            { to: '/designer/messages', label: 'Customer messages', detail: 'Read and reply to customers', Icon: MessageSquare }]
+            { to: '/designer/messages', label: 'Customer messages', detail: 'Read and reply to customers', Icon: MessageSquare },
+            { to: '/designer/project-questions', label: 'Project questions', detail: 'Answer questions about your projects', Icon: MessageCircleQuestion }]
             .map(({ to, label, detail, Icon }) => <ActionCard key={to} to={to} title={label} description={detail} Icon={Icon} />)}
         </div>
       </section>

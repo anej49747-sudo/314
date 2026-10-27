@@ -35,6 +35,7 @@ public class DesignerPasswordGateFilter extends OncePerRequestFilter {
                         || path.matches("/api/designers/[0-9]+")
                         || path.matches("/api/designers/[0-9]+/reviews")
                         || path.matches("/api/projects/[0-9]+")
+                        || path.matches("/api/projects/[0-9]+/questions")
                         || path.matches("/api/projects/[0-9]+/images/[0-9]+")))
                 && !ALLOWED_WHILE_PENDING.contains(path)
                 && authentication != null && authentication.isAuthenticated()

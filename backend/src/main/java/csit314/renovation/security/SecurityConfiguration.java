@@ -99,6 +99,13 @@ public class SecurityConfiguration {
                                 "/api/articles/*/cover").permitAll()
                         // #36 only Platform Managers can publish articles (session + CSRF).
                         .requestMatchers(HttpMethod.POST, "/api/manager/articles").hasRole("PLATFORM_MANAGER")
+                        // Sprint 4 #48/#49/#50: only answered project Q&A is public.
+                        .requestMatchers(HttpMethod.GET, "/api/projects/*/questions").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/projects/*/questions").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/customer/projects/*/questions").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/designer/project-questions").hasRole("INTERIOR_DESIGNER")
+                        .requestMatchers(HttpMethod.POST, "/api/designer/project-questions/*/answer")
+                        .hasRole("INTERIOR_DESIGNER")
                         // Sprint 4 #25/#47: only authenticated conversation participants can read/send.
                         .requestMatchers(HttpMethod.GET, "/api/messages/conversations",
                                 "/api/messages/conversations/*/messages")
