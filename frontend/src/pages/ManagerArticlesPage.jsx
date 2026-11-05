@@ -1,3 +1,4 @@
+import ManagerReturnButton from '../components/ManagerReturnButton.jsx'
 import { Alert, Button, Card, Form, Input, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -74,6 +75,7 @@ export default function ManagerArticlesPage() {
   }
 
   return <section className="manager-articles-page">
+    <ManagerReturnButton />
     <p className="articles-eyebrow">Platform management</p>
     <h1>Create Article</h1>
     <p className="articles-lead">Publish renovation guidance for visitors. Articles appear immediately in Articles.</p>

@@ -7,6 +7,7 @@ import { DesignerAwardBadges } from '../components/RecognitionBadges.jsx'
 import { currentSession } from '../api/authentication.js'
 import { MAX_COMPARE_DESIGNERS, normalizeComparisonIds, toggleComparisonId } from '../designer/compareDesignersRules.js'
 import '../designer/compareDesigners.css'
+import RecommendationHighlights from '../components/RecommendationHighlights.jsx'
 import { directoryAddress, directoryCountLabel, directoryDescription, designerProfilePath } from '../designer/designerDirectoryRules.js'
 
 export default function DesignerDirectoryPage() {
@@ -84,6 +85,7 @@ export default function DesignerDirectoryPage() {
         </div>
       </div>}
       {customer && selectionMessage && <Alert className="compare-selection-alert" type="warning" role="alert" showIcon message={selectionMessage} />}
+      {customer && <RecommendationHighlights designersOnly />}
       <div className="designer-directory-section-heading">
         <h2>All designers</h2>
         {!loading && !error && <span>{directoryCountLabel(designers.length)}</span>}

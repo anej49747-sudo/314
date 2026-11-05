@@ -3,6 +3,9 @@ import { ArrowRight, BookOpen, Check, FileText, Home, Sparkles } from 'lucide-re
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listArticles } from '../api/articles.js'
+import { currentSession } from '../api/authentication.js'
+import { accountAreaPath } from '../auth/headerSessionRules.js'
+import { homeFooterAction } from '../auth/customerNavigationRules.js'
 import { getDesignerDirectory } from '../api/designerDirectory.js'
 import { getPublicProjects } from '../api/publicProjects.js'
 import { getPublicRecognitions } from '../api/recognitions.js'
@@ -19,6 +22,14 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
   const [failures, setFailures] = useState([])
   const [revision, setRevision] = useState(0)
+  const [accountState, setAccountState] = useState({ status: 'loading', account: null })
+
+  useEffect(() => {
+    let active = true
+    currentSession().then(account => { if (active) setAccountState({ status: 'authenticated', account }) })
+      .catch(error => { if (active) setAccountState({ status: [401, 403].includes(error.response?.status) ? 'guest' : 'error', account: null }) })
+    return () => { active = false }
+  }, [])
 
   useEffect(() => {
     let active = true
@@ -47,6 +58,7 @@ export default function HomePage() {
     return () => { active = false; controller.abort() }
   }, [revision])
 
+  const footerAction = homeFooterAction(accountState.status, accountAreaPath(accountState.account))
   const featured = homepageFeaturedDetails(data.recognitions?.featuredProject, data.projects)
   const designers = homepageRecognisedDesigners(data.designers, data.recognitions?.awards)
   const articles = homepageArticles(data.articles)
@@ -159,7 +171,7 @@ export default function HomePage() {
     <section className="lucky-final-cta" aria-labelledby="lucky-join-heading"><div className="lucky-container lucky-final-inner">
       <div><h2 id="lucky-join-heading">Start exploring your renovation possibilities.</h2>
         <p>Find inspiration, discover designers and save the projects that speak to you.</p></div>
-      <Link className="lucky-btn lucky-btn-primary" to="/register">Create your free account <ArrowRight size={17} /></Link>
+      <Link className="lucky-btn lucky-btn-primary" to={footerAction.to}>{footerAction.label} <ArrowRight size={17} /></Link>
     </div></section>
     <footer className="lucky-footer"><div className="lucky-container lucky-footer-inner">
       <span><strong>Lucky Dog</strong> · Renovation matching platform</span>

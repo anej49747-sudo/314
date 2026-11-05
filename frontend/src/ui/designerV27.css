@@ -1,0 +1,13 @@
+/* V27: Designer portfolio confirmations are light, legible and consistent. */
+.portfolio-page .portfolio-success-notice.ant-alert-success {
+  background-color: #effaf2;
+  border: 1px solid #b8e8c4;
+  border-radius: 10px;
+  color: #14532d;
+}
+.portfolio-page .portfolio-success-notice.ant-alert-success .ant-alert-message {
+  color: #14532d;
+}
+.portfolio-page .portfolio-success-notice.ant-alert-success .ant-alert-icon {
+  color: #16803c;
+}

@@ -35,16 +35,19 @@ public class PortfolioService {
     private final ProjectImageRepository images;
     private final ProjectImageStorage storage;
     private final ProjectInterestMetricsRepository interestMetrics;
+    private final csit314.renovation.discovery.control.DiscoveryService discovery;
 
     public PortfolioService(InteriorDesignProjectRepository projects, UserAccountRepository accounts,
             ProjectCategoryRepository categories, ProjectImageRepository images,
-            ProjectImageStorage storage, ProjectInterestMetricsRepository interestMetrics) {
+            ProjectImageStorage storage, ProjectInterestMetricsRepository interestMetrics,
+            csit314.renovation.discovery.control.DiscoveryService discovery) {
         this.projects = projects;
         this.accounts = accounts;
         this.categories = categories;
         this.images = images;
         this.storage = storage;
         this.interestMetrics = interestMetrics;
+        this.discovery = discovery;
     }
 
     @Transactional(readOnly = true)
@@ -59,11 +62,13 @@ public class PortfolioService {
                 .collect(Collectors.groupingBy(ProjectImage::getProjectId,
                         Collectors.mapping(ProjectImageResponse::from, Collectors.toList())));
         var countsByProject = interestMetrics.countsForProjects(ids);
+        var metadataByProject = discovery.metadataForProjects(ids);
         return ownedProjects.stream().map(project -> {
             var counts = countsByProject.get(project.getId());
             return PortfolioProjectResponse.from(project,
                     byProject.getOrDefault(project.getId(), List.of()),
-                    counts.viewCount(), counts.favouriteCount());
+                    counts.viewCount(), counts.favouriteCount(),
+                    metadataByProject.getOrDefault(project.getId(), Map.of()));
         }).toList();
     }
 
@@ -78,10 +83,12 @@ public class PortfolioService {
         // Validate every image before creating a project or writing any files.
         List<ProjectImageStorage.ValidatedImage> validated = supplied.stream()
                 .map(storage::validate).toList();
-        var category = categories.findById(request.categoryId())
+        var category = request.categoryId()==null?null:categories.findById(request.categoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Select an existing project category"));
+        if(category==null && categories.count()>0) throw new IllegalArgumentException("Select an existing project category");
         InteriorDesignProject project = projects.saveAndFlush(new InteriorDesignProject(designer,
                 category, request.title().trim(), request.description().trim(), request.status()));
+        discovery.saveMetadata(project.getId(), request.metadata(),true);
         List<String> createdKeys = new ArrayList<>();
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -124,8 +131,9 @@ public class PortfolioService {
         }
         List<ProjectImageStorage.ValidatedImage> validated = supplied.stream()
                 .map(storage::validate).toList();
-        var category = categories.findById(request.categoryId())
+        var category = request.categoryId()==null?null:categories.findById(request.categoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Select an existing project category"));
+
         // Check all inputs and ownership before changing the database or touching stored files.
         List<ProjectImage> removed = existing.stream()
                 .filter(image -> !requestedIds.contains(image.getId())).toList();
@@ -139,6 +147,7 @@ public class PortfolioService {
             }
         });
         project.updateDetails(category, request.title().trim(), request.description().trim(), request.status());
+        if(request.metadata()!=null) discovery.saveMetadata(projectId,request.metadata(),false);
         images.deleteAll(removed);
         images.flush();
         int nextOrder = existing.stream().mapToInt(ProjectImage::getDisplayOrder).max().orElse(-1) + 1;

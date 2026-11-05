@@ -1,14 +1,28 @@
+import { validFloorArea, FLOOR_AREA_ERROR } from './floorAreaRules.js'
 export const PROJECT_IMAGE_LIMIT = 6
 export const PROJECT_IMAGE_MAX_BYTES = 5 * 1024 * 1024
 export const PROJECT_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 export function buildProjectDetails(values) {
-  return {
+  if (!validFloorArea(values.floorAreaSqm)) throw new Error(FLOOR_AREA_ERROR)
+  const result = {
     title: (values.title ?? '').trim(),
     description: (values.description ?? '').trim(),
     categoryId: values.categoryId,
     status: values.status,
   }
+  // Keep the existing utility contract for legacy callers and tests.
+  // The updated designer forms supply these fields explicitly.
+  if (['primaryStyleId', 'secondaryStyleIds', 'propertyTypeId', 'floorAreaSqm']
+    .some(name => Object.hasOwn(values, name))) {
+    result.metadata = {
+      propertyTypeId: values.propertyTypeId ?? null,
+      floorAreaSqm: values.floorAreaSqm === '' ? null : values.floorAreaSqm ?? null,
+      primaryStyleId: values.primaryStyleId ?? null,
+      secondaryStyleIds: values.secondaryStyleIds || [],
+    }
+  }
+  return result
 }
 
 export function validateProjectImages(files) {

@@ -3,6 +3,8 @@ import { ChevronDown, House, LogOut, Menu, UserRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { currentSession, logoutSession } from '../api/authentication.js'
+import { isCustomerWorkspacePath } from '../auth/customerNavigationRules.js'
+import { isDesignerWorkspacePath } from '../auth/designerNavigationRules.js'
 import { accountAreaPath, headerSessionFailure } from '../auth/headerSessionRules.js'
 import { logoutFailureMessage } from '../auth/logoutRules.js'
 
@@ -49,7 +51,7 @@ export default function AuthLayout() {
     }
   }
 
-  // Keep account options intentionally minimal; role landing pages stay in the header.
+  // Personal tools live on each role's dashboard; account dropdowns contain Log out only.
   const menuItems = account ? [
     { key: 'logout', danger: true, icon: <LogOut size={16} />,
       label: 'Log out', disabled: loggingOut, onClick: onLogout },
@@ -73,12 +75,13 @@ export default function AuthLayout() {
           {!isAdmin && <>
             {navLink('/', 'Home')}
             {navLink('/designers', 'Interior designers', pathname.startsWith('/designers'))}
-            {navLink('/projects', 'Explore projects', pathname.startsWith('/projects'))}
+            {navLink('/projects', 'Projects', pathname.startsWith('/projects'))}
+            {navLink('/explore', 'Explore', pathname === '/explore')}
             {navLink('/articles', 'Articles', pathname.startsWith('/articles'))}
           </>}
-          {isCustomer && navLink('/customer', 'My dashboard', pathname === '/customer' || pathname.startsWith('/customer/'))}
-          {isDesigner && navLink('/designer', 'My dashboard', pathname === '/designer' || pathname.startsWith('/designer/'))}
-          {isManager && navLink('/manager', 'Management', pathname.startsWith('/manager'))}
+          {isCustomer && navLink('/customer', 'My dashboard', isCustomerWorkspacePath(pathname))}
+          {isDesigner && navLink('/designer', 'My dashboard', isDesignerWorkspacePath(pathname))}
+          {isManager && navLink('/manager', 'Management dashboard', pathname.startsWith('/manager'))}
           {isAdmin && <>
             {navLink('/admin/reports', 'Designer Reports')}
             {navLink('/admin/accounts', 'Account Management', pathname.startsWith('/admin/accounts') || pathname.startsWith('/admin/designers/new'))}

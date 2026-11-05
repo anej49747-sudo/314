@@ -1,3 +1,4 @@
+import ManagerReturnButton from '../components/ManagerReturnButton.jsx'
 import { Alert, Button, Card, Select, Spin, Table } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -99,6 +100,7 @@ export default function ActivityReportsPage() {
     link.click();URL.revokeObjectURL(url)
   }
   return <div className="activity-reports-page">
+    <ManagerReturnButton />
     <p className="activity-eyebrow">Platform management / Reports</p>
     <h1>Activity reports</h1>
     <p className="activity-intro">Explore customer engagement and designer activity over any inclusive date range, using Singapore calendar dates.</p>

@@ -1,11 +1,12 @@
+import DesignerReturnButton from '../components/DesignerReturnButton.jsx'
 import { Alert, Spin } from 'antd'
-import { KeyRound, Mail, UserRound } from 'lucide-react'
+import { KeyRound, Mail, Trash2, UserRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { currentCustomer } from '../api/authentication.js'
 import { currentDesigner } from '../api/designerAuthentication.js'
 import { accountAreaPath } from '../auth/headerSessionRules.js'
-import { ActionCard } from '../components/VisualCards.jsx'
+import CustomerReturnButton from '../components/CustomerReturnButton.jsx'
 
 /** Dedicated account hub. Password/email changes are never mixed into the same form. */
 export default function AccountSecurityPage({ role }) {
@@ -30,16 +31,25 @@ export default function AccountSecurityPage({ role }) {
     return () => {live=false}
   },[navigate,customer])
   return <section className="ui-dashboard ld-account-security" aria-labelledby="security-heading">
-    <p className="ui-eyebrow">{customer ? 'My space' : 'Designer workspace'}</p>
+    {customer ? <CustomerReturnButton /> : <DesignerReturnButton />}
+    <p className="ui-eyebrow">{customer ? 'My dashboard' : 'Designer workspace'}</p>
     <h1 id="security-heading">Account security</h1>
-    <p className="ld-security-intro">Manage your profile and sign-in details. Email and password each have a dedicated page.</p>
     {location.state?.passwordChanged && <Alert showIcon type="success" role="status" message="Password updated successfully." className="form-feedback"/>}
     {loading && <div className="loading-state"><Spin/> Verifying account…</div>}
     {error && <Alert type="error" showIcon message={error} />}
-    {!loading && !error && <div className="ui-shortcuts ld-security-actions">
-      <ActionCard to={`/${role}/account`} title="Display name" description="Update how your name appears" Icon={UserRound} />
-      <ActionCard to={`/${role}/change-email`} title="Change email" description="Update your sign-in address" Icon={Mail} />
-      <ActionCard to={`/${role}/change-password`} title="Change password" description="Verify your current password first" Icon={KeyRound} />
-    </div>}
+    {!loading && !error && (customer ? <section className="ld-customer-security-hub" aria-label="Account settings">
+      <div className="ld-customer-security-options">
+        <Link to="/customer/account"><UserRound size={22} aria-hidden="true"/><span><strong>Change name</strong></span><span aria-hidden="true">→</span></Link>
+        <Link to="/customer/change-email"><Mail size={22} aria-hidden="true"/><span><strong>Change email</strong></span><span aria-hidden="true">→</span></Link>
+        <Link to="/customer/change-password"><KeyRound size={22} aria-hidden="true"/><span><strong>Change password</strong></span><span aria-hidden="true">→</span></Link>
+        <Link className="ld-delete-account-option" to="/customer/delete-account"><Trash2 size={22} aria-hidden="true"/><span><strong>Delete account</strong></span><span aria-hidden="true">→</span></Link>
+      </div>
+    </section> : <section className="ld-customer-security-hub" aria-label="Account settings">
+      <div className="ld-customer-security-options">
+        <Link to="/designer/account"><UserRound size={22} aria-hidden="true"/><span><strong>Change name</strong></span><span aria-hidden="true">→</span></Link>
+        <Link to="/designer/change-email"><Mail size={22} aria-hidden="true"/><span><strong>Change email</strong></span><span aria-hidden="true">→</span></Link>
+        <Link to="/designer/change-password"><KeyRound size={22} aria-hidden="true"/><span><strong>Change password</strong></span><span aria-hidden="true">→</span></Link>
+      </div>
+    </section>)}
   </section>
 }

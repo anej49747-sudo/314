@@ -15,10 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegistrationService {
     private final UserAccountRepository accounts;
     private final PasswordEncoder passwordEncoder;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbc;
 
-    public RegistrationService(UserAccountRepository accounts, PasswordEncoder passwordEncoder) {
+    public RegistrationService(UserAccountRepository accounts, PasswordEncoder passwordEncoder, org.springframework.jdbc.core.JdbcTemplate jdbc) {
         this.accounts = accounts;
         this.passwordEncoder = passwordEncoder;
+        this.jdbc=jdbc;
     }
 
     @Transactional
@@ -31,7 +33,9 @@ public class RegistrationService {
                 email, passwordEncoder.encode(request.password()));
         try {
             // Flush inside the service so concurrent unique-index failures yield HTTP 409.
-            return RegisterResponse.fromAccount(accounts.saveAndFlush(account));
+            UserAccount created=accounts.saveAndFlush(account);
+            jdbc.update("INSERT INTO customer_recommendation_preferences(customer_id,onboarding_state) VALUES(?, 'PENDING')",created.getId());
+            return RegisterResponse.fromAccount(created);
         } catch (DataIntegrityViolationException exception) {
             throw new DuplicateEmailException();
         }

@@ -1,3 +1,4 @@
+import ManagerReturnButton from '../components/ManagerReturnButton.jsx'
 import { Alert, Button, Card, Input, Modal, Select, Spin, Table, Tabs, message } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -233,6 +234,7 @@ export default function ManagerRecognitionsPage() {
   </>
 
   return <section className="recognition-manager-page">
+    <ManagerReturnButton />
     <p className="categories-eyebrow">Platform management</p>
     <h1>Project features &amp; designer awards</h1>
     <p className="recognition-subtitle">Recognise renovation projects and Interior Designers. Changes appear on public pages.</p>

@@ -2,6 +2,7 @@ import { Alert, Button, Form, Input } from 'antd'
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { loginCustomer } from '../api/authentication.js'
+import { getPreferences } from '../api/discovery.js'
 import { buildLoginPayload, loginFailureMessage } from '../auth/loginRules.js'
 import AuthCard from '../components/AuthCard.jsx'
 import { designerLoginDestination } from '../designer/designerLoginRules.js'
@@ -20,7 +21,11 @@ export default function LoginPage() {
     try {
       const account = await loginCustomer(buildLoginPayload(values))
       if (account.role === 'CUSTOMER') {
-        navigate(customerLoginDestination(location.state), { replace: true })
+        // Only customers registered after V19 receive a first-login onboarding prompt.
+        const destination = customerLoginDestination(location.state)
+        let pending = false
+        try { pending = (await getPreferences()).onboardingState === 'PENDING' } catch { /* preserve login */ }
+        navigate(pending ? '/customer/preferences/onboarding' : destination, { replace: true })
       } else if (account.role === 'USER_ADMIN') {
         navigate('/admin/accounts', { replace: true })
       } else if (account.role === 'INTERIOR_DESIGNER') {

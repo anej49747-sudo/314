@@ -21,3 +21,9 @@ export async function deleteCategory(categoryId) {
   const { data } = await client.delete(`/categories/${encodeURIComponent(categoryId)}`, { headers })
   return data
 }
+
+export async function updateCategory(categoryId, values) {
+  const headers = await csrfHeaders()
+  const { data } = await client.put(`/categories/${categoryId}`, values, { headers })
+  return data
+}

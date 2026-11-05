@@ -38,6 +38,7 @@ public class ProjectCategory {
     }
 
     public Long getId() { return id; }
+    public void rename(String newName) { this.name = newName; }
     public String getName() { return name; }
     public Instant getCreatedAt() { return createdAt; }
 }

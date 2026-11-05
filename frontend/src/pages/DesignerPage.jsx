@@ -1,10 +1,12 @@
 import { Alert, Button, Spin } from 'antd'
 import { ArrowRight, Building2, Eye, FolderOpen, Heart, MessageSquare, MessageCircleQuestion, Plus, ShieldCheck } from 'lucide-react'
-import { ActionCard, ImagePreviewCard, SectionHeading } from '../components/VisualCards.jsx'
+import { ActionCard, SectionHeading } from '../components/VisualCards.jsx'
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { currentDesigner, currentDesignerArea } from '../api/designerAuthentication.js'
 import { getMyPortfolio } from '../api/portfolio.js'
+import '../ui/designerV25.css'
+import DesignerProjectCard from '../components/DesignerProjectCard.jsx'
 
 export default function DesignerPage() {
   const navigate = useNavigate()
@@ -56,7 +58,8 @@ export default function DesignerPage() {
     {loading && <div className="loading-state" role="status"><Spin /> Loading your workspace…</div>}
     {error && <Alert type="error" role="alert" showIcon message={error} />}
     {account && <>
-      <div className="ui-metrics" aria-label="Portfolio summary">
+      <h2 className="ld-designer-overview-heading">Portfolio overview</h2>
+      <div className="ui-metrics" aria-label="Portfolio overview">
         <div className="ui-metric"><FolderOpen size={20} aria-hidden="true"/><strong>{projectsError ? '—' : projects.length}</strong><span>Portfolio projects</span></div>
         <div className="ui-metric"><Eye size={20} aria-hidden="true"/><strong>{projectsError ? '—' : totalViews.toLocaleString()}</strong><span>Project views</span></div>
         <div className="ui-metric"><Heart size={20} aria-hidden="true"/><strong>{projectsError ? '—' : totalFavourites.toLocaleString()}</strong><span>Current favourites</span></div>
@@ -80,10 +83,8 @@ export default function DesignerPage() {
         {!projectsError && projects.length === 0 && <div className="ui-empty-state"><FolderOpen size={28}/><h3>No projects yet</h3>
           <p>Add your first renovation project to start your portfolio.</p></div>}
         {!projectsError && projects.length > 0 && <div className="ui-image-grid">
-          {projects.slice(0, 3).map(project => <ImagePreviewCard key={project.id}
-            to={`/designer/portfolio/${project.id}/edit`} imageUrl={project.images?.[0]?.url}
-            title={project.title} subtitle={`${project.categoryName} · ${project.status === 'COMPLETED' ? 'Completed' : 'Current'}`}
-            fallbackIcon={FolderOpen} />)}
+          {projects.slice(0, 3).map(project => <DesignerProjectCard key={project.id}
+            project={project} recent onEdit={(id) => navigate(`/designer/portfolio/${id}/edit`)} />)}
         </div>}
       </section>
     </>}

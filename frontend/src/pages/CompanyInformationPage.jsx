@@ -1,3 +1,4 @@
+import DesignerReturnButton from '../components/DesignerReturnButton.jsx'
 import { Alert, Button, Card, Form, Input, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -65,6 +66,7 @@ export default function CompanyInformationPage() {
 
   return (
     <div className="company-page">
+      <DesignerReturnButton confirmLeave={unsaved} />
       <p className="company-eyebrow">Designer workspace</p>
       <h1>Company information</h1>
       <p className="company-intro">Manage the company details customers will see on your profile.</p>
@@ -93,7 +95,6 @@ export default function CompanyInformationPage() {
             </Form.Item>
             <div className="company-actions">
               {unsaved && <span className="company-unsaved">Unsaved changes</span>}
-              <Button disabled={submitting} onClick={() => navigate('/designer')}>Cancel</Button>
               <Button type="primary" htmlType="submit" loading={submitting}>Save changes</Button>
             </div>
           </Form>

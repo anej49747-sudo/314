@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { currentSession } from '../api/authentication.js'
 import { askProjectQuestion, getAnsweredProjectQuestions, getMyPendingProjectQuestions } from '../api/projectQuestions.js'
 import { pageLabel, QA_BROWSE_SIZE, QA_PREVIEW_SIZE, questionDate, questionValidationError } from './questionRules.js'
+import { questionAudience, showsQuestionPrompt } from './questionAudience.js'
 import './projectQuestions.css'
 
 export default function ProjectQuestionsPanel({ project }) {
@@ -32,7 +33,7 @@ export default function ProjectQuestionsPanel({ project }) {
   useEffect(() => {
     let active = true
     currentSession().then((session) => {
-      if (active) setRole(session.role === 'CUSTOMER' ? 'customer' : 'other')
+      if (active) setRole(questionAudience(session))
     }).catch(() => { if (active) setRole('visitor') })
     return () => { active = false }
   }, [])
@@ -94,17 +95,17 @@ export default function ProjectQuestionsPanel({ project }) {
     <header className="ld-qa-header">
       <div><p className="ld-qa-eyebrow">Helpful project insights</p>
         <h2 id="project-qa-heading">Questions &amp; answers</h2>
-        <p>Find answers about this renovation, or ask the designer something new.</p></div>
+        <p>{showsQuestionPrompt(role) ? 'Find answers about this renovation, or ask the designer something new.' : 'Find answers about this renovation from its designer.'}</p></div>
       <span className="ld-qa-count">{results.total} answered</span>
     </header>
-    <div className="ld-qa-ask-prompt">
+    {showsQuestionPrompt(role) && <div className="ld-qa-ask-prompt">
       <div><h3>Have a question about this project?</h3><p>Ask the designer about materials, layout or renovation decisions.</p></div>
       <Button type="primary" onClick={() => {
         if (role !== 'customer') { setLoginOpen(true); return }
         setShowAsk((open) => !open)
         setSendSuccess('')
       }}>Ask a question</Button>
-    </div>
+    </div>}
     {sendSuccess && <Alert showIcon type="success" role="status" message={sendSuccess} className="ld-qa-feedback" />}
     {showAsk && role === 'customer' && <form className="ld-qa-ask-form" onSubmit={submitQuestion}>
       <h3>Ask {project.designer.name}</h3>

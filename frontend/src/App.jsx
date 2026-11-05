@@ -4,10 +4,14 @@ import AuthLayout from './components/AuthLayout.jsx'
 import HomePage from './pages/HomePage.jsx'
 import AddPortfolioProjectPage from './pages/AddPortfolioProjectPage.jsx'
 import CustomerPage from './pages/CustomerPage.jsx'
+import PreferencesPage from './pages/PreferencesPage.jsx'
+import ExplorePage from './pages/ExplorePage.jsx'
+import ManagerClassificationsPage from './pages/ManagerClassificationsPage.jsx'
 import AccountSecurityPage from './pages/AccountSecurityPage.jsx'
 import ChangeAccountEmailPage from './pages/ChangeAccountEmailPage.jsx'
 import CustomerChangePasswordPage from './pages/CustomerChangePasswordPage.jsx'
 import CustomerAccountSettingsPage from './pages/CustomerAccountSettingsPage.jsx'
+import CustomerDeleteAccountPage from './pages/CustomerDeleteAccountPage.jsx'
 import CustomerFavouritesPage from './pages/CustomerFavouritesPage.jsx'
 import CompareDesignersPage from './pages/CompareDesignersPage.jsx'
 import CompanyInformationPage from './pages/CompanyInformationPage.jsx'
@@ -28,7 +32,6 @@ import PublicProjectDetailsPage from './pages/PublicProjectDetailsPage.jsx'
 import ProjectSearchPage from './pages/ProjectSearchPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
-import ProjectCategoriesPage from './pages/ProjectCategoriesPage.jsx'
 import ActivityReportsPage from './pages/ActivityReportsPage.jsx'
 import ManagerProjectsPage from './pages/ManagerProjectsPage.jsx'
 import ArticlesPage from './pages/ArticlesPage.jsx'
@@ -38,6 +41,8 @@ import ManagerRecognitionsPage from './pages/ManagerRecognitionsPage.jsx'
 import ManagerDashboardPage from './pages/ManagerDashboardPage.jsx'
 import './ui/uiOverhaul.css'
 import './ui/visualPolish.css'
+import './ui/customerV21.css'
+import './ui/successNotifications.css'
 
 const theme = {
   token: {
@@ -64,12 +69,16 @@ export default function App() {
             <Route path="login" element={<LoginPage />} />
             <Route path="designers" element={<DesignerDirectoryPage />} />
             <Route path="designers/:designerId" element={<DesignerProfilePage />} />
+            <Route path="explore" element={<ExplorePage />} />
             <Route path="projects" element={<ProjectSearchPage />} />
             <Route path="projects/:projectId" element={<PublicProjectDetailsPage />} />
             <Route path="articles" element={<ArticlesPage />} />
             <Route path="articles/:articleId" element={<ArticleDetailsPage />} />
             <Route path="customer" element={<CustomerPage />} />
+            <Route path="customer/preferences/onboarding" element={<PreferencesPage onboarding />} />
+            <Route path="customer/preferences" element={<PreferencesPage />} />
             <Route path="customer/account" element={<CustomerAccountSettingsPage />} />
+            <Route path="customer/delete-account" element={<CustomerDeleteAccountPage />} />
             <Route path="customer/security" element={<AccountSecurityPage role="customer" />} />
             <Route path="customer/change-email" element={<ChangeAccountEmailPage role="customer" />} />
             <Route path="customer/change-password" element={<CustomerChangePasswordPage />} />
@@ -91,7 +100,7 @@ export default function App() {
             <Route path="admin/accounts" element={<AdminAccountSearchPage />} />
             <Route path="admin/reports" element={<AdminDesignerReportsPage />} />
             <Route path="manager" element={<ManagerDashboardPage />} />
-            <Route path="manager/categories" element={<ProjectCategoriesPage />} />
+            <Route path="manager/categories" element={<ManagerClassificationsPage />} />
             <Route path="manager/projects" element={<ManagerProjectsPage />} />
             <Route path="manager/articles" element={<ManagerArticlesPage />} />
             <Route path="manager/recognitions" element={<ManagerRecognitionsPage />} />

@@ -1,3 +1,4 @@
+import DesignerReturnButton from '../components/DesignerReturnButton.jsx'
 import { Alert, Button, Input, Select, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -95,7 +96,7 @@ export default function DesignerProjectQuestionsPage() {
   const setFilter = (value) => { setStatus(value); setPage(0); setReplyingTo(null); setSuccess('') }
   const counts = { pending: results.pendingCount, answered: results.answeredCount, all: results.allCount }
   return <section className="ld-qa-designer-page" aria-labelledby="designer-qa-title">
-    <Link className="designer-profile-back" to="/designer">← Designer workspace</Link>
+    <DesignerReturnButton />
     <header className="ld-qa-designer-header"><p className="ld-qa-eyebrow">Designer workspace</p>
       <h1 id="designer-qa-title">Project questions</h1>
       <p>Review customer enquiries and publish answers about your own portfolio projects.</p></header>

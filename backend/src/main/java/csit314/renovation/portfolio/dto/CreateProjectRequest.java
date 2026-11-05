@@ -13,8 +13,12 @@ public record CreateProjectRequest(
         @NotBlank(message = "Project description is required")
         @Size(max = 3000, message = "Description must be 3000 characters or fewer")
         String description,
-        @NotNull(message = "Choose a category")
         @Positive(message = "Choose a valid category")
         Long categoryId,
         @NotNull(message = "Choose a project status")
-        ProjectStatus status) { }
+        ProjectStatus status,
+        csit314.renovation.discovery.control.DiscoveryService.MetadataInput metadata) {
+    public CreateProjectRequest(String title,String description,Long categoryId,ProjectStatus status) {
+        this(title,description,categoryId,status,null);
+    }
+}

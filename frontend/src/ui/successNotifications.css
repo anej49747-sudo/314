@@ -1,0 +1,25 @@
+/* V28 global success feedback: consistent across all roles and public pages.
+   Preserve AntD warning, info and error styles; retain compact message/toast behaviour. */
+.ant-alert.ant-alert-success {
+  background-color: #effaf2;
+  border: 1px solid #b8e8c4;
+  border-radius: 10px;
+  color: #14532d;
+}
+.ant-alert.ant-alert-success .ant-alert-message,
+.ant-alert.ant-alert-success .ant-alert-description {
+  color: #14532d;
+}
+.ant-alert.ant-alert-success .ant-alert-icon { color: #16803c; }
+
+/* Ant Design's transient success messages are not converted into full-width alerts. */
+.ant-message .ant-message-notice-content:has(.ant-message-success),
+.ant-notification .ant-notification-notice-success {
+  background: #effaf2;
+  border: 1px solid #b8e8c4;
+  color: #14532d;
+}
+.ant-message .ant-message-success .anticon,
+.ant-notification .ant-notification-notice-success .ant-notification-notice-icon {
+  color: #16803c;
+}

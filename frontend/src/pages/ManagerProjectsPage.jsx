@@ -1,3 +1,4 @@
+import ManagerReturnButton from '../components/ManagerReturnButton.jsx'
 import { Alert, Button, Card, Drawer, Form, Input, Select, Spin, Table, Tag, message } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -91,6 +92,7 @@ export default function ManagerProjectsPage() {
   ]
 
   return <section className="manager-projects-page">
+    <ManagerReturnButton />
     <p className="categories-eyebrow">Platform management</p>
     <h1>Edit project information</h1>
     <p className="categories-intro">Correct inaccurate project information without changing its designer, photos, favourites or view counts.</p>

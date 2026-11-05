@@ -15,6 +15,9 @@ import {
 import { photoAlt, projectPhotos, shiftedPhotoIndex } from '../project/photoGalleryRules.js'
 import { favouriteAccessState, favouriteButtonLabel, favouriteResultMessage } from '../project/favouriteRules.js'
 import ProjectQuestionsPanel from '../qa/ProjectQuestionsPanel.jsx'
+import { getProjectMetadata } from '../api/discovery.js'
+import ProjectAttributes from '../components/ProjectAttributes.jsx'
+import '../ui/discovery.css'
 import '../project/projectDetails.css'
 import '../project/favouriteControls.css'
 
@@ -24,6 +27,7 @@ export default function PublicProjectDetailsPage() {
   const navigate = useNavigate()
   const back = projectBackLink(state)
   const [project, setProject] = useState(null)
+  const [metadata, setMetadata] = useState(null)
   const { featuredProject } = usePublicRecognitions()
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
@@ -40,6 +44,7 @@ export default function PublicProjectDetailsPage() {
     let active = true
     async function load() {
       setProject(null)
+      setMetadata(null)
       setOpenPhotoIndex(null)
       setLoading(true)
       setNotFound(false)
@@ -52,6 +57,7 @@ export default function PublicProjectDetailsPage() {
       try {
         const data = await getPublicProject(projectId)
         if (active) setProject(data)
+        getProjectMetadata(projectId).then(value => { if (active) setMetadata(value) }).catch(() => {})
       } catch (failure) {
         if (!active) return
         if (failure.response?.status === 404) setNotFound(true)
@@ -148,45 +154,7 @@ export default function PublicProjectDetailsPage() {
           <h1 id="public-project-title">{project.title}</h1>
           <div className="recognition-feature-row"><FeaturedProjectBadge featuredProject={featuredProject} projectId={project.id} /></div>
           <p className="public-project-lede">Explore this project's design approach and the work involved.</p>
-          <div className="public-project-tags" aria-label="Project category and status">
-            <span className={project.status === 'COMPLETED'
-              ? 'public-profile-status public-profile-status-completed'
-              : 'public-profile-status'}>
-              {projectStatusLabel(project.status)}
-            </span>
-            <span className="public-project-category">{project.categoryName}</span>
-          </div>
-          <div className="public-project-favourite-area">
-            <Button type="default"
-              className={`public-project-favourite-button${isFavourite ? ' saved' : ''}`}
-              loading={favouriteBusy} disabled={favouriteBusy || favouriteAccess === 'loading' || favouriteAccess === 'unavailable'}
-              onClick={onToggleFavourite} aria-pressed={favouriteAccess === 'customer' ? isFavourite : undefined}>
-              <span className="favourite-heart" aria-hidden="true">{isFavourite ? '♥' : '♡'}</span>
-              {favouriteButtonLabel(isFavourite)}
-            </Button>
-            {favouriteAccess === 'loading' && <span className="public-project-favourite-hint">Checking saved status…</span>}
-            {favouriteAccess === 'visitor' && <span className="public-project-favourite-hint">Log in to save this project.</span>}
-            {favouriteAccess === 'unavailable' && <Button type="link" onClick={() => setFavouriteRefreshKey((key) => key + 1)}>Retry saved status</Button>}
-          </div>
-          {favouriteFeedback && <Alert className="public-project-favourite-feedback"
-            showIcon role="status" type={favouriteFeedback.type} message={favouriteFeedback.message} />}
-          <div className="public-project-grid">
-            <section className="public-project-panel" aria-labelledby="public-project-about-title">
-              <h2 id="public-project-about-title">About this project</h2>
-              <p className="public-project-description">{projectDescription(project.description)}</p>
-            </section>
-            <aside className="public-project-panel" aria-labelledby="public-project-designer-title">
-              <h2 id="public-project-designer-title">Designed by</h2>
-              <p className="public-project-designer-name">{project.designer.name}</p>
-              {project.designer.address?.trim() && (
-                <p className="public-project-address">{project.designer.address.trim()}</p>
-              )}
-              <Link className="public-project-designer-link"
-                to={designerProfilePath(project.designer.id)}>
-                View designer profile <span aria-hidden="true">→</span>
-              </Link>
-            </aside>
-          </div>
+          <div className="public-project-overview">
           <section className="public-project-photos-panel" aria-labelledby="public-project-photos-title">
             <div className="public-project-photos-heading">
               <h2 id="public-project-photos-title">Project photos</h2>
@@ -207,7 +175,49 @@ export default function PublicProjectDetailsPage() {
               </div>
             )}
           </section>
-          <ProjectQuestionsPanel key={project.id} project={project} />
+            <aside className="public-project-overview-summary" aria-label="Project information">
+          <div className="public-project-tags" aria-label="Project status">
+            <span className={project.status === 'COMPLETED'
+              ? 'public-profile-status public-profile-status-completed'
+              : 'public-profile-status'}>
+              {projectStatusLabel(project.status)}
+            </span>
+          </div>
+          <ProjectAttributes project={{ categoryName: project.categoryName, metadata }} secondary />
+          <div className="public-project-favourite-area">
+            <Button type="default"
+              className={`public-project-favourite-button${isFavourite ? ' saved' : ''}`}
+              loading={favouriteBusy} disabled={favouriteBusy || favouriteAccess === 'loading' || favouriteAccess === 'unavailable'}
+              onClick={onToggleFavourite} aria-pressed={favouriteAccess === 'customer' ? isFavourite : undefined}>
+              <span className="favourite-heart" aria-hidden="true">{isFavourite ? '♥' : '♡'}</span>
+              {favouriteButtonLabel(isFavourite)}
+            </Button>
+            {favouriteAccess === 'loading' && <span className="public-project-favourite-hint">Checking saved status…</span>}
+            {favouriteAccess === 'visitor' && <span className="public-project-favourite-hint">Log in to save this project.</span>}
+            {favouriteAccess === 'unavailable' && <Button type="link" onClick={() => setFavouriteRefreshKey((key) => key + 1)}>Retry saved status</Button>}
+          </div>
+          {favouriteFeedback && <Alert className="public-project-favourite-feedback"
+            showIcon role="status" type={favouriteFeedback.type} message={favouriteFeedback.message} />}
+            </aside>
+          </div>
+          <div className="public-project-grid">
+            <section className="public-project-panel" aria-labelledby="public-project-about-title">
+              <h2 id="public-project-about-title">About this project</h2>
+              <p className="public-project-description">{projectDescription(project.description)}</p>
+            </section>
+            <aside className="public-project-panel" aria-labelledby="public-project-designer-title">
+              <h2 id="public-project-designer-title">Designed by</h2>
+              <p className="public-project-designer-name">{project.designer.name}</p>
+              {project.designer.address?.trim() && (
+                <p className="public-project-address">{project.designer.address.trim()}</p>
+              )}
+              <Link className="public-project-designer-link"
+                to={designerProfilePath(project.designer.id)}>
+                View designer profile <span aria-hidden="true">→</span>
+              </Link>
+            </aside>
+          </div>
+        <ProjectQuestionsPanel key={project.id} project={project} />
         </>
       )}
       <Modal open={loginPromptOpen} onCancel={() => setLoginPromptOpen(false)}

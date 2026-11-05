@@ -1,8 +1,10 @@
+import DesignerReturnButton from '../components/DesignerReturnButton.jsx'
 import { Alert, Button, Spin } from 'antd'
 import { ArrowDown, MessageSquare, Send } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { currentSession } from '../api/authentication.js'
+import CustomerReturnButton from '../components/CustomerReturnButton.jsx'
 import { getDesignerProfile } from '../api/designerProfile.js'
 import { contactDesigner, getConversationMessages, listConversations, sendConversationMessage } from '../api/messaging.js'
 import { initials, MAX_MESSAGE_LENGTH, messageErrorMessage, validDesignerId, validMessageBody } from '../messaging/messageRules.js'
@@ -166,8 +168,9 @@ export default function MessagesPage({ role }) {
   }
 
   return <section className="ld-messages" aria-labelledby="ld-messages-title">
+    {isCustomer ? <CustomerReturnButton /> : <DesignerReturnButton />}
     <header className="ld-messages-page-head">
-      <div><p className="ui-eyebrow">{isCustomer ? 'My space' : 'Designer workspace'}</p>
+      <div><p className="ui-eyebrow">{isCustomer ? 'My dashboard' : 'Designer workspace'}</p>
         <h1 id="ld-messages-title">{isCustomer ? 'My messages' : 'Customer messages'}</h1>
         <p>{isCustomer ? 'Your private conversations with interior designers.'
           : 'Read and reply to messages sent by customers.'}</p></div>
