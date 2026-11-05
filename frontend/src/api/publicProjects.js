@@ -4,9 +4,9 @@ import { createInFlightRequestDeduper } from '../project/inFlightRequestDeduper.
 
 const loadProjectOnce = createInFlightRequestDeduper()
 
-export async function getPublicProjects(titleQuery = '', categoryId = null) {
+export async function getPublicProjects(titleQuery = '', categoryId = null, filters = {}) {
   const { data } = await client.get('/projects', {
-    params: projectSearchParams(titleQuery, categoryId),
+    params: { ...projectSearchParams(titleQuery, categoryId), ...filters, styleIds: filters.styleIds?.join(',') || undefined },
   })
   return data
 }

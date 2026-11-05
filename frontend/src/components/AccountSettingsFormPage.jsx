@@ -3,11 +3,13 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { buildAccountSettingsPayload, accountSettingsChanged,
   accountSettingsFailureMessage } from '../account/accountSettingsRules.js'
+import CustomerReturnButton from './CustomerReturnButton.jsx'
+import DesignerReturnButton from './DesignerReturnButton.jsx'
 import '../designer/designerAccountSettings.css'
 
 /** Shared Story #14/#21 visual form; role checks are also enforced by the backend. */
 export default function AccountSettingsFormPage({
-  backPath, backText, eyebrow, roleLabel, intro, description, advisory,
+  backPath, backText, hideBackLink = false, customerReturnButton = false, designerReturnButton = false, eyebrow, roleLabel, intro, description, advisory,
   footer, afterContent, currentAccount, loadAccount, updateAccount, requirePasswordChange = false, fields = "both", pageTitle = "My account",
 }) {
   const navigate = useNavigate()
@@ -79,19 +81,21 @@ export default function AccountSettingsFormPage({
 
   return (
     <div className="designer-settings-page">
-      <Link className="designer-settings-back" to={backPath}>← {backText}</Link>
-      <p className="company-eyebrow">{eyebrow}</p>
+      {customerReturnButton && <CustomerReturnButton to={backPath} confirmLeave={changed}>Back to account security</CustomerReturnButton>}
+      {designerReturnButton && <DesignerReturnButton to={backPath} confirmLeave={changed}>Back to account security</DesignerReturnButton>}
+      {!customerReturnButton && !designerReturnButton && !hideBackLink && <Link className="designer-settings-back" to={backPath}>← {backText}</Link>}
+      {eyebrow && <p className="company-eyebrow">{eyebrow}</p>}
       <div className="designer-settings-heading">
         <h1>{pageTitle}</h1>
-        <span className="designer-settings-role">{roleLabel}</span>
+        {roleLabel && <span className="designer-settings-role">{roleLabel}</span>}
       </div>
-      <p className="company-intro">{intro}</p>
+      {intro && <p className="company-intro">{intro}</p>}
       {loadError && <Alert type="error" showIcon role="alert" className="form-feedback"
         message={loadError} action={<Button size="small" onClick={() => setReloadKey((key) => key + 1)}>Retry</Button>} />}
       {error && <Alert type="error" showIcon role="alert" className="form-feedback" message={error} />}
       {success && <Alert type="success" showIcon role="status" className="form-feedback" message={success} />}
       <Card className="designer-settings-panel" title="Account details">
-        <p className="designer-settings-card-description">{description}</p>
+        {description && <p className="designer-settings-card-description">{description}</p>}
         {loading && <div className="loading-state" role="status"><Spin /> <span>Loading account details…</span></div>}
         {!loading && initial && <Form form={form} layout="vertical" disabled={saving} onFinish={onSave}
           onValuesChange={(_, values) => { setChanged(accountSettingsChanged(initial, { ...initial, ...values })); setSuccess('') }}>
@@ -108,18 +112,18 @@ export default function AccountSettingsFormPage({
           ]} extra="Used to sign in. If changed, you'll need to sign in again with the new address.">
             <Input maxLength={254} autoComplete="email" inputMode="email" placeholder="name@example.com" />
           </Form.Item>}
-          <div className="designer-settings-advisory">
+          {advisory && <div className="designer-settings-advisory">
             <strong>Only your account details change here.</strong> {advisory}
-          </div>
+          </div>}
           <div className="designer-settings-actions">
             <span className="designer-settings-hint">{changed ? 'Unsaved changes' : 'Your details are up to date'}</span>
-            <Button onClick={() => navigate(backPath)}>Cancel</Button>
+            {!customerReturnButton && !designerReturnButton && <Button onClick={() => navigate(backPath)}>Cancel</Button>}
             <Button type="primary" htmlType="submit" loading={saving} disabled={!changed}>Save changes</Button>
           </div>
         </Form>}
       </Card>
       {!loading && initial && afterContent}
-      <div className="designer-settings-footer">{footer}</div>
+      {footer && <div className="designer-settings-footer">{footer}</div>}
     </div>
   )
 }

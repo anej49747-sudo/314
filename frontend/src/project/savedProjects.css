@@ -1,8 +1,6 @@
 /* Story #52: customer saved projects share the approved project-search cards. */
 .saved-projects-page { width: min(100%, 1120px); }
 .saved-projects-heading { padding: 5px 0 29px; }
-.saved-projects-back { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 23px; color: #365b82; font-size: 13px; font-weight: 700; text-decoration: none; }
-.saved-projects-back:hover { text-decoration: underline; }
 .saved-projects-heading h1 { font-size: clamp(29px, 3.4vw, 38px); line-height: 1.2; letter-spacing: -.03em; margin: 0 0 12px; }
 .saved-projects-heading > p:last-child { color: #526581; max-width: 690px; margin: 0; font-size: 16px; line-height: 1.7; }
 .saved-projects-list { background: #fff; border: 1px solid #d0d8e2; border-radius: 12px; padding: 28px 28px 32px; box-shadow: 0 3px 14px rgba(26,44,66,.035); }

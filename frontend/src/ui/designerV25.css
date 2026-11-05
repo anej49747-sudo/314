@@ -1,0 +1,10 @@
+/* Designer V25: customer-matched navigation, preserving the responsive layouts. */
+.ld-designer-overview-heading {
+  font-size: clamp(22px, 2.3vw, 27px);
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1.3;
+  margin: 0 0 18px;
+}
+.ld-designer-password-page { width: min(100%, 480px); min-width: 0; }
+.ld-designer-password-page .auth-card { max-width: none; }

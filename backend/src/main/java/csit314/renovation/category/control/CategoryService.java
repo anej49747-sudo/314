@@ -65,4 +65,16 @@ public class CategoryService {
             throw new DuplicateCategoryException();
         }
     }
+    @Transactional
+    public CategoryResponse renameCategory(Long id, CreateCategoryRequest request, Authentication authentication) {
+        authenticationService.currentManager(authentication);
+        ProjectCategory existing=categories.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found"));
+        String name=Normalizer.normalize(request.name().strip(),Normalizer.Form.NFKC).strip();
+        if(name.isBlank()||name.length()>100) throw new IllegalArgumentException("Category name must contain 1–100 characters");
+        if(!existing.getName().equalsIgnoreCase(name) && categories.existsByNameIgnoreCase(name)) throw new DuplicateCategoryException();
+        existing.rename(name);
+        try { return CategoryResponse.from(categories.saveAndFlush(existing)); }
+        catch(DataIntegrityViolationException e){ throw new DuplicateCategoryException(); }
+    }
+
 }

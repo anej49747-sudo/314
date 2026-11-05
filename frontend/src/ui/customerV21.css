@@ -1,0 +1,90 @@
+/* Customer V2 design approval: scoped refinements, no change to recommendation logic. */
+.ld-customer-return-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;box-sizing:border-box;max-width:100%;min-height:44px;padding:9px 16px;margin:0 0 22px;border:1px solid #d0d8e2;border-radius:9px;background:#fff;color:#365b82;text-decoration:none;font-size:14px;line-height:1.35;font-weight:650;box-shadow:0 2px 3px rgba(29,41,57,.04);transition:background .15s,border-color .15s}
+.ld-customer-return-button:hover{background:#f1f6fa;border-color:#9cb5cb;color:#274866;text-decoration:none}
+.ld-customer-return-button:focus-visible{outline:3px solid #8cb5d7;outline-offset:3px}
+.ld-customer-return-button svg{flex-shrink:0}
+.ld-customer-security-hub{background:#fff;border:1px solid #d9e2ec;border-radius:16px;padding:28px;max-width:880px;margin-top:24px}
+.ld-customer-security-hub h2{font-size:22px;margin:0 0 6px}
+.ld-customer-security-hub>p{color:#526581;margin:0 0 21px}
+.ld-customer-security-options{display:grid;gap:0;border:1px solid #d9e2ec;border-radius:12px;overflow:hidden}
+.ld-customer-security-options>a{display:flex;align-items:center;gap:16px;min-height:88px;padding:18px 20px;color:#1d2939;text-decoration:none;background:#fff}
+.ld-customer-security-options>a+a{border-top:1px solid #e4eaf0}
+.ld-customer-security-options>a:hover{background:#f5f8fc}
+.ld-customer-security-options>a>svg{flex-shrink:0;color:#365b82}
+.ld-customer-security-options>a span:nth-child(2){flex:1;display:grid;gap:3px}
+.ld-customer-security-options strong{font-size:16px}
+.ld-customer-security-options small{font-size:13px;color:#526581}
+/* Project details: gallery and project classifications share the same top row. */
+.public-project-details{width:min(100%,1180px)}
+.public-project-overview{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(310px,.88fr);gap:22px;align-items:stretch;margin-top:26px}
+.public-project-overview .public-project-photos-panel{margin:0;min-width:0;padding:20px;border:1px solid #d9e2ec;border-radius:16px}
+.public-project-overview .public-project-photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.public-project-overview .public-project-photo-tile.featured img{height:clamp(250px,32vw,420px)}
+.public-project-overview-summary{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;min-width:0;padding:24px;background:#fff;border:1px solid #d9e2ec;border-radius:16px}
+.public-project-overview-summary .public-project-tags{margin-top:0}
+.public-project-overview-summary .discovery-project-attributes{width:100%;max-width:none;margin:16px 0 25px;padding:16px;border-radius:11px;background:#f9fbfd;border:1px solid #e4eaf0}
+.public-project-overview-summary .public-project-favourite-area{margin:0}
+.public-project-overview-summary .public-project-favourite-feedback{margin-top:15px}
+.public-project-overview+.public-project-grid{margin-top:22px;grid-template-columns:minmax(0,1.6fr) minmax(260px,.94fr)}
+/* Explore: two-column, vertically snapping posts; images swipe horizontally. */
+.discovery-page:has(.discovery-reel-feed){max-width:1230px}
+.discovery-page:has(.discovery-reel-feed) .discovery-explore-heading{max-width:none}
+.discovery-reel-feed{max-width:1180px;height:min(810px,84dvh);min-height:510px}
+.discovery-reel-post{display:grid;grid-template-columns:minmax(0,1.24fr) minmax(340px,.9fr)}
+.discovery-reel-photo{height:100%;min-width:0;min-height:0}
+.discovery-reel-info{padding:32px 28px;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
+.discovery-reel-overline{font-size:11px!important;font-weight:750;text-transform:uppercase;letter-spacing:.08em;margin:0!important;color:#365b82!important}
+.discovery-reel-info .discovery-title-row{display:block}
+.discovery-reel-info .discovery-title-row h2{font-size:clamp(22px,2.2vw,29px);line-height:1.25}
+.discovery-reel-info .discovery-title-row p{margin:8px 0 0;color:#526581}
+.discovery-reel-info .discovery-project-attributes{padding:18px 0;margin:0;border-top:1px solid #e4eaf0;border-bottom:1px solid #e4eaf0}
+.discovery-reel-info .discovery-project-attribute dd{font-size:14px}
+.discovery-reel-description{min-width:0}
+.discovery-reel-description h3{margin:0 0 6px;font-size:15px;font-weight:700}
+.discovery-reel-description p{margin:0;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.discovery-reel-designer{display:grid;gap:4px}
+.discovery-reel-designer span{font-size:11px;font-weight:750;color:#64758d;text-transform:uppercase;letter-spacing:.07em}
+.discovery-reel-designer a{color:#365b82;font-weight:700;text-decoration:none;font-size:14px}
+.discovery-reel-designer a:hover{text-decoration:underline}
+.discovery-reel-info .discovery-actions{margin-top:auto;padding-top:15px;border-top:1px solid #e4eaf0;align-items:stretch}
+.discovery-reel-info .discovery-actions .ant-btn{height:auto;min-height:44px;white-space:normal;text-align:center}
+.discovery-reel-footer{max-width:1180px}
+@media(max-width:900px){
+ .public-project-overview{grid-template-columns:minmax(0,1fr)}
+ .public-project-overview-summary{padding:22px}
+ .discovery-reel-feed{height:min(830px,86dvh)}
+ .discovery-reel-post{grid-template-columns:minmax(0,1fr) minmax(270px,.95fr)}
+ .discovery-reel-info{padding:22px 18px;gap:12px}
+}
+@media(max-width:650px){
+ .ui-customer-saved{grid-template-columns:1fr}
+ .ld-customer-security-hub{padding:18px}
+ .ld-customer-security-options>a{padding:15px;gap:12px}
+ .discovery-reel-feed{height:min(800px,85dvh);min-height:480px}
+ .discovery-reel-post{display:flex;flex-direction:column}
+ .discovery-reel-photo{flex:0 0 55%;height:55%}
+ .discovery-reel-info{flex:1 1 45%;padding:16px;gap:10px;overflow-y:auto}
+ .discovery-reel-info .discovery-project-attributes{padding:12px 0}
+ .discovery-reel-info .discovery-title-row h2{font-size:21px}
+ .discovery-reel-info .discovery-actions{margin-top:0}
+ .public-project-overview .public-project-photos-panel{padding:15px}
+ .public-project-overview .public-project-photo-tile.featured img{height:250px}
+ .public-project-overview-summary .discovery-project-attributes{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:380px){.discovery-reel-info .discovery-actions{flex-direction:column}}
+
+/* Customer V22: saved cards use the SAME component and styles as My Favourites. */
+.ui-customer-saved.project-search-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.ui-customer-saved .project-search-card{height:100%}
+/* Account actions have one title each; destructive action is separated visually. */
+.ld-customer-security-options>a{min-height:68px}
+.ld-customer-security-options>a span:nth-child(2){display:block}
+.ld-customer-security-options .ld-delete-account-option{border-top:1px solid #e4eaf0;color:#b42318;background:#fffafa}
+.ld-customer-security-options .ld-delete-account-option>svg{color:#b42318}
+.ld-customer-security-options .ld-delete-account-option:hover{background:#fff0f0}
+.ld-delete-account-page{max-width:880px}
+@media(max-width:680px){.ui-customer-saved.project-search-grid{grid-template-columns:1fr}}
+
+/* Customer V24: place the shared return button above the unchanged password form. */
+.ld-customer-password-page{width:min(100%,480px);min-width:0}
+.ld-customer-password-page .auth-card{max-width:none}

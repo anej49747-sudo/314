@@ -1,14 +1,16 @@
 import { Alert, Button, Form, Input, Spin } from 'antd'
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { currentCustomer } from '../api/authentication.js'
 import { updateOwnAccountPassword } from '../api/accountSecurity.js'
 import { validatePasswordChange, passwordChangeFailureMessage } from '../designer/designerLoginRules.js'
 import AuthCard from '../components/AuthCard.jsx'
+import CustomerReturnButton from '../components/CustomerReturnButton.jsx'
 
 /** Voluntary customer password update; current password is verified server-side. */
 export default function CustomerChangePasswordPage() {
   const navigate = useNavigate()
+  const [hasUnsavedPassword,setHasUnsavedPassword] = useState(false)
   const [ready,setReady] = useState(false)
   const [loading,setLoading] = useState(true)
   const [saving,setSaving] = useState(false)
@@ -32,10 +34,13 @@ export default function CustomerChangePasswordPage() {
       navigate('/customer/security',{replace:true,state:{passwordChanged:true}})
     }catch(err){setError(passwordChangeFailureMessage(err))}finally{setSaving(false)}
   }
-  return <AuthCard title="Change password" description="Verify your current password before setting a new one.">
+  return <div className="ld-customer-password-page">
+    <CustomerReturnButton to="/customer/security" confirmLeave={hasUnsavedPassword}>Back to account security</CustomerReturnButton>
+    <AuthCard title="Change password" description="Verify your current password before setting a new one.">
     {loading && <div className="loading-state"><Spin/> Verifying account…</div>}
     {error && <Alert type="error" role="alert" showIcon message={error} className="form-feedback"/>}
-    {ready && <Form layout="vertical" onFinish={submit} disabled={saving} autoComplete="off">
+    {ready && <Form layout="vertical" onFinish={submit} disabled={saving} autoComplete="off"
+      onValuesChange={(_, values) => setHasUnsavedPassword(Object.values(values).some(value => Boolean(value)))}>
       <Form.Item name="currentPassword" label="Current password" rules={[{required:true,message:'Enter your current password'}]}>
         <Input.Password autoComplete="current-password"/>
       </Form.Item>
@@ -51,7 +56,7 @@ export default function CustomerChangePasswordPage() {
         <Input.Password autoComplete="new-password"/>
       </Form.Item>
       <Button type="primary" block htmlType="submit" loading={saving}>Change password</Button>
-      <Link className="ld-password-back-link" to="/customer/security">Back to account security</Link>
     </Form>}
-  </AuthCard>
+    </AuthCard>
+  </div>
 }

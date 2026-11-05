@@ -1,9 +1,14 @@
+import DesignerReturnButton from '../components/DesignerReturnButton.jsx'
 import { Alert, Button, Card, Form, Input, Radio, Select, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { listCategories } from '../api/categories.js'
 import { currentDesigner, currentDesignerArea } from '../api/designerAuthentication.js'
 import { getMyPortfolio, updatePortfolioProject } from '../api/portfolio.js'
+import ProjectMetadataFields from '../components/ProjectMetadataFields.jsx'
+import { getProjectMetadata } from '../api/discovery.js'
+import { FLOOR_AREA_ERROR } from '../designer/floorAreaRules.js'
+import '../ui/designerV26.css'
 import { buildUpdatedProjectDetails, projectEditingFailureMessage,
   validateEditedImages } from '../designer/projectEditingRules.js'
 
@@ -12,6 +17,7 @@ export default function EditPortfolioProjectPage() {
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const [project, setProject] = useState(null)
+  const [metadata, setMetadata] = useState(null)
   const [categories, setCategories] = useState([])
   const [keptImages, setKeptImages] = useState([])
   const [newImages, setNewImages] = useState([])
@@ -19,6 +25,7 @@ export default function EditPortfolioProjectPage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [dirty, setDirty] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -35,6 +42,10 @@ export default function EditPortfolioProjectPage() {
         if (!active) return
         const chosen = entries.find((item) => String(item.id) === projectId)
         if (!chosen) { setError('This project is not available in your portfolio.'); return }
+        // Never expose an editable form with blank classification values when metadata fails to load.
+        const loadedMetadata = await getProjectMetadata(chosen.id, true)
+        if (!active) return
+        setMetadata(loadedMetadata)
         setProject(chosen)
         setKeptImages(chosen.images ?? [])
         setCategories(availableCategories)
@@ -43,7 +54,7 @@ export default function EditPortfolioProjectPage() {
       } catch (failure) {
         if (!active) return
         if ([401, 403].includes(failure.response?.status)) navigate('/login', { replace: true })
-        else setError('Unable to load this project. Please try again.')
+        else setError('Unable to load this project or its classifications. No changes were made. Please refresh and try again.')
       } finally {
         if (active) setLoading(false)
       }
@@ -87,18 +98,19 @@ export default function EditPortfolioProjectPage() {
     } catch (failure) {
       const fields = failure.response?.data?.fieldErrors
       if (fields) form.setFields(Object.entries(fields).map(([name, message]) => ({ name, errors: [message] })))
-      setError(projectEditingFailureMessage(failure))
+      setError(failure.message === FLOOR_AREA_ERROR ? failure.message : projectEditingFailureMessage(failure))
     } finally { setSubmitting(false) }
   }
 
   return <div className="portfolio-page">
+    <DesignerReturnButton to="/designer/portfolio" confirmLeave={dirty || newImages.length > 0 || keptImages.length !== (project?.images?.length ?? 0)}>Back to portfolio</DesignerReturnButton>
     <p className="portfolio-eyebrow">Designer workspace</p>
     <h1>Edit project</h1>
     <p className="portfolio-intro">Update this project in your portfolio.</p>
     {loading && <div className="loading-state"><Spin /> <span>Loading project…</span></div>}
     {error && <Alert role="alert" type="error" showIcon message={error} className="form-feedback" />}
     {project && !loading && <Card className="portfolio-panel" title="Project details">
-      <Form form={form} layout="vertical" disabled={submitting} onFinish={onSubmit}>
+      <Form form={form} layout="vertical" disabled={submitting} onFinish={onSubmit} onValuesChange={() => setDirty(true)}>
         <Form.Item name="title" label="Project title" rules={[
           { required: true, whitespace: true, message: 'Enter a project title.' },
           { max: 160, message: 'Use 160 characters or fewer.' },
@@ -107,9 +119,10 @@ export default function EditPortfolioProjectPage() {
           { required: true, whitespace: true, message: 'Enter a project description.' },
           { max: 3000, message: 'Use 3000 characters or fewer.' },
         ]}><Input.TextArea rows={5} maxLength={3000} showCount /></Form.Item>
-        <Form.Item name="categoryId" label="Category" rules={[{ required: true, message: 'Choose a project category.' }]}>
-          <Select options={categories.map((item) => ({ value: item.id, label: item.name }))} />
+        <Form.Item name="categoryId" label="Renovation category">
+          <Select disabled={!categories.length} placeholder={categories.length ? "Select category" : "Pending setup"} options={categories.map((item) => ({ value: item.id, label: item.name }))} />
         </Form.Item>
+        <ProjectMetadataFields form={form} initial={metadata} />
         <Form.Item name="status" label="Project status" rules={[{ required: true }]}>
           <Radio.Group options={[{ label: 'Current', value: 'CURRENT' },
             { label: 'Completed', value: 'COMPLETED' }]} />
@@ -141,7 +154,6 @@ export default function EditPortfolioProjectPage() {
           </div>}
         </div>
         <div className="portfolio-form-actions">
-          <Button onClick={() => navigate('/designer/portfolio')} disabled={submitting}>Cancel</Button>
           <Button type="primary" htmlType="submit" loading={submitting}>Save changes</Button>
         </div>
       </Form>

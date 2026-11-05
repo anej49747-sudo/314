@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { currentManager } from '../api/categories.js'
 
 const tools = [
-  { to: '/manager/categories', title: 'Project categories', detail: 'Manage design-style categories used across projects.', Icon: Layers3 },
+  { to: '/manager/categories', title: 'Project classifications', detail: 'Manage renovation categories, design styles, property types and floor-area ranges.', Icon: Layers3 },
   { to: '/manager/projects', title: 'Edit projects', detail: 'Correct published project information.', Icon: FolderPen },
   { to: '/manager/articles', title: 'Renovation articles', detail: 'Publish and manage renovation guidance.', Icon: BookOpenText },
   { to: '/manager/recognitions', title: 'Designer recognition', detail: 'Feature a project and recognise outstanding designers.', Icon: Award },
@@ -28,7 +28,7 @@ export default function ManagerDashboardPage() {
 
   return <section className="ui-dashboard" aria-labelledby="manager-dashboard-title">
     <header className="ui-dashboard-header"><div><p className="ui-eyebrow">Platform management</p>
-      <h1 id="manager-dashboard-title">Management</h1>
+      <h1 id="manager-dashboard-title">Management dashboard</h1>
       <p>Manage published content, recognition and platform activity from one place.</p></div></header>
     {state === 'loading' && <div className="loading-state" role="status"><Spin /> Checking manager access…</div>}
     {state === 'error' && <Alert type="error" role="alert" showIcon message="Unable to verify Platform Manager access. Please try again." />}

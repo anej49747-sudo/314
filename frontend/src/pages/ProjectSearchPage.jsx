@@ -3,11 +3,15 @@ import { Heart, Info, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listCategories } from '../api/categories.js'
+import { getCatalogue } from '../api/discovery.js'
+import '../ui/discovery.css'
 import { currentSession } from '../api/authentication.js'
 import { getSavedProjects } from '../api/favourites.js'
 import { getPublicProjects } from '../api/publicProjects.js'
 import { usePublicRecognitions } from '../recognition/usePublicRecognitions.js'
 import { FeaturedProjectBadge } from '../components/RecognitionBadges.jsx'
+import ProjectAttributes from '../components/ProjectAttributes.jsx'
+import { activeProjectFilters, sizeRangeLabel } from '../discovery/presentationRules.js'
 import { projectStatusLabel } from '../project/projectDetailsRules.js'
 import {
   normalizeProjectQuery,
@@ -23,6 +27,11 @@ export default function ProjectSearchPage() {
   const [input, setInput] = useState('')
   const [query, setQuery] = useState('')
   const [categoryId, setCategoryId] = useState(null)
+  const [filterOpen, setFilterOpen] = useState(false)
+  const [styleIds, setStyleIds] = useState([])
+  const [propertyTypeId, setPropertyTypeId] = useState(null)
+  const [sizeRangeId, setSizeRangeId] = useState(null)
+  const [extra, setExtra] = useState({ styles: [], types: [], sizes: [] })
   const [categories, setCategories] = useState([])
   const [categoriesLoading, setCategoriesLoading] = useState(true)
   const [categoriesError, setCategoriesError] = useState('')
@@ -35,6 +44,12 @@ export default function ProjectSearchPage() {
   const [savedIds, setSavedIds] = useState(new Set())
   const [savedIndicatorError, setSavedIndicatorError] = useState(false)
 
+  useEffect(() => {
+    let alive = true
+    Promise.all([getCatalogue('styles'), getCatalogue('property-types'), getCatalogue('size-ranges')])
+      .then(([styles, types, sizes]) => { if (alive) setExtra({ styles, types, sizes }) }).catch(() => {})
+    return () => { alive = false }
+  }, [])
   // The public search remains available to guests and non-customer roles.
   useEffect(() => {
     let active = true
@@ -80,7 +95,7 @@ export default function ProjectSearchPage() {
       setLoading(true)
       setError('')
       try {
-        const results = await getPublicProjects(query, categoryId)
+        const results = await getPublicProjects(query, categoryId, { styleIds, propertyTypeId, sizeRangeId })
         if (active) setProjects(results)
       } catch {
         if (active) setError('Unable to load projects. Please try again later.')
@@ -90,10 +105,19 @@ export default function ProjectSearchPage() {
     }
     load()
     return () => { active = false }
-  }, [query, categoryId, revision])
+  }, [query, categoryId, styleIds, propertyTypeId, sizeRangeId, revision])
 
   const categoryName = categories.find((category) => category.id === categoryId)?.name || ''
-  const activeFilters = Boolean(query || categoryId != null)
+  const chips = activeProjectFilters({ query, categoryId, categoryName, styleIds, styles: extra.styles,
+    propertyTypeId, types: extra.types, sizeRangeId, sizes: extra.sizes })
+  const activeFilters = chips.length > 0
+  function removeFilter(filter) {
+    if (filter.key === 'title') clearTitle()
+    else if (filter.key === 'category') clearCategory()
+    else if (filter.key.startsWith('style-')) setStyleIds(current => current.filter(id => String(id) !== String(filter.id)))
+    else if (filter.key === 'property') setPropertyTypeId(null)
+    else if (filter.key === 'size') setSizeRangeId(null)
+  }
 
   function submitSearch(event) {
     event.preventDefault()
@@ -115,57 +139,34 @@ export default function ProjectSearchPage() {
     setInput('')
     setQuery('')
     setCategoryId(null)
+    setStyleIds([])
+    setPropertyTypeId(null)
+    setSizeRangeId(null)
     setRevision((value) => value + 1)
   }
 
   return (
     <section className="project-search-page" aria-labelledby="project-search-title">
       <div className="project-search-heading">
-        <p className="project-search-eyebrow">Explore &amp; discover</p>
-        <h1 id="project-search-title">Explore interior design projects</h1>
-        <p>Find inspiration from completed and ongoing renovation projects. Search by project title and filter by category to discover designs that interest you.</p>
+        <p className="project-search-eyebrow">Project catalogue</p>
+        <h1 id="project-search-title">Find interior design projects</h1>
+        <p>Search renovation projects by title, category, design style, property type and floor area. For a photo-first browsing experience, visit <Link to="/explore">Explore</Link>.</p>
       </div>
 
       <div className="project-search-panel">
-        <div className="project-search-filters-layout">
-          <form className="project-search-keyword-control" role="search" onSubmit={submitSearch}>
-            <label className="project-search-label" htmlFor="project-search-input">Search projects by title</label>
-            <div className="project-search-row">
-              <Input
-                id="project-search-input"
-                type="search"
-                size="large"
-                maxLength={160}
-                prefix={<Search size={18} aria-hidden="true" />}
-                placeholder="e.g. Modern kitchen, urban loft"
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-              />
-              <Button htmlType="submit" type="primary" size="large" icon={<Search size={18} />}>
-                Search
-              </Button>
-            </div>
-          </form>
-          <div className="project-search-category-control">
-            <label className="project-search-label" htmlFor="project-category-select">Project category</label>
-            <Select
-              id="project-category-select"
-              aria-label="Project category"
-              aria-describedby="project-category-note"
-              className="project-search-category-select"
-              value={categoryId ?? 'all'}
-              onChange={(value) => setCategoryId(value === 'all' ? null : value)}
-              loading={categoriesLoading}
-              disabled={categoriesLoading || Boolean(categoriesError)}
-              options={[
-                { value: 'all', label: 'All categories' },
-                ...categories.map((category) => ({ value: category.id, label: category.name })),
-              ]}
-            />
-            <p className="project-search-category-note" id="project-category-note">Updates results immediately</p>
-          </div>
-        </div>
-        <p className="project-search-help"><Info size={16} aria-hidden="true" /> Title search applies on Search or Enter. Category changes filter the last submitted search immediately.</p>
+        <form role="search" onSubmit={submitSearch} className="project-search-keyword-control">
+          <label className="project-search-label" htmlFor="project-search-input">Search projects by title</label>
+          <div className="project-search-row"><Input id="project-search-input" type="search" size="large" maxLength={160} prefix={<Search size={18}/>} placeholder="Search projects..." value={input} onChange={event => setInput(event.target.value)}/>
+            <Button type="primary" htmlType="submit" size="large" icon={<Search size={18}/>}>Search</Button></div>
+        </form>
+        <Button className="discovery-filter-toggle" aria-expanded={filterOpen} onClick={() => setFilterOpen(!filterOpen)}>{filterOpen ? 'Hide filters' : 'Filters'} {Number(categoryId!=null)+Number(propertyTypeId!=null)+Number(sizeRangeId!=null)+styleIds.length || ''}</Button>
+        {filterOpen && <div className="discovery-filter-panel">
+          <div><label htmlFor="project-category-filter">Renovation category</label><Select id="project-category-filter" value={categoryId} allowClear placeholder="All categories" loading={categoriesLoading} options={categories.map(c=>({value:c.id,label:c.name}))} onChange={setCategoryId} /></div>
+          <div><label htmlFor="project-property-filter">Property type</label><Select id="project-property-filter" value={propertyTypeId} allowClear placeholder="All property types" disabled={!extra.types.length} options={extra.types.map(c=>({value:c.id,label:c.name}))} onChange={setPropertyTypeId}/></div>
+          <div><label htmlFor="project-area-filter">Floor area</label><Select id="project-area-filter" value={sizeRangeId} allowClear placeholder="Any size" disabled={!extra.sizes.length} options={extra.sizes.map(c=>({value:c.id,label:sizeRangeLabel(c)}))} onChange={setSizeRangeId}/></div>
+          <div><label htmlFor="project-style-filter">Design styles</label><Select id="project-style-filter" mode="multiple" value={styleIds} placeholder="All styles" disabled={!extra.styles.length} options={extra.styles.map(c=>({value:c.id,label:c.name}))} onChange={setStyleIds}/></div>
+          <div style={{alignSelf:'end'}}><Button onClick={clearAll}>Clear all filters</Button></div>
+        </div>}
         {categoriesError && (
           <div className="project-search-category-error">
             <Alert type="error" role="alert" showIcon message={categoriesError} />
@@ -178,11 +179,9 @@ export default function ProjectSearchPage() {
         <div className="project-search-results-heading">
           <div>
             <h2 id="project-search-results-title">{projectSearchHeading(query, categoryName)}</h2>
-            <p>{query && categoryId != null
-              ? 'Projects matching your title search and selected category.'
-              : query ? 'Projects matching your title search.'
-                : categoryId != null ? 'Projects in the selected category.'
-                  : 'Explore publicly available projects from interior designers.'}</p>
+            <p>{activeFilters
+              ? 'Projects matching your selected search and classification filters.'
+              : 'Browse the full public project catalogue from interior designers.'}</p>
           </div>
           {!loading && !error && <span className="project-search-count" role="status">{projectSearchCount(projects.length)}</span>}
         </div>
@@ -194,10 +193,10 @@ export default function ProjectSearchPage() {
 
         {activeFilters && (
           <div className="project-search-active" aria-label="Active search filters">
-            {query && <button type="button" className="project-search-chip" onClick={clearTitle}
-              aria-label="Clear title search">Title: “{query}” <span aria-hidden="true">×</span></button>}
-            {categoryId != null && <button type="button" className="project-search-chip" onClick={clearCategory}
-              aria-label="Clear category filter">Category: {categoryName || 'Selected category'} <span aria-hidden="true">×</span></button>}
+            {chips.map(chip => <button key={chip.key} type="button" className="project-search-chip"
+              onClick={() => removeFilter(chip)} aria-label={`Remove ${chip.label} filter`}>
+              {chip.label} <span aria-hidden="true">×</span>
+            </button>)}
             <button type="button" className="project-search-clear" onClick={clearAll}>Clear all filters</button>
           </div>
         )}
@@ -214,7 +213,7 @@ export default function ProjectSearchPage() {
             <Search size={28} aria-hidden="true" />
             <h3>{activeFilters ? 'No projects found' : 'No projects available yet'}</h3>
             <p>{activeFilters
-              ? 'Try another project title or category, or clear your filters to see all projects.'
+              ? 'Adjust your search or classification filters, or clear them to see all projects.'
               : 'Check back later for newly published projects.'}</p>
             {activeFilters && <Button onClick={clearAll}>Clear all filters</Button>}
           </div>
@@ -229,7 +228,6 @@ export default function ProjectSearchPage() {
                     alt={`Cover photo for ${project.title}`} loading="lazy" />
                 </Link>}
                 <div className="project-search-tags">
-                  <span className="project-search-category"><span className="ld-category-kicker">Style</span>{project.categoryName}</span>
                   <span className={project.status === 'COMPLETED'
                     ? 'project-search-status project-search-status-completed'
                     : 'project-search-status project-search-status-current'}>
@@ -244,6 +242,7 @@ export default function ProjectSearchPage() {
                 </div>
                 <FeaturedProjectBadge featuredProject={featuredProject} projectId={project.id} />
                 <h3>{project.title}</h3>
+                <ProjectAttributes project={project} />
                 <p className="project-search-description">{projectSearchDescription(project.description)}</p>
                 <div className="project-search-card-footer">
                   <div>

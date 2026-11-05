@@ -6,6 +6,7 @@ import csit314.renovation.account.repository.UserAccountRepository;
 import csit314.renovation.company.entity.DesignerCompany;
 import csit314.renovation.company.repository.DesignerCompanyRepository;
 import csit314.renovation.favourite.entity.CustomerProjectFavourite;
+import csit314.renovation.discovery.control.DiscoveryService;
 import csit314.renovation.favourite.dto.CustomerFavouriteStatusResponse;
 import csit314.renovation.favourite.repository.CustomerProjectFavouriteRepository;
 import csit314.renovation.portfolio.entity.InteriorDesignProject;
@@ -32,16 +33,19 @@ public class CustomerFavouriteService {
     private final DesignerCompanyRepository companies;
     private final ProjectImageRepository images;
     private final PlatformEngagementRecorder engagement;
+    private final DiscoveryService discovery;
 
     public CustomerFavouriteService(UserAccountRepository accounts,
             CustomerProjectFavouriteRepository favourites, PublicProjectDetailsService publicProjects,
-            DesignerCompanyRepository companies, ProjectImageRepository images, PlatformEngagementRecorder engagement) {
+            DesignerCompanyRepository companies, ProjectImageRepository images, PlatformEngagementRecorder engagement,
+            DiscoveryService discovery) {
         this.accounts = accounts;
         this.favourites = favourites;
         this.publicProjects = publicProjects;
         this.companies = companies;
         this.images = images;
         this.engagement = engagement;
+        this.discovery = discovery;
     }
 
     @Transactional(readOnly = true)
@@ -70,7 +74,7 @@ public class CustomerFavouriteService {
             return new PublicProjectSearchResponse(project.getId(), project.getTitle(),
                     project.getDescription(), project.getCategoryDisplayName(), project.getStatus(),
                     new PublicProjectDesignerResponse(designer.getId(), name,
-                            company == null ? null : company.getAddress()), covers.get(project.getId()));
+                            company == null ? null : company.getAddress()), covers.get(project.getId()), discovery.metadata(project.getId()));
         }).toList();
     }
 

@@ -6,6 +6,7 @@ import { usePublicRecognitions } from '../recognition/usePublicRecognitions.js'
 import { DesignerAwardBadges, FeaturedProjectBadge } from '../components/RecognitionBadges.jsx'
 import DesignerReviewAction from '../components/DesignerReviewAction.jsx'
 import DesignerReportAction from '../components/DesignerReportAction.jsx'
+import MessageDesignerAction from '../components/MessageDesignerAction.jsx'
 import DesignerReviewsSection from '../components/DesignerReviewsSection.jsx'
 import { directoryAddress } from '../designer/designerDirectoryRules.js'
 import {
@@ -85,6 +86,7 @@ export default function DesignerProfilePage() {
               <DesignerAwardBadges awards={awards} designerId={profile.id} />
             </div>
             <div className="designer-report-profile-actions">
+              <MessageDesignerAction designerId={profile.id} designerName={profile.name} />
               <DesignerReviewAction designerId={profile.id} designerName={profile.name}
                 onSubmitted={reviewSubmitted} />
               <DesignerReportAction designerId={profile.id} designerName={profile.name} />
@@ -131,7 +133,7 @@ export default function DesignerProfilePage() {
                       </span>
                       <FeaturedProjectBadge featuredProject={featuredProject} projectId={project.id} />
                       <h3>{project.title}</h3>
-                      <p className="public-profile-project-category"><span className="ld-category-kicker">Design style</span>{project.categoryName}</p>
+                      <p className="public-profile-project-category"><span className="ld-category-kicker">Category</span>{project.categoryName}</p>
                       <Link className="public-profile-project-link"
                         to={publicProjectPath(project.id)}
                         state={{ designerId: profile.id, projectTitle: project.title }}>

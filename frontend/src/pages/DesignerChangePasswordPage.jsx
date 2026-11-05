@@ -5,7 +5,9 @@ import { changeDesignerPassword, currentDesigner, updateOwnDesignerPassword } fr
 import { logoutSession } from '../api/authentication.js'
 import { logoutFailureMessage } from '../auth/logoutRules.js'
 import AuthCard from '../components/AuthCard.jsx'
+import DesignerReturnButton from '../components/DesignerReturnButton.jsx'
 import { buildPasswordChangePayload, passwordChangeFailureMessage, validatePasswordChange } from '../designer/designerLoginRules.js'
+import '../ui/designerV25.css'
 
 export default function DesignerChangePasswordPage() {
   const navigate = useNavigate()
@@ -14,6 +16,7 @@ export default function DesignerChangePasswordPage() {
   const [submitting, setSubmitting] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
   const [firstLogin, setFirstLogin] = useState(true)
+  const [hasUnsavedPassword, setHasUnsavedPassword] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -58,12 +61,15 @@ export default function DesignerChangePasswordPage() {
   }
 
   return (
+    <div className="ld-designer-password-page">
+    {!checking && !firstLogin && <DesignerReturnButton to="/designer/security" confirmLeave={hasUnsavedPassword}>Back to account security</DesignerReturnButton>}
     <AuthCard title={firstLogin ? 'Set your new password' : 'Change password'}
       description={firstLogin ? 'For your security, choose a new password before accessing designer features.' : 'Verify your current password before choosing a new one.'}>
       {checking && !error && <div className="loading-state"><Spin /> <span>Checking your account…</span></div>}
       {error && <Alert className="form-feedback" type="error" showIcon role="alert" message={error} />}
       {!checking && <>
-      <Form layout="vertical" onFinish={onSubmit} disabled={submitting || loggingOut} autoComplete="off">
+      <Form layout="vertical" onFinish={onSubmit} disabled={submitting || loggingOut} autoComplete="off"
+        onValuesChange={(_, values) => setHasUnsavedPassword(Object.values(values).some(Boolean))}>
         {!firstLogin && <Form.Item name="currentPassword" label="Current password"
           rules={[{ required: true, message: 'Enter your current password' }]}>
           <Input.Password autoComplete="current-password" />
@@ -85,9 +91,10 @@ export default function DesignerChangePasswordPage() {
         </Form.Item>
         <Button type="primary" htmlType="submit" block loading={submitting} className="submit-button">{firstLogin ? 'Set password' : 'Change password'}</Button>
       </Form>
-      <Button block type="default" className="submit-button" loading={loggingOut}
-        disabled={submitting} onClick={onLogout}>Log out</Button>
+      {firstLogin && <Button block type="default" className="submit-button" loading={loggingOut}
+        disabled={submitting} onClick={onLogout}>Log out</Button>}
       </>}
     </AuthCard>
+    </div>
   )
 }

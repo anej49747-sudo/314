@@ -1,9 +1,12 @@
+import DesignerReturnButton from '../components/DesignerReturnButton.jsx'
 import { Alert, Button, Card, Form, Input, Radio, Select, Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listCategories } from '../api/categories.js'
 import { currentDesigner, currentDesignerArea } from '../api/designerAuthentication.js'
 import { addPortfolioProject } from '../api/portfolio.js'
+import { FLOOR_AREA_ERROR } from '../designer/floorAreaRules.js'
+import ProjectMetadataFields from '../components/ProjectMetadataFields.jsx'
 import {
   buildProjectDetails, projectCreationFailureMessage, validateProjectImages,
 } from '../designer/projectCreationRules.js'
@@ -18,6 +21,7 @@ export default function AddPortfolioProjectPage() {
   const [images, setImages] = useState([])
   const [previews, setPreviews] = useState([])
   const [error, setError] = useState('')
+  const [dirty, setDirty] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -73,7 +77,7 @@ export default function AddPortfolioProjectPage() {
     } catch (failure) {
       const fields = failure.response?.data?.fieldErrors
       if (fields) form.setFields(Object.entries(fields).map(([name, message]) => ({ name, errors: [message] })))
-      setError(projectCreationFailureMessage(failure))
+      setError(failure.message === FLOOR_AREA_ERROR ? failure.message : projectCreationFailureMessage(failure))
     } finally {
       setSubmitting(false)
     }
@@ -81,6 +85,7 @@ export default function AddPortfolioProjectPage() {
 
   return (
     <div className="portfolio-page">
+      <DesignerReturnButton to="/designer/portfolio" confirmLeave={dirty || images.length > 0}>Back to portfolio</DesignerReturnButton>
       <p className="portfolio-eyebrow">Designer workspace</p>
       <h1>Add project</h1>
       <p className="portfolio-intro">Showcase a current or completed interior design project in your portfolio.</p>
@@ -88,8 +93,8 @@ export default function AddPortfolioProjectPage() {
       {error && <Alert role="alert" type="error" showIcon message={error} className="form-feedback" />}
       {authorized && !loading && <Card className="portfolio-panel" title="Project details">
         {categories.length === 0 && <Alert type="warning" showIcon className="form-feedback"
-          message="No project categories exist yet. Ask the Platform Manager to create a category before adding a project." />}
-        <Form form={form} layout="vertical" disabled={submitting} onFinish={onSubmit}
+          message="Category classification pending setup. You can still create projects." />}
+        <Form form={form} layout="vertical" disabled={submitting} onFinish={onSubmit} onValuesChange={() => setDirty(true)}
           initialValues={{ status: 'CURRENT' }}>
           <Form.Item name="title" label="Project title" rules={[
             { required: true, whitespace: true, message: 'Enter a project title.' },
@@ -104,11 +109,12 @@ export default function AddPortfolioProjectPage() {
             <Input.TextArea rows={5} showCount maxLength={3000}
               placeholder="Describe the design, renovation scope and key features" />
           </Form.Item>
-          <Form.Item name="categoryId" label="Category" rules={[{ required: true, message: 'Choose a project category.' }]}>
-            <Select placeholder="Select category" options={categories.map((item) => ({
+          <Form.Item name="categoryId" label="Renovation category" rules={categories.length ? [{ required: true, message: 'Choose a project category.' }] : []}>
+            <Select disabled={!categories.length} placeholder={categories.length ? "Select category" : "Pending setup"} options={categories.map((item) => ({
               value: item.id, label: item.name,
             }))} />
           </Form.Item>
+          <ProjectMetadataFields form={form} />
           <Form.Item name="status" label="Project status" rules={[{ required: true }]}>
             <Radio.Group options={[{ label: 'Current', value: 'CURRENT' },
               { label: 'Completed', value: 'COMPLETED' }]} />
@@ -126,8 +132,7 @@ export default function AddPortfolioProjectPage() {
             </div>}
           </div>
           <div className="portfolio-form-actions">
-            <Button onClick={() => navigate('/designer/portfolio')} disabled={submitting}>Cancel</Button>
-            <Button type="primary" htmlType="submit" loading={submitting} disabled={categories.length === 0}>
+              <Button type="primary" htmlType="submit" loading={submitting} >
               Add project
             </Button>
           </div>

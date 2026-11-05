@@ -1,0 +1,75 @@
+/* Sprint 4 discovery: native vertical photo feed and restrained typography. */
+.discovery-page{max-width:1180px;margin:0 auto;padding:30px 20px 60px;color:#1d2939}
+.discovery-page h1{font-size:clamp(27px,3vw,38px);font-weight:700;margin:6px 0 8px}
+.discovery-page h2{font-size:23px;font-weight:650;margin:0}
+.discovery-page p{color:#526581}
+.discovery-eyebrow{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:#526581}
+.discovery-toolbar,.discovery-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.discovery-toolbar{justify-content:space-between;margin-bottom:18px}
+.discovery-preferences{max-width:740px}
+.discovery-explore-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:0 auto 16px;max-width:700px}
+.discovery-reel-loading{display:flex;justify-content:center;padding:55px}
+/* Scroll through real DOM posts, not a single project switched by wheel events. */
+.discovery-reel-feed{max-width:700px;margin:auto;height:min(820px,82dvh);min-height:490px;overflow-y:auto;overscroll-behavior-y:contain;scroll-snap-type:y mandatory;scrollbar-width:thin;border-radius:18px;box-shadow:0 12px 36px #1b345314}
+.discovery-reel-post{box-sizing:border-box;scroll-snap-align:start;scroll-snap-stop:always;height:100%;min-height:0;display:flex;flex-direction:column;border:1px solid #d0d8e2;background:white;border-radius:18px;overflow:hidden}
+.discovery-reel-photo{flex:1 1 auto;min-height:0;background:#eff2f6;position:relative;overflow:hidden;touch-action:pan-y}
+.discovery-photo-placeholder{position:absolute;inset:0;display:grid;place-items:center;color:#526581}
+.discovery-reel-photo img{position:relative;z-index:1;display:block;height:100%;width:100%;object-fit:cover}
+.discovery-photo-nav{position:absolute;z-index:2;top:50%;left:14px;right:14px;display:flex;justify-content:space-between;transform:translateY(-50%);pointer-events:none}
+.discovery-photo-nav button{pointer-events:auto}
+.discovery-photo-count{position:absolute;z-index:2;right:14px;bottom:12px;border-radius:8px;padding:5px 9px;color:white;background:#1d2939ae}
+.discovery-reel-info{flex:0 0 auto;padding:18px 20px;min-width:0}
+.discovery-reel-title{min-width:0}
+.discovery-title-row{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.discovery-title-row h2{margin:0 0 4px}
+.discovery-title-row p{margin:0 0 14px}
+.discovery-score{width:135px;min-width:110px}
+.discovery-score>div:first-child{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.discovery-score span{font-size:12px;color:#526581}
+.discovery-score strong{font-size:20px;font-weight:650;color:#1d2939}
+.discovery-score-track{height:3px;margin-top:5px;background:#e5ebf2;border-radius:8px}
+.discovery-score-track span{height:100%;display:block;background:#365b82;border-radius:8px}
+.discovery-reel-footer{display:flex;justify-content:center;gap:12px;align-items:center;min-height:52px;margin:12px auto;max-width:700px;color:#526581;font-size:13px}
+.discovery-small{max-width:700px;margin:16px auto;font-size:14px}
+.discovery-highlights{padding:24px 0}
+.discovery-highlights h3{margin:20px 0 12px;font-weight:650}
+.discovery-recommend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
+.discovery-recommend-card{display:block;border:1px solid #d0d8e2;border-radius:12px;overflow:hidden;text-decoration:none;background:white;color:#1d2939}
+.discovery-recommend-card:hover{border-color:#365b82}
+.discovery-recommend-card img,.discovery-missing{width:100%;height:155px;object-fit:cover;background:#eff2f6}
+.discovery-missing{display:grid;place-items:center;color:#526581}
+.discovery-recommend-card>div:last-child{padding:14px}
+.discovery-recommend-card strong{font-weight:600}
+.discovery-recommend-card p{margin:5px 0 12px;font-size:13px;color:#526581}
+.discovery-recommend-card .discovery-score{width:100%}
+.discovery-filter-toggle{margin:12px 0}
+.discovery-filter-panel{display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:14px;padding:20px 0}
+.discovery-filter-panel>div{display:grid;gap:6px}
+.discovery-filter-panel label{font-size:14px;font-weight:500}
+.discovery-metadata{color:#526581;font-size:14px;margin:10px 0}
+.discovery-metadata span{margin-right:14px}
+@media(max-width:650px){
+  .discovery-page{padding:20px 14px 40px}
+  .discovery-explore-heading{align-items:flex-start}
+  .discovery-reel-feed{height:min(730px,79dvh);min-height:440px}
+  .discovery-title-row{align-items:flex-start}
+  .discovery-reel-info{padding:14px 16px}
+  .discovery-score{width:110px;min-width:95px}
+  .discovery-filter-panel{grid-template-columns:1fr}
+  .discovery-recommend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .discovery-recommend-card img{height:115px}
+}
+
+/* Sprint 4 consistency: equal project metadata treatment, no category-only pill. */
+.discovery-project-attributes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px;margin:12px 0 17px;min-width:0}
+.discovery-project-attribute{min-width:0}
+.discovery-project-attribute dt{font-size:11px;text-transform:uppercase;letter-spacing:.055em;font-weight:700;color:#64758d;margin-bottom:3px}
+.discovery-project-attribute dd{font-size:13px;line-height:1.5;font-weight:600;color:#33475e;margin:0;overflow-wrap:anywhere}
+.project-search-card .discovery-project-attributes,.saved-project-card .discovery-project-attributes{margin-block:5px 16px}
+.public-project-details>.discovery-project-attributes{max-width:650px;border:1px solid #d9e2ec;border-radius:12px;background:#fff;padding:17px 20px;margin:14px 0 22px}
+.discovery-reel-favourite.saved{color:#b42318;border-color:#b42318;background:#fff}
+.discovery-reel-favourite.saved:hover{color:#8c1b13!important;border-color:#8c1b13!important}
+.discovery-reel-favourite.saved svg{color:#b42318}
+.discovery-reel-footer{flex-wrap:wrap;text-align:center}
+.discovery-preferences .ant-select-selection-item{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:420px){.discovery-project-attributes{grid-template-columns:1fr 1fr;gap:10px}}

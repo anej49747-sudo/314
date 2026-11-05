@@ -22,25 +22,36 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class RegistrationServiceTest {
     @Mock UserAccountRepository repository;
     @Mock PasswordEncoder encoder;
+    @Mock JdbcTemplate jdbc;
     @InjectMocks RegistrationService registrationService;
 
     @Test
     void normalizesEmailAndAssignsCustomerRoleAndHashedPassword() {
         RegisterRequest request = new RegisterRequest(Salutation.DR, "  Jane Tan  ", "  JANE@EXAMPLE.COM  ", "SecurePass1!");
         when(encoder.encode("SecurePass1!")).thenReturn("$argon2id$encoded");
-        when(repository.saveAndFlush(any(UserAccount.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.saveAndFlush(any(UserAccount.class))).thenAnswer(invocation -> {
+            UserAccount created = invocation.getArgument(0);
+            // Simulate the database-generated identity returned by saveAndFlush.
+            ReflectionTestUtils.setField(created, "id", 101L);
+            return created;
+        });
 
         RegisterResponse response = registrationService.register(request);
 
         ArgumentCaptor<UserAccount> accountCaptor = ArgumentCaptor.forClass(UserAccount.class);
         verify(repository).existsByEmailIgnoreCase("jane@example.com");
         verify(repository).saveAndFlush(accountCaptor.capture());
+        verify(jdbc).update(
+                "INSERT INTO customer_recommendation_preferences(customer_id,onboarding_state) VALUES(?, 'PENDING')",
+                101L);
         UserAccount account = accountCaptor.getValue();
         assertEquals(UserRole.CUSTOMER, account.getRole());
         assertEquals("Jane Tan", account.getName());

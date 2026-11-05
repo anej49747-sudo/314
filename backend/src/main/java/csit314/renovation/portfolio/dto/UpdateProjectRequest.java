@@ -13,7 +13,11 @@ public record UpdateProjectRequest(
         @Size(max = 160, message = "Title must be 160 characters or fewer") String title,
         @NotBlank(message = "Project description is required")
         @Size(max = 3000, message = "Description must be 3000 characters or fewer") String description,
-        @NotNull(message = "Choose a category")
         @Positive(message = "Choose a valid category") Long categoryId,
         @NotNull(message = "Choose a project status") ProjectStatus status,
-        @NotNull(message = "Specify which existing photos to keep") List<@NotNull Long> keepImageIds) { }
+        @NotNull(message = "Specify which existing photos to keep") List<@NotNull Long> keepImageIds,
+        csit314.renovation.discovery.control.DiscoveryService.MetadataInput metadata) {
+    public UpdateProjectRequest(String title,String description,Long categoryId,ProjectStatus status,List<Long> keepImageIds){
+        this(title,description,categoryId,status,keepImageIds,null);
+    }
+}

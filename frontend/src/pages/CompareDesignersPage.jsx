@@ -12,6 +12,7 @@ import {
   projectStatusCounts,
 } from '../designer/compareDesignersRules.js'
 import { designerProfilePath } from '../designer/designerDirectoryRules.js'
+import CustomerReturnButton from '../components/CustomerReturnButton.jsx'
 import { portfolioStatusLabel } from '../designer/portfolioRules.js'
 import '../designer/compareDesigners.css'
 
@@ -129,13 +130,14 @@ export default function CompareDesignersPage() {
 
   return (
     <section className="compare-page" aria-labelledby="compare-page-title">
+      <CustomerReturnButton />
       <div className="compare-page-heading">
         <div>
           <p className="compare-eyebrow">Interior designer comparison</p>
           <h1 id="compare-page-title">Compare interior designers</h1>
           <p>Review available details side by side to help choose a designer for your renovation.</p>
         </div>
-        <Button onClick={() => backToDirectory()}>← Add or change designers</Button>
+        <Button onClick={() => backToDirectory()}>Add or change designers</Button>
       </div>
       {loading && <div className="loading-state" role="status"><Spin /> <span>Loading comparison…</span></div>}
       {!loading && error && <Alert type="error" role="alert" showIcon message={error}

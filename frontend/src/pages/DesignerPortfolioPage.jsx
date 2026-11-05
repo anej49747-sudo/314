@@ -1,12 +1,13 @@
-import { Alert, Button, Card, Empty, Modal, Segmented, Spin, Tag } from 'antd'
+import DesignerReturnButton from '../components/DesignerReturnButton.jsx'
+import { Alert, Button, Card, Empty, Modal, Segmented, Spin } from 'antd'
 import { useEffect, useState } from 'react'
-import { Eye, Heart } from 'lucide-react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { deletePortfolioProject, getMyPortfolio } from '../api/portfolio.js'
 import { currentDesigner, currentDesignerArea } from '../api/designerAuthentication.js'
 import { filteredPortfolio, portfolioStatusLabel, portfolioSummary } from '../designer/portfolioRules.js'
 import { projectDeletionFailureMessage, withoutDeletedProject } from '../designer/projectDeletionRules.js'
-import { interestMetricCount } from '../designer/projectInterestRules.js'
+import DesignerProjectCard from '../components/DesignerProjectCard.jsx'
+import '../ui/designerV27.css'
 
 const filters = [
   { label: 'All', value: 'ALL' },
@@ -78,15 +79,16 @@ export default function DesignerPortfolioPage() {
 
   return (
     <div className="portfolio-page">
+      <DesignerReturnButton />
       <p className="portfolio-eyebrow">Designer workspace</p>
       <h1>My portfolio</h1>
       <p className="portfolio-intro">View your current and completed interior design projects.</p>
       {location.state?.createdProjectName && <Alert type="success" showIcon role="status"
-        message={`Project “${location.state.createdProjectName}” added to your portfolio.`} className="form-feedback" />}
+        message={`Project “${location.state.createdProjectName}” added to your portfolio.`} className="form-feedback portfolio-success-notice" />}
       {location.state?.editedProjectName && <Alert type="success" showIcon role="status"
-        message={`Project “${location.state.editedProjectName}” updated.`} className="form-feedback" />}
+        message={`Project “${location.state.editedProjectName}” updated.`} className="form-feedback portfolio-success-notice" />}
       {deletedProjectName && <Alert type="success" showIcon role="status"
-        message={`Project “${deletedProjectName}” deleted from your portfolio.`} className="form-feedback" />}
+        message={`Project “${deletedProjectName}” deleted from your portfolio.`} className="form-feedback portfolio-success-notice" />}
       {loading && <div className="loading-state"><Spin /> <span>Loading portfolio…</span></div>}
       {error && <Alert type="error" showIcon role="alert" message={error} className="form-feedback" />}
       {authorized && !loading && <>
@@ -108,37 +110,9 @@ export default function DesignerPortfolioPage() {
           ) : (
             <div className="portfolio-grid">
               {visible.map((project) => (
-                <Card key={project.id} className="portfolio-project-card" size="small">
-                  {project.images?.length > 0 && <img className="portfolio-project-cover"
-                    src={project.images[0].url} alt={`Cover photo for ${project.title}`} />}
-                  <div className="portfolio-project-heading">
-                    <h2>{project.title}</h2>
-                    <Tag color={project.status === 'CURRENT' ? '#365b82' : '#16a34a'}>{portfolioStatusLabel(project.status)}</Tag>
-                  </div>
-                  <p className="portfolio-project-category"><span className="ld-category-kicker">Style</span>{project.categoryName}</p>
-                  <p className="portfolio-project-description">{project.description}</p>
-                  <div className="portfolio-project-metrics" aria-label={`Interest metrics for ${project.title}`}>
-                    <div className="portfolio-project-metric">
-                      <Eye size={18} aria-hidden="true" />
-                      <span><strong>{interestMetricCount(project.viewCount)}</strong> Project views</span>
-                    </div>
-                    <div className="portfolio-project-metric">
-                      <Heart size={18} aria-hidden="true" />
-                      <span><strong>{interestMetricCount(project.favouriteCount)}</strong> Favourites</span>
-                    </div>
-                  </div>
-                  <div className="portfolio-project-actions">
-                    <Link to={`/projects/${project.id}`} target="_blank" rel="noopener noreferrer" className="portfolio-preview-link" aria-label={`Preview ${project.title} as a visitor`}>
-                      <Eye size={15} aria-hidden="true" /> Preview
-                    </Link>
-                    <Button size="small" onClick={() => navigate(`/designer/portfolio/${project.id}/edit`)}>
-                      Edit project
-                    </Button>
-                    <Button size="small" danger onClick={() => { setError(''); setDeletionTarget(project) }}>
-                      Delete project
-                    </Button>
-                  </div>
-                </Card>
+                <DesignerProjectCard key={project.id} project={project}
+                  onEdit={(id) => navigate(`/designer/portfolio/${id}/edit`)}
+                  onDelete={(target) => { setError(''); setDeletionTarget(target) }} />
               ))}
             </div>
           )}
@@ -149,7 +123,6 @@ export default function DesignerPortfolioPage() {
           cancelButtonProps={{ disabled: deleting }} closable={!deleting} maskClosable={!deleting}>
           <p>Delete “{deletionTarget?.title}” and all its photos? This cannot be undone.</p>
         </Modal>
-        <Button onClick={() => navigate('/designer')}>Back to designer workspace</Button>
       </>}
     </div>
   )

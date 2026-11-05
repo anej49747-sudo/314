@@ -251,4 +251,3 @@ body { background: var(--ld-canvas); }
 .ld-account-security h1{font-size:clamp(30px,3vw,40px);letter-spacing:-.04em;margin:8px 0}
 .ld-security-intro{color:#526581;font-size:16px;max-width:620px;margin:0 0 30px}
 .ld-security-actions{margin-top:25px}
-.ld-password-back-link{display:block;margin:16px auto 0;text-align:center;font-size:13px}

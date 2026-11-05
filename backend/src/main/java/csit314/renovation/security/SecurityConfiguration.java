@@ -99,6 +99,30 @@ public class SecurityConfiguration {
                                 "/api/articles/*/cover").permitAll()
                         // #36 only Platform Managers can publish articles (session + CSRF).
                         .requestMatchers(HttpMethod.POST, "/api/manager/articles").hasRole("PLATFORM_MANAGER")
+                        // Sprint 4 #23/#24: public discovery and authenticated preference management.
+                        .requestMatchers(HttpMethod.GET,"/api/discovery/catalogues/*", "/api/discovery/explore", "/api/discovery/projects",
+                                "/api/discovery/designers", "/api/discovery/projects/*/metadata").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/discovery/customer/preferences").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.PUT,"/api/discovery/customer/preferences").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.POST,"/api/discovery/customer/preferences/skip").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET,"/api/discovery/designer/projects/*/metadata").hasRole("INTERIOR_DESIGNER")
+                        .requestMatchers("/api/discovery/catalogues/**").hasRole("PLATFORM_MANAGER")
+                        .requestMatchers(HttpMethod.PUT,"/api/categories/*").hasRole("PLATFORM_MANAGER")
+                        // Sprint 4 #48/#49/#50: only answered project Q&A is public.
+                        .requestMatchers(HttpMethod.GET, "/api/projects/*/questions").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/projects/*/questions").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/customer/projects/*/questions").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/designer/project-questions").hasRole("INTERIOR_DESIGNER")
+                        .requestMatchers(HttpMethod.POST, "/api/designer/project-questions/*/answer")
+                        .hasRole("INTERIOR_DESIGNER")
+                        // Sprint 4 #25/#47: only authenticated conversation participants can read/send.
+                        .requestMatchers(HttpMethod.GET, "/api/messages/conversations",
+                                "/api/messages/conversations/*/messages")
+                        .hasAnyRole("CUSTOMER", "INTERIOR_DESIGNER")
+                        .requestMatchers(HttpMethod.POST, "/api/messages/conversations/*/messages")
+                        .hasAnyRole("CUSTOMER", "INTERIOR_DESIGNER")
+                        .requestMatchers(HttpMethod.POST, "/api/messages/designers/*/messages")
+                        .hasRole("CUSTOMER")
                         // Story #52: the saved-project list is private to the signed-in customer.
                         .requestMatchers(HttpMethod.GET, "/api/customer/account")
                         .hasRole("CUSTOMER")
