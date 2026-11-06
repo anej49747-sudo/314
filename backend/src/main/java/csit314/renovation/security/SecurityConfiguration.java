@@ -125,6 +125,10 @@ public class SecurityConfiguration {
                         .hasRole("CUSTOMER")
                         // Story #27: budget estimates are calculated for authenticated customers only.
                         .requestMatchers(HttpMethod.POST, "/api/customer/budget/estimate").hasRole("CUSTOMER")
+                        // Story #28: private boards and their saved-project photo picker.
+                        .requestMatchers("/api/customer/moodboards/**").hasRole("CUSTOMER")
+                        // Story #26: versioned 2D design drafts are private to their customer.
+                        .requestMatchers("/api/customer/designs", "/api/customer/designs/**").hasRole("CUSTOMER")
                         // Story #52: the saved-project list is private to the signed-in customer.
                         .requestMatchers(HttpMethod.GET, "/api/customer/account")
                         .hasRole("CUSTOMER")
