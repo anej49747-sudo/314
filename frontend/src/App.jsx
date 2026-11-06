@@ -4,6 +4,11 @@ import AuthLayout from './components/AuthLayout.jsx'
 import HomePage from './pages/HomePage.jsx'
 import AddPortfolioProjectPage from './pages/AddPortfolioProjectPage.jsx'
 import CustomerPage from './pages/CustomerPage.jsx'
+import BudgetEstimatorPage from './pages/BudgetEstimatorPage.jsx'
+import MoodboardsPage from './pages/MoodboardsPage.jsx'
+import MoodboardEditorPage from './pages/MoodboardEditorPage.jsx'
+import DesignDraftsPage from './pages/DesignDraftsPage.jsx'
+import DesignDraftEditorPage from './pages/DesignDraftEditorPage.jsx'
 import PreferencesPage from './pages/PreferencesPage.jsx'
 import ExplorePage from './pages/ExplorePage.jsx'
 import ManagerClassificationsPage from './pages/ManagerClassificationsPage.jsx'
@@ -75,6 +80,11 @@ export default function App() {
             <Route path="articles" element={<ArticlesPage />} />
             <Route path="articles/:articleId" element={<ArticleDetailsPage />} />
             <Route path="customer" element={<CustomerPage />} />
+            <Route path="customer/budget" element={<BudgetEstimatorPage />} />
+            <Route path="customer/moodboards" element={<MoodboardsPage />} />
+            <Route path="customer/moodboards/:boardId" element={<MoodboardEditorPage />} />
+            <Route path="customer/designs" element={<DesignDraftsPage />} />
+            <Route path="customer/designs/:draftId" element={<DesignDraftEditorPage />} />
             <Route path="customer/preferences/onboarding" element={<PreferencesPage onboarding />} />
             <Route path="customer/preferences" element={<PreferencesPage />} />
             <Route path="customer/account" element={<CustomerAccountSettingsPage />} />

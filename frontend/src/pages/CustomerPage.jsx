@@ -1,5 +1,5 @@
 import { Alert, Button, Spin } from 'antd'
-import { ArrowRight, Heart, MessageSquare, SlidersHorizontal, ShieldCheck, Users } from 'lucide-react'
+import { ArrowRight, Calculator, DraftingCompass, Images, Heart, MessageSquare, SlidersHorizontal, ShieldCheck, Users } from 'lucide-react'
 import { ActionCard, SectionHeading } from '../components/VisualCards.jsx'
 import SavedProjectCard from '../components/SavedProjectCard.jsx'
 import { useEffect, useState } from 'react'
@@ -16,6 +16,9 @@ const shortcuts = [
   { title: 'Compare designers', detail: 'Find the right studio for you', to: '/customer/compare', Icon: Users },
   { title: 'My messages', detail: 'Chat privately with designers', to: '/customer/messages', Icon: MessageSquare },
   { title: 'Account security', detail: 'Change email or password', to: '/customer/security', Icon: ShieldCheck },
+  { title: 'Budget estimator', detail: 'Plan your expected renovation costs', to: '/customer/budget', Icon: Calculator },
+  { title: 'My moodboards', detail: 'Arrange photos, colours and ideas on a canvas', to: '/customer/moodboards', Icon: Images },
+  { title: 'My design drafts', detail: 'Plan measured rooms and furniture layouts', to: '/customer/designs', Icon: DraftingCompass },
 ]
 
 export default function CustomerPage() {
